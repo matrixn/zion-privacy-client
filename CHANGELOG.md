@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Commit 8 — Full-height admin workspace
+
+- Extended the plugin workspace across the full WordPress content height and removed the unused white footer area.
+- Fixed the horizontal navigation bar at the top of the available viewport and kept the API connection status anchored in the same position regardless of page content height.
+
 ### Commit 7 — Live scans and consent banner workspace
 
 - Added automatic AJAX polling on the Scans page while a scan is active, so page and cookie counts update as the scanner progresses.
