@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Commit 4 — OAuth handler and Settings layout
+
+- Fixed the WordPress REST OAuth handler visibility so the Google/Facebook connection endpoint is accepted by WordPress.
+- Removed the provider-secrets sentence from the connection banner.
+- Reworked the Settings layout with responsive cards, stacked headings/descriptions and consistent action spacing.
+
 ### Commit 2 — Synology release and deployment workflow
 
 - Added the adapted Synology deployment script with WSL build support, SSH key validation, dry-run mode, timestamped backups and rollback handling.
