@@ -263,6 +263,7 @@ final class RestController
             'banner_width' => (int) $settings['banner_width'],
             'banner_radius' => (int) $settings['banner_radius'],
             'banner_font_size' => (int) $settings['banner_font_size'],
+            'banner_use_site_font' => (bool) $settings['banner_use_site_font'],
             'banner_shadow' => (bool) $settings['banner_shadow'],
             'banner_background_color' => $settings['banner_background_color'],
             'banner_text_color' => $settings['banner_text_color'],

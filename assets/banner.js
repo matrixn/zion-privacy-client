@@ -8,8 +8,18 @@
     return;
   }
 
+  var host = document.createElement('section');
+  host.setAttribute('data-zion-privacy-banner-host', '');
+  var shadowRoot = host.attachShadow ? host.attachShadow({ mode: 'open' }) : host;
+  var stylesheet = document.createElement('link');
+  stylesheet.rel = 'stylesheet';
+  stylesheet.href = config.styleUrl || '';
+  shadowRoot.appendChild(stylesheet);
+
   var root = document.createElement('section');
-  root.className = 'zion-privacy-banner zion-privacy-banner--' + safePosition(config.position || 'bottom') + (config.shadow === false ? ' is-flat' : '');
+  root.className = 'zion-privacy-banner zion-privacy-banner--' + safePosition(config.position || 'bottom')
+    + (config.shadow === false ? ' is-flat' : '')
+    + (config.useSiteFont === false ? ' uses-system-font' : ' uses-site-font');
   root.setAttribute('aria-label', 'Privacy preferences');
   var colors = config.colors || {};
   root.style.setProperty('--zion-banner-background', colors.background || '#ffffff');
@@ -32,7 +42,8 @@
     + (config.showCustomize !== false ? '<button type="button" data-zion-consent="customize">' + escapeHtml(config.customizeLabel || 'Customize') + '</button>' : '')
     + '<button type="button" data-zion-consent="accept" class="is-primary">' + escapeHtml(config.acceptLabel || 'Accept all') + '</button>'
     + '</div></div>';
-  document.body.appendChild(root);
+  shadowRoot.appendChild(root);
+  document.body.appendChild(host);
 
   root.addEventListener('click', function (event) {
     var button = event.target.closest('[data-zion-consent]');
@@ -124,7 +135,7 @@
   function applyConsent(consent, status) {
     window.localStorage.setItem(storageKey, JSON.stringify(consent));
     sendConsentEvent(consent, status);
-    root.remove();
+    host.remove();
     document.dispatchEvent(new CustomEvent('zionprivacy:consent', { detail: consent }));
   }
 

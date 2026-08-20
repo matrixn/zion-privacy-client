@@ -25,9 +25,9 @@ final class ConsentBanner
             return;
         }
 
-        wp_enqueue_style('zion-privacy-banner', ZION_PRIVACY_URL.'assets/banner.css', [], ZION_PRIVACY_VERSION);
         wp_enqueue_script('zion-privacy-banner', ZION_PRIVACY_URL.'assets/banner.js', [], ZION_PRIVACY_VERSION, true);
         wp_localize_script('zion-privacy-banner', 'ZionPrivacyBanner', [
+            'styleUrl' => ZION_PRIVACY_URL.'assets/banner.css?ver='.rawurlencode(ZION_PRIVACY_VERSION),
             'title' => $settings['banner_title'],
             'message' => $settings['banner_message'],
             'acceptLabel' => $settings['banner_accept_label'],
@@ -45,6 +45,7 @@ final class ConsentBanner
             'width' => (int) $settings['banner_width'],
             'radius' => (int) $settings['banner_radius'],
             'fontSize' => (int) $settings['banner_font_size'],
+            'useSiteFont' => (bool) $settings['banner_use_site_font'],
             'shadow' => (bool) $settings['banner_shadow'],
             'colors' => [
                 'background' => $settings['banner_background_color'],

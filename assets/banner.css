@@ -1,4 +1,6 @@
 .zion-privacy-banner {
+  all: initial;
+  isolation: isolate;
   position: fixed;
   z-index: 999999;
   right: 20px;
@@ -15,6 +17,14 @@
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: var(--zion-banner-font-size, 14px);
 }
+
+.zion-privacy-banner,
+.zion-privacy-banner *,
+.zion-privacy-banner *::before,
+.zion-privacy-banner *::after { box-sizing: border-box; }
+
+.zion-privacy-banner.uses-site-font { font-family: inherit; }
+.zion-privacy-banner.uses-system-font { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
 
 .zion-privacy-banner.is-flat { box-shadow: none; }
 .zion-privacy-banner--top { top: 20px; bottom: auto; }

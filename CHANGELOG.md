@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Commit 16 — Isolated consent banner styles
+
+- Rendered the consent banner and cookie preferences modal inside an isolated Shadow DOM so theme CSS cannot override their layout, controls or typography.
+- Added the `Use website font` setting; when disabled, the banner and modal use a neutral system font while keeping all other styles isolated.
+- Loaded the banner stylesheet inside the isolated component instead of exposing it globally on the site.
+
 ### Commit 15 — Reliable sticky consent preview
 
 - Moved the Live preview card into a dedicated sticky wrapper so it remains visible while scrolling through the consent banner settings.

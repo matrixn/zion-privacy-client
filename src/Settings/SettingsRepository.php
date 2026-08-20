@@ -38,6 +38,7 @@ final class SettingsRepository
             'banner_width' => 1180,
             'banner_radius' => 12,
             'banner_font_size' => 14,
+            'banner_use_site_font' => true,
             'banner_shadow' => true,
             'banner_background_color' => '#ffffff',
             'banner_text_color' => '#183153',
@@ -68,7 +69,7 @@ final class SettingsRepository
             $current[$key] = sanitize_text_field((string) ($settings[$key] ?? $current[$key]));
         }
         $current['banner_selector_message'] = sanitize_textarea_field((string) ($settings['banner_selector_message'] ?? $current['banner_selector_message']));
-        foreach (['banner_show_customize', 'banner_show_cookie_details', 'banner_show_category_counts', 'banner_show_privacy_link', 'banner_shadow'] as $key) {
+        foreach (['banner_show_customize', 'banner_show_cookie_details', 'banner_show_category_counts', 'banner_show_privacy_link', 'banner_use_site_font', 'banner_shadow'] as $key) {
             $current[$key] = ! isset($settings[$key]) || ! empty($settings[$key]);
         }
         $current['banner_position'] = $this->allowedChoice($settings, 'banner_position', ['bottom', 'top', 'bottom_right', 'bottom_left', 'center'], $current['banner_position']);

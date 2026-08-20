@@ -33,6 +33,7 @@ Zion Privacy API
 - consent analytics stored first in a local WordPress table and synchronized every 15 minutes to the API;
 - a native WordPress Dashboard donut widget for accepted, rejected and partially accepted choices;
 - a Consent banner design studio with grouped behavior, content, action, selector and appearance controls;
+- isolated consent banner and cookie preference modal styles, with an option to inherit the active website font or use a neutral system font;
 - local category overrides for cookie inventory entries;
 - documentation and changelog for each project checkpoint.
 
