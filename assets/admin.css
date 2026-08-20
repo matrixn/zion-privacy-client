@@ -1,0 +1,49 @@
+#zion-privacy-admin { max-width: 1380px; margin: 24px 20px 40px 0; }
+.zion-admin { color: #183153; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+.zion-admin__header { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 22px; }
+.zion-admin__eyebrow { margin: 0 0 6px; color: #2369d1; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.zion-admin__title { margin: 0; color: #183153; font-size: 30px; line-height: 1.15; }
+.zion-admin__subtitle { max-width: 710px; margin: 8px 0 0; color: #61738a; font-size: 14px; }
+.zion-admin__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px; }
+.zion-admin__grid--two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.zion-admin__card { overflow: hidden; background: #fff; border: 1px solid #dce5f0; border-radius: 10px; box-shadow: 0 4px 18px rgba(37, 68, 105, .05); }
+.zion-admin__card-header { padding: 17px 18px; border-bottom: 1px solid #e7eef5; }
+.zion-admin__card-header h2 { margin: 0; color: #183153; font-size: 16px; }
+.zion-admin__card-header p { margin: 5px 0 0; color: #75869a; font-size: 12px; }
+.zion-admin__card-body { padding: 18px; }
+.zion-admin__metric { min-height: 102px; padding: 16px; background: #f7faff; border: 1px solid #e1ebf6; border-radius: 9px; }
+.zion-admin__metric-label { color: #667b94; font-size: 12px; }
+.zion-admin__metric-value { margin-top: 8px; color: #183153; font-size: 27px; font-weight: 700; }
+.zion-admin__metric-note { margin-top: 5px; color: #7d8fa4; font-size: 11px; }
+.zion-admin__status { display: inline-flex; align-items: center; gap: 7px; padding: 6px 10px; color: #99600b; background: #fff7e3; border-radius: 99px; font-size: 12px; font-weight: 600; }
+.zion-admin__status::before { width: 7px; height: 7px; background: currentColor; border-radius: 50%; content: ""; }
+.zion-admin__status--connected { color: #13845e; background: #e8f8f1; }
+.zion-admin__status--danger { color: #b23944; background: #fff0f1; }
+.zion-admin__notice { margin: 0 0 18px; }
+.zion-admin__banner { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 18px 20px; color: #174274; background: #edf6ff; border: 1px solid #cce4fa; border-radius: 10px; }
+.zion-admin__banner h2 { margin: 0 0 5px; color: #174274; font-size: 16px; }
+.zion-admin__banner p { margin: 0; color: #54718f; font-size: 13px; }
+.zion-admin__actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.zion-admin__table-wrap { overflow-x: auto; }
+.zion-admin__table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.zion-admin__table th { padding: 10px 12px; color: #72849a; background: #f7faff; font-size: 11px; text-align: left; text-transform: uppercase; }
+.zion-admin__table td { padding: 12px; border-top: 1px solid #edf1f5; vertical-align: top; }
+.zion-admin__table select { min-width: 130px; }
+.zion-admin__muted { color: #71849b; }
+.zion-admin__green { color: #13845e; font-weight: 600; }
+.zion-admin__amber { color: #a76a0d; font-weight: 600; }
+.zion-admin__empty { padding: 20px 0; color: #71849b; text-align: center; }
+.zion-admin__bar-chart { display: flex; align-items: flex-end; gap: 9px; height: 210px; padding: 20px 8px 0; border-bottom: 1px solid #dce5f0; }
+.zion-admin__bar { display: flex; flex: 1; align-items: flex-end; height: 100%; min-width: 14px; }
+.zion-admin__bar span { display: block; width: 100%; min-height: 3px; background: linear-gradient(180deg, #68a7ff, #2369d1); border-radius: 4px 4px 0 0; }
+.zion-admin__legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 13px; color: #71849b; font-size: 12px; }
+.zion-admin__legend strong { color: #183153; }
+.zion-admin__form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.zion-admin__form > .zion-admin__field--full { grid-column: 1 / -1; }
+.zion-admin__field label { display: block; margin-bottom: 6px; color: #304b6b; font-size: 12px; font-weight: 600; }
+.zion-admin__field input, .zion-admin__field textarea { width: 100%; box-sizing: border-box; }
+.zion-admin__field small { display: block; margin-top: 5px; color: #71849b; font-size: 11px; }
+.zion-admin__readonly { padding: 11px 12px; color: #61738a; background: #f7faff; border: 1px solid #dce5f0; border-radius: 4px; font-size: 13px; }
+.zion-admin__spinner { display: flex; justify-content: center; padding: 50px; }
+@media (max-width: 1100px) { .zion-admin__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 700px) { #zion-privacy-admin { margin-right: 10px; } .zion-admin__header, .zion-admin__banner { align-items: stretch; flex-direction: column; } .zion-admin__grid, .zion-admin__grid--two, .zion-admin__form { grid-template-columns: 1fr; } }

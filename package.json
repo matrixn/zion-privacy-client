@@ -1,0 +1,19 @@
+{
+  "name": "zion-privacy-client",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Admin interface for the Zion Privacy WordPress client.",
+  "scripts": {
+    "build": "wp-scripts build src/admin/index.tsx --output-path=build",
+    "start": "wp-scripts start src/admin/index.tsx --output-path=build"
+  },
+  "dependencies": {
+    "@wordpress/components": "^29.0.0",
+    "@wordpress/element": "^6.0.0",
+    "@wordpress/i18n": "^6.0.0"
+  },
+  "devDependencies": {
+    "@wordpress/scripts": "^30.0.0",
+    "typescript": "^5.6.0"
+  }
+}

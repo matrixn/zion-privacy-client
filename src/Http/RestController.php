@@ -1,0 +1,248 @@
+<?php
+
+namespace ZionPrivacy\Http;
+
+use ZionPrivacy\Api\ApiClient;
+use ZionPrivacy\OAuth\CallbackHandler;
+use ZionPrivacy\Settings\SettingsRepository;
+
+final class RestController
+{
+    public function __construct(
+        private readonly SettingsRepository $settings,
+        private readonly ApiClient $api,
+        private readonly CallbackHandler $oauth,
+    ) {}
+
+    public function register(): void
+    {
+        add_action('rest_api_init', [$this, 'routes']);
+    }
+
+    public function routes(): void
+    {
+        register_rest_route('zion-privacy/v1', '/status', [
+            'methods' => 'GET',
+            'permission_callback' => [$this, 'permission'],
+            'callback' => fn (): array => $this->status(),
+        ]);
+        register_rest_route('zion-privacy/v1', '/dashboard', [
+            'methods' => 'GET',
+            'permission_callback' => [$this, 'permission'],
+            'callback' => fn (): array|\WP_Error => $this->dashboard(),
+        ]);
+        register_rest_route('zion-privacy/v1', '/cookies', [
+            'methods' => 'GET',
+            'permission_callback' => [$this, 'permission'],
+            'callback' => fn (): array|\WP_Error => $this->cookies(),
+        ]);
+        register_rest_route('zion-privacy/v1', '/cookies/category', [
+            'methods' => 'POST',
+            'permission_callback' => [$this, 'permission'],
+            'callback' => [$this, 'saveCookieCategory'],
+        ]);
+        register_rest_route('zion-privacy/v1', '/statistics', [
+            'methods' => 'GET',
+            'permission_callback' => [$this, 'permission'],
+            'callback' => fn (): array|\WP_Error => $this->statistics(),
+        ]);
+        register_rest_route('zion-privacy/v1', '/settings', [
+            [
+                'methods' => 'GET',
+                'permission_callback' => [$this, 'permission'],
+                'callback' => fn (): array => $this->publicSettings(),
+            ],
+            [
+                'methods' => 'POST',
+                'permission_callback' => [$this, 'permission'],
+                'callback' => [$this, 'saveSettings'],
+            ],
+        ]);
+        register_rest_route('zion-privacy/v1', '/connect', [
+            'methods' => 'POST',
+            'permission_callback' => [$this, 'permission'],
+            'callback' => [$this, 'connect'],
+        ]);
+        register_rest_route('zion-privacy/v1', '/disconnect', [
+            'methods' => 'POST',
+            'permission_callback' => [$this, 'permission'],
+            'callback' => function (): array {
+                $this->settings->clearCredentials();
+
+                return ['connected' => false];
+            },
+        ]);
+    }
+
+    public function permission(): bool
+    {
+        return current_user_can('manage_options');
+    }
+
+    private function status(): array
+    {
+        $credentials = $this->settings->credentials();
+
+        return [
+            'connected' => $this->settings->isConnected(),
+            'api_base_url' => $this->settings->apiBaseUrl(),
+            'account' => $credentials['account'] ?? [],
+            'site_url' => home_url('/'),
+        ];
+    }
+
+    private function dashboard(): array|\WP_Error
+    {
+        $websiteResponse = $this->api->get('websites', ['per_page' => 1]);
+
+        if (is_wp_error($websiteResponse)) {
+            return $websiteResponse;
+        }
+
+        $website = $this->firstData($websiteResponse);
+
+        if (! $website) {
+            return ['website' => null, 'scans' => [], 'cookies' => [], 'stats' => $this->emptyStats()];
+        }
+
+        $scansResponse = $this->api->get('websites/'.rawurlencode((string) $website['id']).'/scans', ['per_page' => 10]);
+        $cookiesResponse = $this->api->get('websites/'.rawurlencode((string) $website['id']).'/cookies');
+
+        return [
+            'website' => $website,
+            'scans' => is_wp_error($scansResponse) ? [] : (array) ($scansResponse['data'] ?? []),
+            'cookies' => is_wp_error($cookiesResponse) ? [] : $this->applyOverrides((array) ($cookiesResponse['data'] ?? [])),
+            'stats' => $this->statsFrom($website, $scansResponse, $cookiesResponse),
+        ];
+    }
+
+    private function cookies(): array|\WP_Error
+    {
+        $dashboard = $this->dashboard();
+
+        return is_wp_error($dashboard) ? $dashboard : ['data' => $dashboard['cookies']];
+    }
+
+    private function statistics(): array|\WP_Error
+    {
+        $dashboard = $this->dashboard();
+
+        return is_wp_error($dashboard) ? $dashboard : [
+            'website' => $dashboard['website'],
+            'stats' => $dashboard['stats'],
+            'scans' => $dashboard['scans'],
+        ];
+    }
+
+    private function publicSettings(): array
+    {
+        $settings = $this->settings->all();
+
+        return [
+            'api_base_url' => $settings['api_base_url'],
+            'banner_enabled' => (bool) $settings['banner_enabled'],
+            'banner_title' => $settings['banner_title'],
+            'banner_message' => $settings['banner_message'],
+            'connected' => $this->settings->isConnected(),
+        ];
+    }
+
+    private function saveSettings(\WP_REST_Request $request): array
+    {
+        $this->settings->update((array) $request->get_json_params());
+
+        return $this->publicSettings();
+    }
+
+    private function connect(\WP_REST_Request $request): array|\WP_Error
+    {
+        $url = $this->oauth->connectionUrl((string) ($request->get_param('provider') ?: 'google'));
+
+        return is_wp_error($url) ? $url : ['url' => $url];
+    }
+
+    private function saveCookieCategory(\WP_REST_Request $request): array|\WP_Error
+    {
+        $identity = sanitize_text_field((string) $request->get_param('identity'));
+        $category = sanitize_key((string) $request->get_param('category'));
+        $allowed = ['necessary', 'preferences', 'analytics', 'marketing', 'security', 'personalization', 'unknown'];
+
+        if ($identity === '' || ! in_array($category, $allowed, true)) {
+            return new \WP_Error('zion_privacy_invalid_cookie_category', 'A valid cookie identity and category are required.', ['status' => 422]);
+        }
+
+        $this->settings->setCookieOverride($identity, $category);
+
+        return ['saved' => true, 'identity' => $identity, 'category' => $category];
+    }
+
+    private function firstData(array $response): ?array
+    {
+        $data = $response['data'][0] ?? null;
+
+        return is_array($data) ? $data : null;
+    }
+
+    private function statsFrom(array $website, array|\WP_Error $scansResponse, array|\WP_Error $cookiesResponse): array
+    {
+        $scans = is_wp_error($scansResponse) ? [] : (array) ($scansResponse['data'] ?? []);
+        $cookies = is_wp_error($cookiesResponse) ? [] : $this->applyOverrides((array) ($cookiesResponse['data'] ?? []));
+        $completed = array_values(array_filter($scans, static fn (array $scan): bool => ($scan['status'] ?? '') === 'completed'));
+        $durations = array_values(array_filter(array_map(static function (array $scan): ?int {
+            if (empty($scan['started_at']) || empty($scan['finished_at'])) {
+                return null;
+            }
+
+            $start = strtotime((string) $scan['started_at']);
+            $finish = strtotime((string) $scan['finished_at']);
+
+            return $start && $finish ? max(0, $finish - $start) : null;
+        }, $completed)));
+
+        return [
+            'total_cookies' => count($cookies),
+            'categories' => array_count_values(array_map(static fn (array $cookie): string => (string) ($cookie['category'] ?? 'unknown'), $cookies)),
+            'pages_scanned' => (int) ($completed[0]['page_count'] ?? 0),
+            'scans_count' => count($scans),
+            'successful_scans' => count($completed),
+            'average_duration_seconds' => $durations ? (int) round(array_sum($durations) / count($durations)) : null,
+            'last_successful_scan_at' => $website['last_successful_scan_at'] ?? null,
+        ];
+    }
+
+    private function emptyStats(): array
+    {
+        return [
+            'total_cookies' => 0,
+            'categories' => [],
+            'pages_scanned' => 0,
+            'scans_count' => 0,
+            'successful_scans' => 0,
+            'average_duration_seconds' => null,
+            'last_successful_scan_at' => null,
+        ];
+    }
+
+    private function applyOverrides(array $cookies): array
+    {
+        $overrides = [];
+
+        foreach ($this->settings->cookieOverrides() as $override) {
+            if (is_array($override) && isset($override['identity'], $override['category'])) {
+                $overrides[hash('sha256', (string) $override['identity'])] = (string) $override['category'];
+            }
+        }
+
+        return array_map(static function (array $cookie) use ($overrides): array {
+            $identity = implode('|', [(string) ($cookie['name'] ?? ''), (string) ($cookie['domain'] ?? ''), (string) ($cookie['path'] ?? '')]);
+            $hash = hash('sha256', $identity);
+
+            if (isset($overrides[$hash])) {
+                $cookie['category'] = $overrides[$hash];
+                $cookie['classification_source'] = 'local_override';
+            }
+
+            return $cookie;
+        }, $cookies);
+    }
+}

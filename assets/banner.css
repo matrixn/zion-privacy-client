@@ -1,0 +1,38 @@
+.zion-privacy-banner {
+  position: fixed;
+  z-index: 999999;
+  right: 20px;
+  bottom: 20px;
+  left: 20px;
+  padding: 22px 24px;
+  color: #183153;
+  background: #fff;
+  border: 1px solid #dce5f0;
+  border-radius: 12px;
+  box-shadow: 0 16px 55px rgba(20, 43, 74, .2);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.zion-privacy-banner__content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.zion-privacy-banner h2 { margin: 0 0 6px; font-size: 19px; }
+.zion-privacy-banner p { margin: 0 0 6px; color: #52657c; font-size: 14px; }
+.zion-privacy-banner a { color: #2369d1; font-size: 13px; }
+.zion-privacy-banner__actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+.zion-privacy-banner button { padding: 9px 13px; color: #1e477c; background: #f1f6fc; border: 1px solid #cddbeb; border-radius: 6px; cursor: pointer; font-size: 13px; }
+.zion-privacy-banner button.is-primary { color: #fff; background: #2369d1; border-color: #2369d1; }
+.zion-privacy-banner.is-customizing::after { display: block; margin-top: 12px; color: #52657c; content: "Customization controls will be available after the API consent policy is connected."; font-size: 13px; }
+
+@media (max-width: 700px) {
+  .zion-privacy-banner { right: 10px; bottom: 10px; left: 10px; }
+  .zion-privacy-banner__content { align-items: stretch; flex-direction: column; gap: 15px; }
+  .zion-privacy-banner__actions { justify-content: stretch; }
+  .zion-privacy-banner button { flex: 1; }
+}
