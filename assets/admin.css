@@ -108,7 +108,8 @@ body.toplevel_page_zion-privacy #wpfooter { display: none; }
 .zion-admin__scan-row--active td { background: rgba(34, 211, 238, .025); }
 .zion-admin__banner-layout { display: grid; grid-template-columns: minmax(300px, .85fr) minmax(440px, 1.15fr); gap: 18px; align-items: start; }
 .zion-admin__banner-settings-card { min-width: 0; }
-.zion-admin__preview-card { position: sticky; top: 124px; align-self: start; }
+.zion-admin__preview-sticky { position: sticky; z-index: 4; top: 124px; align-self: start; min-width: 0; }
+.zion-admin__preview-card { min-width: 0; }
 .zion-admin__banner-settings { display: grid; gap: 10px; }
 .zion-admin__banner-accordion { overflow: hidden; background: rgba(255, 255, 255, .025); border: 1px solid rgba(148, 163, 184, .18); border-radius: 13px; }
 .zion-admin__banner-accordion summary { display: flex; align-items: center; gap: 11px; padding: 15px 16px; color: #edf3ff; cursor: pointer; list-style: none; }
@@ -176,6 +177,6 @@ body.toplevel_page_zion-privacy #wpfooter { display: none; }
 .zion-admin__toast-progress { position: absolute; right: 0; bottom: 0; left: 0; height: 3px; background: rgba(255, 255, 255, .08); }
 .zion-admin__toast-progress span { display: block; height: 100%; background: linear-gradient(90deg, var(--cyan), var(--purple)); transition: width .1s linear; }
 @media (max-width: 1100px) { .zion-admin__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .zion-admin__plan-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-@media (max-width: 1100px) { .zion-admin__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .zion-admin__plan-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .zion-admin__banner-layout { grid-template-columns: 1fr; } .zion-admin__preview-card { position: static; } }
+@media (max-width: 1100px) { .zion-admin__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .zion-admin__plan-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .zion-admin__banner-layout { grid-template-columns: 1fr; } .zion-admin__preview-sticky { position: static; } }
 @media (max-width: 782px) { body.toplevel_page_zion-privacy .zion-admin__sidebar, body.folded.toplevel_page_zion-privacy .zion-admin__sidebar { left: 0; width: 100%; } }
 @media (max-width: 700px) { .zion-admin-shell { margin-left: -10px; } .zion-admin__sidebar { position: fixed; top: 32px; min-height: auto; align-items: stretch; flex-wrap: wrap; gap: 14px; padding: 15px; } .zion-admin__brand { width: 100%; } .zion-admin__nav { display: grid; width: 100%; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; } .zion-admin__nav-item { justify-content: center; padding: 9px 4px; } .zion-admin__nav-pip { position: absolute; right: 7px; top: 7px; margin: 0; } .zion-admin__sidebar-footer { display: none; } .zion-admin__main { padding: 150px 15px 42px; } .zion-admin__header, .zion-admin__banner, .zion-admin__card-heading { align-items: stretch; flex-direction: column; } .zion-admin__grid, .zion-admin__grid--two, .zion-admin__form, .zion-admin__modal-form, .zion-admin__plan-grid { grid-template-columns: 1fr; } .zion-admin__banner-preview-content { position: static; align-items: stretch; flex-direction: column; } .zion-admin__banner-preview-actions { justify-content: stretch; } .zion-admin__banner-preview button { flex: 1; } .zion-admin__modal-footer { align-items: stretch; flex-direction: column-reverse; } .zion-admin__toast-region { top: 15px; right: 15px; } }

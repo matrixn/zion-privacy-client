@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Commit 15 — Reliable sticky consent preview
+
+- Moved the Live preview card into a dedicated sticky wrapper so it remains visible while scrolling through the consent banner settings.
+- Prevented the global WordPress card overflow rule from interfering with the sticky positioning.
+- Disabled sticky positioning when the layout collapses to one column on tablet and mobile screens.
+
 ### Commit 14 — Sticky consent banner preview
 
 - Kept the Live preview card visible while scrolling through the consent banner settings on desktop.
