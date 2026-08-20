@@ -67,10 +67,6 @@ final class ApiClient
 
     public function exchangeOAuthCode(string $code, string $state): array|\WP_Error
     {
-        if (trim($this->settings->apiBaseUrl()) === '') {
-            return new \WP_Error('zion_privacy_api_url_missing', 'Set the Zion Privacy API URL first.');
-        }
-
         $response = wp_remote_post($this->settings->apiBaseUrl().'/api/v1/oauth/token', [
             'timeout' => 20,
             'headers' => ['Accept' => 'application/json'],
@@ -78,7 +74,8 @@ final class ApiClient
                 'code' => $code,
                 'state' => $state,
                 'site_url' => home_url('/'),
-                'callback_url' => admin_url('admin.php?page=zion-privacy-settings'),
+                'site_name' => get_bloginfo('name'),
+                'callback_url' => admin_url('admin.php?page=zion-privacy'),
                 'plugin_version' => ZION_PRIVACY_VERSION,
             ],
         ]);

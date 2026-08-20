@@ -85,7 +85,6 @@ final class RestController
 
         return [
             'connected' => $this->settings->isConnected(),
-            'api_base_url' => $this->settings->apiBaseUrl(),
             'account' => $credentials['account'] ?? [],
             'site_url' => home_url('/'),
         ];
@@ -93,6 +92,15 @@ final class RestController
 
     private function dashboard(): array|\WP_Error
     {
+        if (! $this->settings->isConnected()) {
+            return [
+                'website' => null,
+                'scans' => [],
+                'cookies' => [],
+                'stats' => $this->emptyStats(),
+            ];
+        }
+
         $websiteResponse = $this->api->get('websites', ['per_page' => 1]);
 
         if (is_wp_error($websiteResponse)) {
@@ -139,11 +147,11 @@ final class RestController
         $settings = $this->settings->all();
 
         return [
-            'api_base_url' => $settings['api_base_url'],
             'banner_enabled' => (bool) $settings['banner_enabled'],
             'banner_title' => $settings['banner_title'],
             'banner_message' => $settings['banner_message'],
             'connected' => $this->settings->isConnected(),
+            'account' => $this->settings->credentials()['account'] ?? [],
         ];
     }
 

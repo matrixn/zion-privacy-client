@@ -57,7 +57,6 @@ final class AdminMenu
             'nonce' => wp_create_nonce('wp_rest'),
             'page' => sanitize_key((string) ($_GET['page'] ?? 'zion-privacy')),
             'connected' => $this->settings->isConnected(),
-            'apiBaseUrl' => $this->settings->apiBaseUrl(),
             'version' => ZION_PRIVACY_VERSION,
         ]);
     }

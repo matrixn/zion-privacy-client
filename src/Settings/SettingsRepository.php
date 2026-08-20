@@ -6,6 +6,8 @@ use ZionPrivacy\Infrastructure\CredentialVault;
 
 final class SettingsRepository
 {
+    private const API_BASE_URL = 'https://privacy-api.zion3d.ro';
+
     private const SETTINGS_OPTION = 'zion_privacy_settings';
 
     private const CREDENTIALS_OPTION = 'zion_privacy_credentials';
@@ -17,7 +19,7 @@ final class SettingsRepository
     public function all(): array
     {
         return wp_parse_args((array) get_option(self::SETTINGS_OPTION, []), [
-            'api_base_url' => '',
+            'api_base_url' => self::API_BASE_URL,
             'banner_enabled' => true,
             'banner_title' => 'Your privacy matters',
             'banner_message' => 'Choose which categories of cookies you allow.',
@@ -27,7 +29,8 @@ final class SettingsRepository
     public function update(array $settings): void
     {
         $current = $this->all();
-        $current['api_base_url'] = untrailingslashit(esc_url_raw((string) ($settings['api_base_url'] ?? $current['api_base_url'])));
+        // The production API is intentionally immutable from WordPress.
+        $current['api_base_url'] = self::API_BASE_URL;
         $current['banner_enabled'] = ! empty($settings['banner_enabled']);
         $current['banner_title'] = sanitize_text_field((string) ($settings['banner_title'] ?? $current['banner_title']));
         $current['banner_message'] = sanitize_textarea_field((string) ($settings['banner_message'] ?? $current['banner_message']));
@@ -37,7 +40,7 @@ final class SettingsRepository
 
     public function apiBaseUrl(): string
     {
-        return (string) $this->all()['api_base_url'];
+        return self::API_BASE_URL;
     }
 
     public function credentials(): array
@@ -59,8 +62,7 @@ final class SettingsRepository
     {
         $credentials = $this->credentials();
 
-        return $this->hasValue($this->apiBaseUrl())
-            && $this->hasValue($credentials['installation_uuid'] ?? null)
+        return $this->hasValue($credentials['installation_uuid'] ?? null)
             && $this->hasValue($credentials['key_id'] ?? null)
             && $this->hasValue($credentials['secret'] ?? null);
     }

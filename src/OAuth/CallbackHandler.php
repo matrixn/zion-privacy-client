@@ -21,18 +21,15 @@ final class CallbackHandler
     {
         $provider = in_array($provider, ['google', 'facebook'], true) ? $provider : 'google';
 
-        if (trim($this->settings->apiBaseUrl()) === '') {
-            return new \WP_Error('zion_privacy_api_url_missing', 'Set the Zion Privacy API URL first.');
-        }
-
         $state = wp_generate_uuid4();
         set_transient('zion_privacy_oauth_state_'.$state, ['provider' => $provider], 10 * MINUTE_IN_SECONDS);
 
         return add_query_arg([
             'provider' => $provider,
             'state' => $state,
-            'client_callback' => admin_url('admin.php?page=zion-privacy-settings'),
+            'client_callback' => admin_url('admin.php?page=zion-privacy'),
             'site_url' => home_url('/'),
+            'site_name' => get_bloginfo('name'),
         ], $this->settings->apiBaseUrl().'/api/v1/oauth/'.$provider.'/start');
     }
 
@@ -74,7 +71,7 @@ final class CallbackHandler
     private function redirectWithNotice(string $type, string $message): never
     {
         wp_safe_redirect(add_query_arg([
-            'page' => 'zion-privacy-settings',
+            'page' => 'zion-privacy',
             'zion_privacy_notice' => $type,
             'zion_privacy_message' => rawurlencode($message),
         ], admin_url('admin.php')));

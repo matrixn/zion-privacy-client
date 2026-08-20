@@ -47,7 +47,7 @@ does not store provider secrets and does not complete OAuth locally.
 2. Run `composer install --no-dev`.
 3. Run `npm ci && npm run build`.
 4. Activate **Zion Privacy Client** in WordPress.
-5. Open **Zion Privacy → Settings**, enter the public Zion Privacy API URL and connect the account.
+5. Open **Zion Privacy → Dashboard** and connect the account with Google or Facebook. The production API URL is fixed in the plugin.
 
 The API owns Google/Facebook OAuth credentials. Never add provider secrets, Gemini keys or API secrets to this repository or to a WordPress frontend bundle.
 
