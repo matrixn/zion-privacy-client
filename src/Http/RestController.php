@@ -155,21 +155,21 @@ final class RestController
         ];
     }
 
-    private function saveSettings(\WP_REST_Request $request): array
+    public function saveSettings(\WP_REST_Request $request): array
     {
         $this->settings->update((array) $request->get_json_params());
 
         return $this->publicSettings();
     }
 
-    private function connect(\WP_REST_Request $request): array|\WP_Error
+    public function connect(\WP_REST_Request $request): array|\WP_Error
     {
         $url = $this->oauth->connectionUrl((string) ($request->get_param('provider') ?: 'google'));
 
         return is_wp_error($url) ? $url : ['url' => $url];
     }
 
-    private function saveCookieCategory(\WP_REST_Request $request): array|\WP_Error
+    public function saveCookieCategory(\WP_REST_Request $request): array|\WP_Error
     {
         $identity = sanitize_text_field((string) $request->get_param('identity'));
         $category = sanitize_key((string) $request->get_param('category'));

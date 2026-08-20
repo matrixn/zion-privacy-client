@@ -30,7 +30,7 @@ function Metric({ label, value, note }: { label: string; value: string | number;
 
 function ConnectionBanner({ connected, onConnect }: { connected: boolean; onConnect: (provider: string) => void }) {
   if (connected) return null;
-  return <div className="zion-admin__banner zion-admin__notice"><div><h2>Connect your website to Zion Privacy</h2><p>Use the secure API-owned OAuth flow to connect this WordPress installation. Provider secrets never live in the plugin.</p></div><div className="zion-admin__actions"><Button variant="primary" onClick={() => onConnect('google')}>Connect with Google</Button><Button variant="secondary" onClick={() => onConnect('facebook')}>Connect with Facebook</Button></div></div>;
+  return <div className="zion-admin__banner zion-admin__notice"><div><h2>Connect your website to Zion Privacy</h2><p>Use the secure API-owned OAuth flow to connect this WordPress installation.</p></div><div className="zion-admin__actions"><Button variant="primary" onClick={() => onConnect('google')}>Connect with Google</Button><Button variant="secondary" onClick={() => onConnect('facebook')}>Connect with Facebook</Button></div></div>;
 }
 
 function Dashboard() {
