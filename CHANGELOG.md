@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Commit 9 — WordPress menu offset
+
+- Anchored the fixed Zion Privacy navigation after the WordPress admin menu instead of allowing it to render underneath it.
+- Added offsets for the standard 160px menu, the 36px collapsed menu and the responsive mobile layout.
+
 ### Commit 8 — Full-height admin workspace
 
 - Extended the plugin workspace across the full WordPress content height and removed the unused white footer area.
