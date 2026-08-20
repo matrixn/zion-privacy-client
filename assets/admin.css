@@ -1,58 +1,100 @@
-#zion-privacy-admin { max-width: 1380px; margin: 24px 20px 40px 0; }
-.zion-admin { color: #183153; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-.zion-admin__header { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 22px; }
-.zion-admin__eyebrow { margin: 0 0 6px; color: #2369d1; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
-.zion-admin__title { margin: 0; color: #183153; font-size: 30px; line-height: 1.15; }
-.zion-admin__subtitle { max-width: 710px; margin: 8px 0 0; color: #61738a; font-size: 14px; }
-.zion-admin__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px; }
+body.toplevel_page_zion-privacy #wpcontent { padding-left: 0; }
+.zion-privacy-wrap { margin: 0 !important; }
+#zion-privacy-admin { min-height: calc(100vh - 32px); }
+.zion-admin-shell { --ink: #e8eeff; --muted: #8c9ac2; --panel: rgba(20, 28, 58, .78); --line: rgba(143, 164, 224, .18); --purple: #8b5cf6; --cyan: #22d3ee; --green: #34d399; display: flex; min-height: calc(100vh - 32px); margin-left: -20px; color: var(--ink); background: #090d1d; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+.zion-admin-shell::before { position: fixed; z-index: 0; top: 0; right: 0; width: 54vw; height: 54vw; max-width: 720px; max-height: 720px; background: radial-gradient(circle, rgba(124, 58, 237, .22), transparent 67%); pointer-events: none; content: ""; }
+.zion-admin { position: relative; z-index: 1; width: 100%; max-width: 1480px; margin: 0 auto; }
+.zion-admin__sidebar { position: sticky; z-index: 3; top: 32px; display: flex; width: 254px; min-width: 254px; min-height: calc(100vh - 32px); flex-direction: column; padding: 28px 16px 20px; background: linear-gradient(180deg, #111832 0%, #0d1229 100%); border-right: 1px solid var(--line); box-sizing: border-box; }
+.zion-admin__brand { display: flex; align-items: center; gap: 12px; padding: 0 12px 34px; }
+.zion-admin__brand-mark { display: grid; width: 42px; height: 42px; place-items: center; color: #fff; background: linear-gradient(135deg, var(--cyan), var(--purple)); border-radius: 14px; box-shadow: 0 8px 26px rgba(34, 211, 238, .22); font-size: 20px; font-weight: 800; }
+.zion-admin__brand strong { display: block; color: #fff; font-size: 15px; letter-spacing: -.02em; }
+.zion-admin__brand small { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; }
+.zion-admin__nav { display: grid; gap: 7px; }
+.zion-admin__nav-item { position: relative; display: flex; align-items: center; gap: 13px; width: 100%; padding: 13px 14px; color: #99a6c8; background: transparent; border: 1px solid transparent; border-radius: 12px; cursor: pointer; font: inherit; font-size: 13px; font-weight: 600; text-align: left; transition: color .18s ease, background .18s ease, transform .18s ease; }
+.zion-admin__nav-item:hover { color: #fff; background: rgba(139, 92, 246, .12); transform: translateX(2px); }
+.zion-admin__nav-item.is-active { color: #fff; background: linear-gradient(90deg, rgba(139, 92, 246, .25), rgba(34, 211, 238, .08)); border-color: rgba(139, 92, 246, .32); box-shadow: inset 3px 0 0 var(--cyan), 0 8px 24px rgba(0, 0, 0, .12); }
+.zion-admin__nav-icon { display: grid; width: 23px; color: #a7b4e4; place-items: center; font-size: 18px; }
+.zion-admin__nav-item.is-active .zion-admin__nav-icon { color: var(--cyan); }
+.zion-admin__nav-pip { width: 6px; height: 6px; margin-left: auto; background: var(--cyan); border-radius: 50%; box-shadow: 0 0 12px var(--cyan); }
+.zion-admin__sidebar-footer { display: flex; align-items: center; gap: 7px; margin-top: auto; padding: 15px 12px 0; color: #7180a5; border-top: 1px solid var(--line); font-size: 11px; }
+.zion-admin__sidebar-footer small { margin-left: auto; color: #556184; }
+.zion-admin__sidebar-status { width: 7px; height: 7px; background: #f59e0b; border-radius: 50%; box-shadow: 0 0 10px #f59e0b; }
+.zion-admin__sidebar-status.is-online { background: var(--green); box-shadow: 0 0 10px var(--green); }
+.zion-admin__main { flex: 1; min-width: 0; padding: 42px clamp(22px, 4vw, 62px) 54px; }
+.zion-admin__header { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 30px; }
+.zion-admin__eyebrow { margin: 0 0 10px; color: var(--cyan); font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+.zion-admin__title { margin: 0; color: #fff; font-size: clamp(28px, 3vw, 42px); letter-spacing: -.045em; line-height: 1.05; }
+.zion-admin__subtitle { max-width: 760px; margin: 11px 0 0; color: var(--muted); font-size: 14px; line-height: 1.65; }
+.zion-admin__status { display: inline-flex; align-items: center; gap: 8px; padding: 9px 13px; color: #fbbf24; background: rgba(245, 158, 11, .1); border: 1px solid rgba(245, 158, 11, .24); border-radius: 99px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.zion-admin__status::before { width: 7px; height: 7px; background: currentColor; border-radius: 50%; box-shadow: 0 0 10px currentColor; content: ""; }
+.zion-admin__status--connected { color: var(--green); background: rgba(52, 211, 153, .09); border-color: rgba(52, 211, 153, .22); }
+.zion-admin__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 15px; margin-bottom: 18px; }
 .zion-admin__grid--two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.zion-admin__card { overflow: hidden; background: #fff; border: 1px solid #dce5f0; border-radius: 10px; box-shadow: 0 4px 18px rgba(37, 68, 105, .05); }
-.zion-admin__card-header { padding: 17px 18px; border-bottom: 1px solid #e7eef5; }
-.zion-admin__card-header h2 { margin: 0; color: #183153; font-size: 16px; }
-.zion-admin__card-header p { margin: 5px 0 0; color: #75869a; font-size: 12px; }
-.zion-admin__card-body { padding: 18px; }
-.zion-admin__metric { min-height: 102px; padding: 16px; background: #f7faff; border: 1px solid #e1ebf6; border-radius: 9px; }
-.zion-admin__metric-label { color: #667b94; font-size: 12px; }
-.zion-admin__metric-value { margin-top: 8px; color: #183153; font-size: 27px; font-weight: 700; }
-.zion-admin__metric-note { margin-top: 5px; color: #7d8fa4; font-size: 11px; }
-.zion-admin__status { display: inline-flex; align-items: center; gap: 7px; padding: 6px 10px; color: #99600b; background: #fff7e3; border-radius: 99px; font-size: 12px; font-weight: 600; }
-.zion-admin__status::before { width: 7px; height: 7px; background: currentColor; border-radius: 50%; content: ""; }
-.zion-admin__status--connected { color: #13845e; background: #e8f8f1; }
-.zion-admin__status--danger { color: #b23944; background: #fff0f1; }
-.zion-admin__notice { margin: 0 0 18px; }
-.zion-admin__banner { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 18px 20px; color: #174274; background: #edf6ff; border: 1px solid #cce4fa; border-radius: 10px; }
-.zion-admin__banner h2 { margin: 0 0 5px; color: #174274; font-size: 16px; }
-.zion-admin__banner p { margin: 0; color: #54718f; font-size: 13px; }
-.zion-admin__actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.zion-admin__metric { position: relative; min-height: 116px; overflow: hidden; padding: 20px; background: linear-gradient(145deg, rgba(32, 43, 84, .92), rgba(17, 25, 56, .86)); border: 1px solid var(--line); border-radius: 17px; box-shadow: 0 18px 40px rgba(0, 0, 0, .14); }
+.zion-admin__metric::after { position: absolute; right: -24px; bottom: -34px; width: 100px; height: 100px; background: radial-gradient(circle, rgba(34, 211, 238, .22), transparent 70%); content: ""; }
+.zion-admin__metric-label { color: #aeb9da; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.zion-admin__metric-value { margin-top: 12px; color: #fff; font-size: 32px; font-weight: 800; letter-spacing: -.05em; }
+.zion-admin__metric-note { margin-top: 5px; color: #7785aa; font-size: 11px; }
+.zion-admin__card, .components-card { overflow: hidden; color: var(--ink); background: var(--panel) !important; border: 1px solid var(--line) !important; border-radius: 17px !important; box-shadow: 0 18px 50px rgba(0, 0, 0, .16) !important; }
+.zion-admin__card-header, .components-card__header { padding: 20px 22px !important; background: rgba(255, 255, 255, .015); border-bottom: 1px solid var(--line) !important; }
+.zion-admin__card-header h2, .components-card__header h2 { margin: 0; color: #fff; font-size: 16px; letter-spacing: -.015em; }
+.zion-admin__card-header p, .components-card__header p { margin: 6px 0 0; color: var(--muted); font-size: 12px; line-height: 1.55; }
+.zion-admin__card-body, .components-card__body { padding: 22px !important; }
+.zion-admin__card-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.zion-admin__banner { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 18px; padding: 21px 23px; color: #dbeafe; background: linear-gradient(110deg, rgba(29, 78, 216, .28), rgba(124, 58, 237, .2)); border: 1px solid rgba(96, 165, 250, .28); border-radius: 17px; box-shadow: 0 18px 42px rgba(30, 64, 175, .12); }
+.zion-admin__banner h2 { margin: 0 0 6px; color: #fff; font-size: 16px; }
+.zion-admin__banner p { margin: 0; color: #a9c4ef; font-size: 13px; line-height: 1.5; }
+.zion-admin__actions { display: flex; flex-wrap: wrap; gap: 9px; }
+.zion-admin .components-button { min-height: 36px; border-radius: 9px; font-weight: 700; }
+.zion-admin .components-button.is-primary { color: #071425; background: linear-gradient(135deg, var(--cyan), #60a5fa); box-shadow: 0 8px 20px rgba(34, 211, 238, .18); }
+.zion-admin .components-button.is-secondary { color: #dbeafe; background: rgba(255, 255, 255, .06); border: 1px solid rgba(147, 197, 253, .28); }
+.zion-admin .components-button.is-destructive { color: #fecdd3; background: rgba(225, 29, 72, .1); border: 1px solid rgba(251, 113, 133, .25); }
 .zion-admin__table-wrap { overflow-x: auto; }
-.zion-admin__table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.zion-admin__table th { padding: 10px 12px; color: #72849a; background: #f7faff; font-size: 11px; text-align: left; text-transform: uppercase; }
-.zion-admin__table td { padding: 12px; border-top: 1px solid #edf1f5; vertical-align: top; }
-.zion-admin__table select { min-width: 130px; }
-.zion-admin__muted { color: #71849b; }
-.zion-admin__green { color: #13845e; font-weight: 600; }
-.zion-admin__amber { color: #a76a0d; font-weight: 600; }
-.zion-admin__empty { padding: 20px 0; color: #71849b; text-align: center; }
-.zion-admin__bar-chart { display: flex; align-items: flex-end; gap: 9px; height: 210px; padding: 20px 8px 0; border-bottom: 1px solid #dce5f0; }
+.zion-admin__table { width: 100%; border-collapse: collapse; color: #d9e2ff; font-size: 13px; }
+.zion-admin__table th { padding: 12px 14px; color: #8290b4; background: rgba(255, 255, 255, .035); font-size: 10px; font-weight: 800; letter-spacing: .08em; text-align: left; text-transform: uppercase; }
+.zion-admin__table td { padding: 14px; border-top: 1px solid rgba(143, 164, 224, .1); vertical-align: top; }
+.zion-admin__table tbody tr { transition: background .15s ease; }
+.zion-admin__table tbody tr:hover { background: rgba(139, 92, 246, .07); }
+.zion-admin__table select { min-width: 130px; color: #d9e2ff; background: #151e40; border-color: #34416d; }
+.zion-admin__table code { color: #9ddcf4; font-size: 12px; }
+.zion-admin__muted { color: var(--muted); }
+.zion-admin__green { color: var(--green); font-weight: 700; }
+.zion-admin__amber { color: #fbbf24; font-weight: 700; }
+.zion-admin__status-text { display: inline-flex; padding: 5px 9px; border-radius: 99px; font-size: 11px; font-weight: 800; }
+.zion-admin__status-text--completed { color: #86efac; background: rgba(34, 197, 94, .13); }
+.zion-admin__status-text--failed { color: #fda4af; background: rgba(244, 63, 94, .13); }
+.zion-admin__status-text--running, .zion-admin__status-text--queued, .zion-admin__status-text--pending { color: #fde68a; background: rgba(245, 158, 11, .13); }
+.zion-admin__status-text--unknown { color: #c4b5fd; background: rgba(139, 92, 246, .13); }
+.zion-admin__empty { padding: 28px 0; color: var(--muted); text-align: center; }
+.zion-admin__bar-chart { display: flex; align-items: flex-end; gap: 9px; height: 210px; padding: 20px 8px 0; border-bottom: 1px solid var(--line); }
 .zion-admin__bar { display: flex; flex: 1; align-items: flex-end; height: 100%; min-width: 14px; }
-.zion-admin__bar span { display: block; width: 100%; min-height: 3px; background: linear-gradient(180deg, #68a7ff, #2369d1); border-radius: 4px 4px 0 0; }
-.zion-admin__legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 13px; color: #71849b; font-size: 12px; }
-.zion-admin__legend strong { color: #183153; }
+.zion-admin__bar span { display: block; width: 100%; min-height: 3px; background: linear-gradient(180deg, var(--cyan), var(--purple)); border-radius: 5px 5px 0 0; box-shadow: 0 0 18px rgba(34, 211, 238, .2); }
+.zion-admin__legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 13px; color: var(--muted); font-size: 12px; }
+.zion-admin__legend strong { color: #e5e7ff; }
 .zion-admin__form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .zion-admin__form > .zion-admin__field--full { grid-column: 1 / -1; }
-.zion-admin__field label { display: block; margin-bottom: 6px; color: #304b6b; font-size: 12px; font-weight: 600; }
-.zion-admin__field input, .zion-admin__field textarea { width: 100%; box-sizing: border-box; }
-.zion-admin__field small { display: block; margin-top: 5px; color: #71849b; font-size: 11px; }
-.zion-admin__readonly { padding: 11px 12px; color: #61738a; background: #f7faff; border: 1px solid #dce5f0; border-radius: 4px; font-size: 13px; }
+.zion-admin__field label, .zion-admin .components-base-control__label { display: block; margin-bottom: 6px; color: #b7c3e4; font-size: 12px; font-weight: 700; }
+.zion-admin__field input, .zion-admin__field textarea, .zion-admin .components-text-control__input, .zion-admin .components-textarea-control__input { width: 100%; box-sizing: border-box; color: #e7edff; background: #111a38; border-color: #34416d; border-radius: 9px; }
+.zion-admin__field small { display: block; margin-top: 5px; color: var(--muted); font-size: 11px; }
+.zion-admin__readonly { padding: 12px 13px; overflow-wrap: anywhere; color: #a9c4ef; background: #111a38; border: 1px solid #34416d; border-radius: 9px; font-size: 13px; }
 .zion-admin__settings-layout { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(280px, .75fr); gap: 18px; align-items: start; }
 .zion-admin__settings-card--connection, .zion-admin__settings-card--banner { grid-column: 1 / -1; }
 .zion-admin__settings-layout .components-card__header { display: block; }
 .zion-admin__settings-layout .components-card__header h2 { line-height: 1.3; }
 .zion-admin__settings-layout .components-card__header p { max-width: 760px; line-height: 1.5; }
-.zion-admin__settings-layout .components-card__body { min-width: 0; }
-.zion-admin__settings-layout .zion-admin__readonly { overflow-wrap: anywhere; }
 .zion-admin__settings-layout .zion-admin__actions { margin-top: 14px; }
-.zion-admin__spinner { display: flex; justify-content: center; padding: 50px; }
+.zion-admin__spinner { display: flex; justify-content: center; padding: 70px; }
+.zion-admin__page-error { display: grid; gap: 8px; padding: 20px; color: #fecdd3; background: rgba(225, 29, 72, .1); border: 1px solid rgba(251, 113, 133, .25); border-radius: 14px; }
+.zion-admin__page-error strong { color: #fff; }
+.zion-admin__toast-region { position: fixed; z-index: 99999; top: 47px; right: 24px; display: grid; width: min(390px, calc(100vw - 40px)); gap: 11px; }
+.zion-admin__toast { position: relative; display: flex; align-items: flex-start; gap: 11px; overflow: hidden; padding: 15px 16px 18px; color: #e9efff; background: rgba(20, 28, 58, .96); border: 1px solid rgba(139, 92, 246, .38); border-radius: 13px; box-shadow: 0 16px 36px rgba(0, 0, 0, .3); cursor: copy; font-size: 12px; line-height: 1.45; backdrop-filter: blur(16px); }
+.zion-admin__toast--error { border-color: rgba(251, 113, 133, .52); }
+.zion-admin__toast--info { border-color: rgba(96, 165, 250, .48); }
+.zion-admin__toast-dot { flex: 0 0 auto; width: 8px; height: 8px; margin-top: 4px; background: var(--green); border-radius: 50%; box-shadow: 0 0 11px var(--green); }
+.zion-admin__toast--error .zion-admin__toast-dot { background: #fb7185; box-shadow: 0 0 11px #fb7185; }
+.zion-admin__toast--info .zion-admin__toast-dot { background: #60a5fa; box-shadow: 0 0 11px #60a5fa; }
+.zion-admin__toast-progress { position: absolute; right: 0; bottom: 0; left: 0; height: 3px; background: rgba(255, 255, 255, .08); }
+.zion-admin__toast-progress span { display: block; height: 100%; background: linear-gradient(90deg, var(--cyan), var(--purple)); transition: width .1s linear; }
 @media (max-width: 1100px) { .zion-admin__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 900px) { .zion-admin__settings-layout { grid-template-columns: 1fr; } .zion-admin__settings-card--connection, .zion-admin__settings-card--banner { grid-column: auto; } }
-@media (max-width: 700px) { #zion-privacy-admin { margin-right: 10px; } .zion-admin__header, .zion-admin__banner { align-items: stretch; flex-direction: column; } .zion-admin__grid, .zion-admin__grid--two, .zion-admin__form { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { .zion-admin__sidebar { position: static; width: 210px; min-width: 210px; } .zion-admin__settings-layout { grid-template-columns: 1fr; } .zion-admin__settings-card--connection, .zion-admin__settings-card--banner { grid-column: auto; } }
+@media (max-width: 700px) { .zion-admin-shell { display: block; margin-left: -10px; } .zion-admin__sidebar { width: 100%; min-height: auto; padding: 15px; } .zion-admin__brand { padding-bottom: 16px; } .zion-admin__nav { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; } .zion-admin__nav-item { justify-content: center; padding: 9px 4px; } .zion-admin__nav-item > span:not(.zion-admin__nav-icon):not(.zion-admin__nav-pip) { display: none; } .zion-admin__nav-pip { position: absolute; right: 7px; top: 7px; margin: 0; } .zion-admin__sidebar-footer { display: none; } .zion-admin__main { padding: 28px 15px 42px; } .zion-admin__header, .zion-admin__banner, .zion-admin__card-heading { align-items: stretch; flex-direction: column; } .zion-admin__grid, .zion-admin__grid--two, .zion-admin__form { grid-template-columns: 1fr; } .zion-admin__toast-region { top: 15px; right: 15px; } }

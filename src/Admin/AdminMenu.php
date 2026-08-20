@@ -26,10 +26,6 @@ final class AdminMenu
             80,
         );
 
-        add_submenu_page('zion-privacy', 'Dashboard', 'Dashboard', 'manage_options', 'zion-privacy', [$this, 'renderPage']);
-        add_submenu_page('zion-privacy', 'Cookies', 'Cookies', 'manage_options', 'zion-privacy-cookies', [$this, 'renderPage']);
-        add_submenu_page('zion-privacy', 'Statistics', 'Statistics', 'manage_options', 'zion-privacy-statistics', [$this, 'renderPage']);
-        add_submenu_page('zion-privacy', 'Settings', 'Settings', 'manage_options', 'zion-privacy-settings', [$this, 'renderPage']);
     }
 
     public function enqueueAssets(string $hook): void
@@ -55,7 +51,7 @@ final class AdminMenu
         wp_localize_script('zion-privacy-admin', 'ZionPrivacyAdmin', [
             'restUrl' => esc_url_raw(rest_url('zion-privacy/v1/')),
             'nonce' => wp_create_nonce('wp_rest'),
-            'page' => sanitize_key((string) ($_GET['page'] ?? 'zion-privacy')),
+            'page' => sanitize_key((string) ($_GET['view'] ?? 'dashboard')),
             'connected' => $this->settings->isConnected(),
             'version' => ZION_PRIVACY_VERSION,
         ]);
@@ -63,6 +59,6 @@ final class AdminMenu
 
     public function renderPage(): void
     {
-        echo '<div class="wrap"><div id="zion-privacy-admin"></div></div>';
+        echo '<div class="wrap zion-privacy-wrap"><div id="zion-privacy-admin"></div></div>';
     }
 }

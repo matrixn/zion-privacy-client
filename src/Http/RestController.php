@@ -46,6 +46,11 @@ final class RestController
             'permission_callback' => [$this, 'permission'],
             'callback' => fn (): array|\WP_Error => $this->statistics(),
         ]);
+        register_rest_route('zion-privacy/v1', '/scans', [
+            'methods' => 'GET',
+            'permission_callback' => [$this, 'permission'],
+            'callback' => fn (): array|\WP_Error => $this->scans(),
+        ]);
         register_rest_route('zion-privacy/v1', '/settings', [
             [
                 'methods' => 'GET',
@@ -139,6 +144,36 @@ final class RestController
             'website' => $dashboard['website'],
             'stats' => $dashboard['stats'],
             'scans' => $dashboard['scans'],
+        ];
+    }
+
+    private function scans(): array|\WP_Error
+    {
+        if (! $this->settings->isConnected()) {
+            return ['website' => null, 'data' => []];
+        }
+
+        $websiteResponse = $this->api->get('websites', ['per_page' => 1]);
+
+        if (is_wp_error($websiteResponse)) {
+            return $websiteResponse;
+        }
+
+        $website = $this->firstData($websiteResponse);
+
+        if (! $website) {
+            return ['website' => null, 'data' => []];
+        }
+
+        $scansResponse = $this->api->get('websites/'.rawurlencode((string) $website['id']).'/scans', ['per_page' => 100]);
+
+        if (is_wp_error($scansResponse)) {
+            return $scansResponse;
+        }
+
+        return [
+            'website' => $website,
+            'data' => (array) ($scansResponse['data'] ?? []),
         ];
     }
 

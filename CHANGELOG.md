@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### Commit 5 — Standalone admin workspace
+
+- Replaced the WordPress submenu pages with a standalone Zion Privacy vertical navigation workspace.
+- Added the AJAX-powered Scans page with refresh and complete scan history for the linked website.
+- Added floating notifications with five-second auto-dismiss, hover pause and click-to-copy behavior.
+- Added a dark indigo, cyan and violet admin visual system with responsive navigation, cards and status badges.
+
 ### Commit 4 — OAuth handler and Settings layout
 
 - Fixed the WordPress REST OAuth handler visibility so the Google/Facebook connection endpoint is accepted by WordPress.
