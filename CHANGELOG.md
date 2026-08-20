@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### Commit 7 — Live scans and consent banner workspace
+
+- Added automatic AJAX polling on the Scans page while a scan is active, so page and cookie counts update as the scanner progresses.
+- Reworked the plugin navigation into a horizontal bar with relevant WordPress Dashicons and added the dedicated Consent banner page.
+- Moved banner settings out of Settings into a live editor with an interactive preview and cookie-category customization dialog.
+- Added cookie metadata to the public banner's Customize dialog, including category, name, description and vendor where available.
+- Added a Refresh cookies AJAX action to the plugin cookie inventory.
+
 ### Commit 6 — Scan scheduling workspace
 
 - Added an AJAX scan creation and editing modal with manual and automatic modes.

@@ -41,6 +41,7 @@ final class AdminMenu
         $asset = file_exists($assetFile) ? require $assetFile : ['dependencies' => ['wp-element'], 'version' => ZION_PRIVACY_VERSION];
 
         wp_enqueue_style('zion-privacy-admin', ZION_PRIVACY_URL.'assets/admin.css', [], ZION_PRIVACY_VERSION);
+        wp_enqueue_style('dashicons');
         wp_enqueue_script(
             'zion-privacy-admin',
             ZION_PRIVACY_URL.'build/'.$scriptFile,

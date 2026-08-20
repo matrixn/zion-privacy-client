@@ -29,6 +29,30 @@
 .zion-privacy-banner button { padding: 9px 13px; color: #1e477c; background: #f1f6fc; border: 1px solid #cddbeb; border-radius: 6px; cursor: pointer; font-size: 13px; }
 .zion-privacy-banner button.is-primary { color: #fff; background: #2369d1; border-color: #2369d1; }
 .zion-privacy-banner.is-customizing::after { display: block; margin-top: 12px; color: #52657c; content: "Customization controls will be available after the API consent policy is connected."; font-size: 13px; }
+.zion-privacy-banner__preferences { position: fixed; z-index: 2; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(17, 32, 55, .62); }
+.zion-privacy-banner__preferences-dialog { width: min(620px, 100%); max-height: min(82vh, 720px); overflow: auto; color: #183153; background: #fff; border-radius: 12px; box-shadow: 0 24px 70px rgba(2, 13, 34, .38); }
+.zion-privacy-banner__preferences-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 18px 20px; border-bottom: 1px solid #dce5f0; }
+.zion-privacy-banner__preferences-header span { color: #2369d1; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.zion-privacy-banner__preferences-header h2 { margin: 4px 0 0; color: #183153; font-size: 20px; }
+.zion-privacy-banner__preferences-header button { width: 30px; height: 30px; color: #52657c; background: #f1f6fc; border: 1px solid #cddbeb; border-radius: 6px; cursor: pointer; font-size: 20px; line-height: 1; }
+.zion-privacy-banner__preferences-body { display: grid; gap: 9px; padding: 15px 20px; }
+.zion-privacy-banner__category { padding: 12px; background: #f7faff; border: 1px solid #dce5f0; border-radius: 8px; }
+.zion-privacy-banner__category-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.zion-privacy-banner__category h3 { margin: 0; color: #183153; font-size: 14px; }
+.zion-privacy-banner__category p { margin: 3px 0 0; color: #52657c; font-size: 11px; }
+.zion-privacy-banner__cookies { display: grid; gap: 7px; margin-top: 10px; padding-top: 9px; border-top: 1px solid #dce5f0; }
+.zion-privacy-banner__cookie { display: grid; gap: 2px; }
+.zion-privacy-banner__cookie strong { color: #1e477c; font-size: 11px; }
+.zion-privacy-banner__cookie span { color: #52657c; font-size: 11px; line-height: 1.35; }
+.zion-privacy-banner__switch { position: relative; display: inline-block; width: 34px; height: 20px; }
+.zion-privacy-banner__switch input { width: 0; height: 0; opacity: 0; }
+.zion-privacy-banner__switch span { position: absolute; inset: 0; background: #cddbeb; border-radius: 99px; cursor: pointer; transition: background .2s ease; }
+.zion-privacy-banner__switch span::before { position: absolute; bottom: 3px; left: 3px; width: 14px; height: 14px; background: #fff; border-radius: 50%; content: ""; transition: transform .2s ease; }
+.zion-privacy-banner__switch input:checked + span { background: #2369d1; }
+.zion-privacy-banner__switch input:checked + span::before { transform: translateX(14px); }
+.zion-privacy-banner__preferences-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid #dce5f0; }
+.zion-privacy-banner__preferences-footer button { padding: 9px 13px; color: #1e477c; background: #f1f6fc; border: 1px solid #cddbeb; border-radius: 6px; cursor: pointer; font-size: 13px; }
+.zion-privacy-banner__preferences-footer button.is-primary { color: #fff; background: #2369d1; border-color: #2369d1; }
 
 @media (max-width: 700px) {
   .zion-privacy-banner { right: 10px; bottom: 10px; left: 10px; }

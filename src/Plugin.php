@@ -22,6 +22,6 @@ final class Plugin
         (new AdminMenu($settings))->register();
         (new RestController($settings, $api, $oauth))->register();
         $oauth->register();
-        (new ConsentBanner($settings))->register();
+        (new ConsentBanner($settings, $api))->register();
     }
 }
