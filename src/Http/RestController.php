@@ -3,6 +3,7 @@
 namespace ZionPrivacy\Http;
 
 use ZionPrivacy\Api\ApiClient;
+use ZionPrivacy\Consent\ConsentEventRepository;
 use ZionPrivacy\OAuth\CallbackHandler;
 use ZionPrivacy\Settings\SettingsRepository;
 
@@ -12,6 +13,7 @@ final class RestController
         private readonly SettingsRepository $settings,
         private readonly ApiClient $api,
         private readonly CallbackHandler $oauth,
+        private readonly ConsentEventRepository $consents,
     ) {}
 
     public function register(): void
@@ -25,6 +27,11 @@ final class RestController
             'methods' => 'GET',
             'permission_callback' => [$this, 'permission'],
             'callback' => fn (): array => $this->status(),
+        ]);
+        register_rest_route('zion-privacy/v1', '/consent', [
+            'methods' => 'POST',
+            'permission_callback' => '__return_true',
+            'callback' => [$this, 'savePublicConsent'],
         ]);
         register_rest_route('zion-privacy/v1', '/dashboard', [
             'methods' => 'GET',
@@ -241,6 +248,12 @@ final class RestController
             'banner_enabled' => (bool) $settings['banner_enabled'],
             'banner_title' => $settings['banner_title'],
             'banner_message' => $settings['banner_message'],
+            'scan_poll_interval_seconds' => (int) $settings['scan_poll_interval_seconds'],
+            'api_timeout_seconds' => (int) $settings['api_timeout_seconds'],
+            'default_scan_mode' => $settings['default_scan_mode'],
+            'default_scan_scenario' => $settings['default_scan_scenario'],
+            'banner_cookie_cache_minutes' => (int) $settings['banner_cookie_cache_minutes'],
+            'consent_tracking_enabled' => $this->settings->consentTrackingEnabled(),
             'connected' => $this->settings->isConnected(),
             'account' => $this->settings->credentials()['account'] ?? [],
         ];
@@ -251,6 +264,27 @@ final class RestController
         $this->settings->update((array) $request->get_json_params());
 
         return $this->publicSettings();
+    }
+
+    public function savePublicConsent(\WP_REST_Request $request): array|\WP_Error
+    {
+        $token = sanitize_text_field((string) $request->get_param('token'));
+        if ($token === '' || ! hash_equals($this->settings->publicConsentToken(), $token)) {
+            return new \WP_Error('zion_privacy_invalid_consent_token', 'The consent event token is invalid.', ['status' => 403]);
+        }
+
+        $origin = (string) ($request->get_header('Origin') ?: $request->get_header('Referer'));
+        $originHost = wp_parse_url($origin, PHP_URL_HOST);
+        $siteHost = wp_parse_url(home_url('/'), PHP_URL_HOST);
+        if ($originHost && $siteHost && strtolower((string) $originHost) !== strtolower((string) $siteHost)) {
+            return new \WP_Error('zion_privacy_invalid_consent_origin', 'The consent event origin is invalid.', ['status' => 403]);
+        }
+
+        if (! $this->consents->record((array) $request->get_json_params())) {
+            return new \WP_Error('zion_privacy_invalid_consent_event', 'The consent event could not be stored.', ['status' => 422]);
+        }
+
+        return ['saved' => true];
     }
 
     public function connect(\WP_REST_Request $request): array|\WP_Error

@@ -23,6 +23,12 @@ final class SettingsRepository
             'banner_enabled' => true,
             'banner_title' => 'Your privacy matters',
             'banner_message' => 'Choose which categories of cookies you allow.',
+            'scan_poll_interval_seconds' => 3,
+            'api_timeout_seconds' => 20,
+            'default_scan_mode' => 'manual',
+            'default_scan_scenario' => 'pre_consent',
+            'banner_cookie_cache_minutes' => 5,
+            'consent_tracking_enabled' => true,
         ]);
     }
 
@@ -34,6 +40,12 @@ final class SettingsRepository
         $current['banner_enabled'] = ! empty($settings['banner_enabled']);
         $current['banner_title'] = sanitize_text_field((string) ($settings['banner_title'] ?? $current['banner_title']));
         $current['banner_message'] = sanitize_textarea_field((string) ($settings['banner_message'] ?? $current['banner_message']));
+        $current['scan_poll_interval_seconds'] = max(1, min(30, absint($settings['scan_poll_interval_seconds'] ?? $current['scan_poll_interval_seconds'])));
+        $current['api_timeout_seconds'] = max(10, min(60, absint($settings['api_timeout_seconds'] ?? $current['api_timeout_seconds'])));
+        $current['default_scan_mode'] = in_array($settings['default_scan_mode'] ?? $current['default_scan_mode'], ['manual', 'automatic'], true) ? $settings['default_scan_mode'] : $current['default_scan_mode'];
+        $current['default_scan_scenario'] = in_array($settings['default_scan_scenario'] ?? $current['default_scan_scenario'], ['pre_consent', 'reject_all', 'accept_all'], true) ? $settings['default_scan_scenario'] : $current['default_scan_scenario'];
+        $current['banner_cookie_cache_minutes'] = max(1, min(60, absint($settings['banner_cookie_cache_minutes'] ?? $current['banner_cookie_cache_minutes'])));
+        $current['consent_tracking_enabled'] = ! isset($settings['consent_tracking_enabled']) || ! empty($settings['consent_tracking_enabled']);
 
         update_option(self::SETTINGS_OPTION, $current, false);
     }
@@ -41,6 +53,31 @@ final class SettingsRepository
     public function apiBaseUrl(): string
     {
         return self::API_BASE_URL;
+    }
+
+    public function apiTimeoutSeconds(): int
+    {
+        return max(10, min(60, (int) $this->all()['api_timeout_seconds']));
+    }
+
+    public function scanPollIntervalSeconds(): int
+    {
+        return max(1, min(30, (int) $this->all()['scan_poll_interval_seconds']));
+    }
+
+    public function bannerCookieCacheMinutes(): int
+    {
+        return max(1, min(60, (int) $this->all()['banner_cookie_cache_minutes']));
+    }
+
+    public function consentTrackingEnabled(): bool
+    {
+        return ! empty($this->all()['consent_tracking_enabled']);
+    }
+
+    public function publicConsentToken(): string
+    {
+        return hash_hmac('sha256', home_url('/'), wp_salt('auth'));
     }
 
     public function credentials(): array

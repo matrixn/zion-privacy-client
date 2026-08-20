@@ -1,0 +1,20 @@
+.zion-privacy-dashboard-consent { color: #183153; padding: 2px 2px 4px; }
+.zion-privacy-dashboard-consent__heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.zion-privacy-dashboard-consent__heading strong { font-size: 14px; }
+.zion-privacy-dashboard-consent__heading span { color: #6a7c93; font-size: 11px; }
+.zion-privacy-dashboard-consent__body { display: flex; align-items: center; gap: 26px; min-height: 210px; }
+.zion-privacy-dashboard-consent__chart { display: grid; flex: 0 0 178px; width: 178px; height: 178px; place-items: center; background: var(--zion-consent-chart); border-radius: 50%; }
+.zion-privacy-dashboard-consent__chart::before { width: 132px; height: 132px; background: #fff; border-radius: 50%; content: ""; grid-area: 1 / 1; }
+.zion-privacy-dashboard-consent__chart > div { z-index: 1; display: grid; place-items: center; grid-area: 1 / 1; text-align: center; }
+.zion-privacy-dashboard-consent__chart strong { color: #13233e; font-size: 38px; line-height: 1; }
+.zion-privacy-dashboard-consent__chart span { margin-top: 7px; color: #52657c; font-size: 12px; }
+.zion-privacy-dashboard-consent__legend { display: grid; flex: 1; gap: 16px; }
+.zion-privacy-dashboard-consent__legend-item { display: flex; align-items: flex-start; gap: 10px; color: #52657c; font-size: 12px; line-height: 1.35; }
+.zion-privacy-dashboard-consent__legend-item strong { color: #183153; margin-right: 3px; }
+.zion-privacy-dashboard-consent__legend-item small { display: block; margin-top: 2px; color: #8b9aae; font-size: 11px; }
+.zion-privacy-dashboard-consent__swatch { display: block; flex: 0 0 19px; width: 19px; height: 19px; margin-top: 1px; }
+.zion-privacy-dashboard-consent__swatch.is-accepted { background: #9ad4c1; }
+.zion-privacy-dashboard-consent__swatch.is-rejected { background: #f39baa; }
+.zion-privacy-dashboard-consent__swatch.is-partial { background: #a8c7fb; }
+.zion-privacy-dashboard-empty { color: #52657c; }
+@media (max-width: 520px) { .zion-privacy-dashboard-consent__body { align-items: flex-start; flex-direction: column; } .zion-privacy-dashboard-consent__chart { align-self: center; } .zion-privacy-dashboard-consent__legend { width: 100%; } }

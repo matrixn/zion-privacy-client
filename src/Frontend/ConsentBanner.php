@@ -32,6 +32,9 @@ final class ConsentBanner
             'message' => $settings['banner_message'],
             'privacyUrl' => (string) apply_filters('zion_privacy_privacy_policy_url', get_privacy_policy_url()),
             'storageKey' => 'zion_privacy_consent_v1',
+            'consentUrl' => esc_url_raw(rest_url('zion-privacy/v1/consent')),
+            'consentToken' => $this->settings->publicConsentToken(),
+            'consentTrackingEnabled' => $this->settings->consentTrackingEnabled(),
             'cookies' => $this->cookies(),
         ]);
     }
@@ -70,7 +73,7 @@ final class ConsentBanner
             ];
         }, (array) ($response['data'] ?? []));
 
-        set_transient($cacheKey, $cookies, 5 * MINUTE_IN_SECONDS);
+        set_transient($cacheKey, $cookies, $this->settings->bannerCookieCacheMinutes() * MINUTE_IN_SECONDS);
 
         return $cookies;
     }

@@ -44,7 +44,7 @@ final class ApiClient
 
         $response = wp_remote_request($url, [
             'method' => $method,
-            'timeout' => 20,
+            'timeout' => $this->settings->apiTimeoutSeconds(),
             'headers' => [
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',

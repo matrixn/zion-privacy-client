@@ -30,6 +30,8 @@ Zion Privacy API
 - API REST bridge with nonce and capability protection;
 - OAuth redirect/exchange contract owned by the API, with no Google or Facebook secrets in the plugin;
 - cookie banner with essential, analytics, marketing and preferences consent states;
+- consent analytics stored first in a local WordPress table and synchronized every 15 minutes to the API;
+- a native WordPress Dashboard donut widget for accepted, rejected and partially accepted choices;
 - local category overrides for cookie inventory entries;
 - documentation and changelog for each project checkpoint.
 
@@ -66,6 +68,17 @@ npm start
 ```
 
 The plugin requires WordPress 6.4+ and PHP 8.1+.
+
+## Application settings
+
+The **Zion Privacy → Settings** page keeps the production API URL fixed and exposes the controls that are useful for this client:
+
+- live scan refresh interval and API request timeout;
+- default scan mode and scenario for new scan forms;
+- public banner cookie metadata cache duration;
+- consent analytics collection toggle.
+
+When consent analytics is enabled, each banner choice is stored locally before it is synchronized with the API. The sync runs through a WordPress cron event every 15 minutes and retries unsent rows. The **WordPress Dashboard** widget reads the last 30 days from the API and displays accepted, rejected and partially accepted totals. No cookie values are collected; only the choice, selected categories, page URL and timestamp are sent.
 
 ## Release and Synology deployment
 

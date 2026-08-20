@@ -55,6 +55,9 @@ final class AdminMenu
             'page' => sanitize_key((string) ($_GET['view'] ?? 'dashboard')),
             'connected' => $this->settings->isConnected(),
             'version' => ZION_PRIVACY_VERSION,
+            'scanPollIntervalSeconds' => $this->settings->scanPollIntervalSeconds(),
+            'defaultScanMode' => $this->settings->all()['default_scan_mode'],
+            'defaultScanScenario' => $this->settings->all()['default_scan_scenario'],
         ]);
     }
 

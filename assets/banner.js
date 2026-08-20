@@ -50,7 +50,7 @@
       ? { necessary: true, preferences: true, analytics: true, marketing: true, security: true, personalization: true, unknown: true }
       : { necessary: true, preferences: false, analytics: false, marketing: false, security: false, personalization: false, unknown: false };
 
-    applyConsent(consent);
+    applyConsent(consent, action === 'accept' ? 'accepted' : 'rejected');
   });
 
   function showPreferences() {
@@ -103,13 +103,49 @@
     root.querySelectorAll('[data-zion-category]').forEach(function (input) {
       consent[input.getAttribute('data-zion-category')] = input.checked;
     });
-    applyConsent(consent);
+    var optional = Object.keys(consent).filter(function (category) { return category !== 'necessary'; });
+    var enabledOptional = optional.filter(function (category) { return consent[category]; }).length;
+    var status = enabledOptional === optional.length ? 'accepted' : 'partially_accepted';
+    applyConsent(consent, status);
   }
 
-  function applyConsent(consent) {
+  function applyConsent(consent, status) {
     window.localStorage.setItem(storageKey, JSON.stringify(consent));
+    sendConsentEvent(consent, status);
     root.remove();
     document.dispatchEvent(new CustomEvent('zionprivacy:consent', { detail: consent }));
+  }
+
+  function sendConsentEvent(consent, status) {
+    if (config.consentTrackingEnabled === false || !config.consentUrl || !config.consentToken || !window.fetch) {
+      return;
+    }
+
+    window.fetch(config.consentUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        token: config.consentToken,
+        event_uuid: uuid(),
+        status: status,
+        categories: consent,
+        page_url: window.location.href,
+        occurred_at: new Date().toISOString()
+      }),
+      keepalive: true
+    }).catch(function () {});
+  }
+
+  function uuid() {
+    if (window.crypto && window.crypto.randomUUID) {
+      return window.crypto.randomUUID();
+    }
+
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (character) {
+      var random = Math.random() * 16 | 0;
+      var value = character === 'x' ? random : (random & 0x3 | 0x8);
+      return value.toString(16);
+    });
   }
 
   function formatLabel(value) {

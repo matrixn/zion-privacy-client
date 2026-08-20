@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+### Commit 11 — Consent analytics
+
+- Added local consent event storage for accepted, rejected and partially accepted banner choices.
+- Added periodic 15-minute HMAC synchronization from WordPress to the API with retry-safe UUIDs.
+- Added the WordPress Dashboard consent trends widget with a donut chart and 30-day totals.
+- Added the consent tracking switch to plugin Settings and a public token/origin-validated event endpoint.
+
+### Commit 10 — Application settings
+
+- Added live scan refresh interval, API timeout, default scan mode, default scenario and banner cookie-cache settings to the plugin Settings page.
+- Connected those values to the AJAX scan workflow, API client and public banner metadata cache.
+- Added explanatory controls and bounded values so settings remain safe for the WordPress site.
+
 ### Commit 9 — WordPress menu offset
 
 - Anchored the fixed Zion Privacy navigation after the WordPress admin menu instead of allowing it to render underneath it.
