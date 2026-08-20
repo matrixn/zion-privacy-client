@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### Commit 6 — Scan scheduling workspace
+
+- Added an AJAX scan creation and editing modal with manual and automatic modes.
+- Added daily, weekly and monthly recurrence controls, including a one-year date picker and the API's last-valid-day behavior for short months.
+- Added scan actions for edit, delete with confirmation, run with confirmation and refresh, with floating notifications for each result.
+- Added the connected account plan and entitlement usage card to the dashboard.
+- Added API bridge methods for PATCH, DELETE, scan actions and account limits.
+
 ### Commit 5 — Standalone admin workspace
 
 - Replaced the WordPress submenu pages with a standalone Zion Privacy vertical navigation workspace.

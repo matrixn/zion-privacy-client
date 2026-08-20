@@ -51,6 +51,33 @@ final class RestController
             'permission_callback' => [$this, 'permission'],
             'callback' => fn (): array|\WP_Error => $this->scans(),
         ]);
+        register_rest_route('zion-privacy/v1', '/account', [
+            'methods' => 'GET',
+            'permission_callback' => [$this, 'permission'],
+            'callback' => fn (): array|\WP_Error => $this->account(),
+        ]);
+        register_rest_route('zion-privacy/v1', '/websites/(?P<website>[\\w-]+)/scans', [
+            'methods' => 'POST',
+            'permission_callback' => [$this, 'permission'],
+            'callback' => [$this, 'createScan'],
+        ]);
+        register_rest_route('zion-privacy/v1', '/websites/(?P<website>[\\w-]+)/scans/(?P<scan>[\\w-]+)', [
+            [
+                'methods' => 'PATCH',
+                'permission_callback' => [$this, 'permission'],
+                'callback' => [$this, 'updateScan'],
+            ],
+            [
+                'methods' => 'DELETE',
+                'permission_callback' => [$this, 'permission'],
+                'callback' => [$this, 'deleteScan'],
+            ],
+        ]);
+        register_rest_route('zion-privacy/v1', '/scans/(?P<scan>[\\w-]+)/run', [
+            'methods' => 'POST',
+            'permission_callback' => [$this, 'permission'],
+            'callback' => [$this, 'runScan'],
+        ]);
         register_rest_route('zion-privacy/v1', '/settings', [
             [
                 'methods' => 'GET',
@@ -120,12 +147,14 @@ final class RestController
 
         $scansResponse = $this->api->get('websites/'.rawurlencode((string) $website['id']).'/scans', ['per_page' => 10]);
         $cookiesResponse = $this->api->get('websites/'.rawurlencode((string) $website['id']).'/cookies');
+        $accountResponse = $this->api->get('installation/account');
 
         return [
             'website' => $website,
             'scans' => is_wp_error($scansResponse) ? [] : (array) ($scansResponse['data'] ?? []),
             'cookies' => is_wp_error($cookiesResponse) ? [] : $this->applyOverrides((array) ($cookiesResponse['data'] ?? [])),
             'stats' => $this->statsFrom($website, $scansResponse, $cookiesResponse),
+            'account' => is_wp_error($accountResponse) ? null : $accountResponse,
         ];
     }
 
@@ -150,7 +179,7 @@ final class RestController
     private function scans(): array|\WP_Error
     {
         if (! $this->settings->isConnected()) {
-            return ['website' => null, 'data' => []];
+            return ['website' => null, 'data' => [], 'account' => null];
         }
 
         $websiteResponse = $this->api->get('websites', ['per_page' => 1]);
@@ -162,10 +191,11 @@ final class RestController
         $website = $this->firstData($websiteResponse);
 
         if (! $website) {
-            return ['website' => null, 'data' => []];
+            return ['website' => null, 'data' => [], 'account' => null];
         }
 
         $scansResponse = $this->api->get('websites/'.rawurlencode((string) $website['id']).'/scans', ['per_page' => 100]);
+        $accountResponse = $this->api->get('installation/account');
 
         if (is_wp_error($scansResponse)) {
             return $scansResponse;
@@ -174,7 +204,33 @@ final class RestController
         return [
             'website' => $website,
             'data' => (array) ($scansResponse['data'] ?? []),
+            'account' => is_wp_error($accountResponse) ? null : $accountResponse,
         ];
+    }
+
+    public function account(): array|\WP_Error
+    {
+        return $this->api->get('installation/account');
+    }
+
+    public function createScan(\WP_REST_Request $request): array|\WP_Error
+    {
+        return $this->api->post('websites/'.rawurlencode((string) $request->get_param('website')).'/scans', (array) $request->get_json_params());
+    }
+
+    public function updateScan(\WP_REST_Request $request): array|\WP_Error
+    {
+        return $this->api->patch('websites/'.rawurlencode((string) $request->get_param('website')).'/scans/'.rawurlencode((string) $request->get_param('scan')), (array) $request->get_json_params());
+    }
+
+    public function deleteScan(\WP_REST_Request $request): array|\WP_Error
+    {
+        return $this->api->delete('websites/'.rawurlencode((string) $request->get_param('website')).'/scans/'.rawurlencode((string) $request->get_param('scan')));
+    }
+
+    public function runScan(\WP_REST_Request $request): array|\WP_Error
+    {
+        return $this->api->post('scans/'.rawurlencode((string) $request->get_param('scan')).'/run');
     }
 
     private function publicSettings(): array

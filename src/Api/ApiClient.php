@@ -18,6 +18,16 @@ final class ApiClient
         return $this->request('POST', $path, $body);
     }
 
+    public function patch(string $path, array $body = []): array|\WP_Error
+    {
+        return $this->request('PATCH', $path, $body);
+    }
+
+    public function delete(string $path): array|\WP_Error
+    {
+        return $this->request('DELETE', $path);
+    }
+
     public function request(string $method, string $path, array $body = [], array $query = []): array|\WP_Error
     {
         if (! $this->settings->isConnected()) {
