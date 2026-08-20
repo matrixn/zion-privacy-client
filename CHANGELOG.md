@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Commit 14 — Sticky consent banner preview
+
+- Kept the Live preview card visible while scrolling through the consent banner settings on desktop.
+- Disabled sticky positioning when the layout collapses to one column on tablet and mobile screens.
+
 ### Commit 13 — Consent banner design studio
 
 - Added accordion-based banner configuration for behavior, layout, content, buttons, cookie selector and appearance.
