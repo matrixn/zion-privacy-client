@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### Commit 2 — Synology release and deployment workflow
+
+- Added the adapted Synology deployment script with WSL build support, SSH key validation, dry-run mode, timestamped backups and rollback handling.
+- Added `bin/build-release.sh` for the production Composer/React release stage and `bin/build.sh` as a compatibility entry point.
+- Added the WordPress distribution `readme.txt` and verified that the compiled admin bundle is included in release archives.
+- Added VS Code tasks for deployment, dry-run validation and deployment without tests.
+
 ### Commit 1 — plugin foundation
 
 - Initialized the standalone WordPress client repository.

@@ -1,5 +1,7 @@
 /vendor/
 /node_modules/
+/\.deploy/
+/\.dist/
 .env
 .DS_Store
 *.log
