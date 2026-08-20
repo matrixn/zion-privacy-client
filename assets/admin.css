@@ -92,7 +92,7 @@ body.toplevel_page_zion-privacy #wpfooter { display: none; }
 .zion-admin__field small { display: block; margin-top: 5px; color: var(--muted); font-size: 11px; }
 .zion-admin__readonly { padding: 12px 13px; overflow-wrap: anywhere; color: #a9c4ef; background: #111a38; border: 1px solid #34416d; border-radius: 9px; font-size: 13px; }
 .zion-admin__settings-layout { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(280px, .75fr); gap: 18px; align-items: start; }
-.zion-admin__settings-card--connection, .zion-admin__settings-card--banner { grid-column: 1 / -1; }
+.zion-admin__settings-card--banner { grid-column: 1 / -1; }
 .zion-admin__settings-card--application { grid-column: 1 / -1; }
 .zion-admin__settings-select, .zion-admin__settings-input { width: 100%; min-height: 40px; box-sizing: border-box; color: #e7edff; background: #111a38; border: 1px solid #34416d; border-radius: 9px; padding: 8px 11px; }
 .zion-admin__settings-layout .components-card__header { display: block; }

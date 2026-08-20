@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Commit 12 — Settings layout
+
+- Placed the API connection and connection details cards side by side on desktop.
+- Kept application behavior full width and preserved the responsive single-column layout on smaller screens.
+
 ### Commit 11 — Consent analytics
 
 - Added local consent event storage for accepted, rejected and partially accepted banner choices.
