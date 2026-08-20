@@ -107,19 +107,38 @@ body.toplevel_page_zion-privacy #wpfooter { display: none; }
 .zion-admin__live-value { display: block; margin-top: 4px; color: #6ee7b7; font-size: 10px; }
 .zion-admin__scan-row--active td { background: rgba(34, 211, 238, .025); }
 .zion-admin__banner-layout { display: grid; grid-template-columns: minmax(300px, .85fr) minmax(440px, 1.15fr); gap: 18px; align-items: start; }
+.zion-admin__banner-settings-card { min-width: 0; }
+.zion-admin__banner-settings { display: grid; gap: 10px; }
+.zion-admin__banner-accordion { overflow: hidden; background: rgba(255, 255, 255, .025); border: 1px solid rgba(148, 163, 184, .18); border-radius: 13px; }
+.zion-admin__banner-accordion summary { display: flex; align-items: center; gap: 11px; padding: 15px 16px; color: #edf3ff; cursor: pointer; list-style: none; }
+.zion-admin__banner-accordion summary::-webkit-details-marker { display: none; }
+.zion-admin__banner-accordion summary:hover { background: rgba(34, 211, 238, .045); }
+.zion-admin__banner-accordion-icon { display: grid; flex: 0 0 28px; width: 28px; height: 28px; place-items: center; color: #67e8f9; background: rgba(34, 211, 238, .11); border: 1px solid rgba(34, 211, 238, .2); border-radius: 8px; font-size: 14px; }
+.zion-admin__banner-accordion summary > span:nth-child(2) { display: grid; flex: 1; gap: 3px; }
+.zion-admin__banner-accordion summary strong { font-size: 13px; }
+.zion-admin__banner-accordion summary small { color: #8c9ac2; font-size: 11px; font-weight: 400; line-height: 1.4; }
+.zion-admin__banner-accordion-chevron { color: #8c9ac2; font-size: 20px; transition: transform .2s ease; }
+.zion-admin__banner-accordion[open] .zion-admin__banner-accordion-chevron { transform: rotate(180deg); }
+.zion-admin__banner-accordion-body { padding: 2px 16px 16px; border-top: 1px solid rgba(148, 163, 184, .12); }
+.zion-admin__banner-accordion-body .zion-admin__form { padding-top: 15px; }
+.zion-admin__color-control { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 40px; color: #dce5ff; font-size: 12px; font-weight: 700; }
+.zion-admin__color-control-input { display: flex; align-items: center; gap: 8px; }
+.zion-admin__color-control input { width: 38px; height: 30px; padding: 2px; background: #0d1633; border: 1px solid #3c4b7c; border-radius: 7px; cursor: pointer; }
+.zion-admin__color-control code { min-width: 70px; color: #a5f3fc; font-size: 11px; }
 .zion-admin__preview-label { padding: 6px 9px; color: #a5f3fc; background: rgba(34, 211, 238, .1); border: 1px solid rgba(34, 211, 238, .25); border-radius: 99px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
-.zion-admin__banner-preview { position: relative; min-height: 285px; padding: 22px; color: #183153; background: linear-gradient(150deg, #f8fbff, #eaf2fb); border: 1px solid #cddbeb; border-radius: 13px; box-shadow: 0 16px 40px rgba(4, 13, 35, .22); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; box-sizing: border-box; }
-.zion-admin__banner-preview-content { position: absolute; right: 22px; bottom: 22px; left: 22px; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 20px; background: #fff; border: 1px solid #dce5f0; border-radius: 12px; box-shadow: 0 14px 38px rgba(20, 43, 74, .16); }
-.zion-admin__banner-preview h3 { margin: 0 0 6px; color: #183153; font-size: 19px; }
-.zion-admin__banner-preview p { max-width: 440px; margin: 0 0 6px; color: #52657c; font-size: 14px; line-height: 1.45; }
-.zion-admin__banner-preview a { color: #2369d1; font-size: 13px; }
+.zion-admin__banner-preview { position: relative; min-height: 285px; padding: 22px; color: var(--zion-preview-text, #183153); background: linear-gradient(150deg, #f8fbff, #eaf2fb); border: 1px solid #cddbeb; border-radius: 13px; box-shadow: 0 16px 40px rgba(4, 13, 35, .22); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; box-sizing: border-box; }
+.zion-admin__banner-preview-content { position: absolute; right: 22px; bottom: 22px; left: 22px; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 20px; background: var(--zion-preview-background, #fff); border: 1px solid var(--zion-preview-border, #dce5f0); border-radius: 12px; box-shadow: 0 14px 38px rgba(20, 43, 74, .16); }
+.zion-admin__banner-preview h3 { margin: 0 0 6px; color: var(--zion-preview-text, #183153); font-size: 19px; }
+.zion-admin__banner-preview p { max-width: 440px; margin: 0 0 6px; color: var(--zion-preview-muted, #52657c); font-size: 14px; line-height: 1.45; }
+.zion-admin__banner-preview a { color: var(--zion-preview-primary, #2369d1); font-size: 13px; }
 .zion-admin__banner-preview-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
-.zion-admin__banner-preview button { padding: 9px 13px; color: #1e477c; background: #f1f6fc; border: 1px solid #cddbeb; border-radius: 6px; cursor: pointer; font-size: 13px; white-space: nowrap; }
-.zion-admin__banner-preview button.is-primary { color: #fff; background: #2369d1; border-color: #2369d1; }
+.zion-admin__banner-preview button { padding: 9px 13px; color: var(--zion-preview-secondary-text, #1e477c); background: var(--zion-preview-secondary, #f1f6fc); border: 1px solid var(--zion-preview-border, #cddbeb); border-radius: 6px; cursor: pointer; font-size: 13px; white-space: nowrap; }
+.zion-admin__banner-preview button.is-primary { color: var(--zion-preview-primary-text, #fff); background: var(--zion-preview-primary, #2369d1); border-color: var(--zion-preview-primary, #2369d1); }
 .zion-admin__preference-backdrop { position: absolute; z-index: 2; inset: 0; display: grid; place-items: center; padding: 15px; background: rgba(17, 32, 55, .62); border-radius: 13px; }
 .zion-admin__preference-modal { width: min(560px, 100%); max-height: 100%; overflow: auto; color: #183153; background: #fff; border-radius: 12px; box-shadow: 0 24px 60px rgba(2, 13, 34, .38); }
 .zion-admin__preference-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 17px 19px; border-bottom: 1px solid #dce5f0; }
 .zion-admin__preference-header h3 { margin: 0; color: #183153; font-size: 19px; }
+.zion-admin__preference-header p { margin: 5px 0 0; color: #52657c; font-size: 12px; line-height: 1.4; }
 .zion-admin__preference-header button { width: 28px; height: 28px; color: #52657c; background: #f1f6fc; border: 1px solid #cddbeb; border-radius: 6px; cursor: pointer; font-size: 20px; line-height: 1; }
 .zion-admin__preference-body { display: grid; gap: 9px; padding: 14px 19px; }
 .zion-admin__preference-category { padding: 11px 12px; background: #f7faff; border: 1px solid #dce5f0; border-radius: 8px; }

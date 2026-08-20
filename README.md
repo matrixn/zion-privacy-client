@@ -32,6 +32,7 @@ Zion Privacy API
 - cookie banner with essential, analytics, marketing and preferences consent states;
 - consent analytics stored first in a local WordPress table and synchronized every 15 minutes to the API;
 - a native WordPress Dashboard donut widget for accepted, rejected and partially accepted choices;
+- a Consent banner design studio with grouped behavior, content, action, selector and appearance controls;
 - local category overrides for cookie inventory entries;
 - documentation and changelog for each project checkpoint.
 
@@ -77,6 +78,8 @@ The **Zion Privacy → Settings** page keeps the production API URL fixed and ex
 - default scan mode and scenario for new scan forms;
 - public banner cookie metadata cache duration;
 - consent analytics collection toggle.
+
+The **Consent banner** page provides grouped accordion sections for banner position and width, responsive presentation, text and privacy link, action labels, the Customize cookie selector, category counts and cookie descriptions. Appearance controls include background, text, muted text, border, primary and secondary button colors, button text colors, radius, font size and shadow. The live preview uses the same values that are passed to the public banner.
 
 When consent analytics is enabled, each banner choice is stored locally before it is synchronized with the API. The sync runs through a WordPress cron event every 15 minutes and retries unsent rows. The **WordPress Dashboard** widget reads the last 30 days from the API and displays accepted, rejected and partially accepted totals. No cookie values are collected; only the choice, selected categories, page URL and timestamp are sent.
 

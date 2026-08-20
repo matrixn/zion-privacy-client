@@ -23,6 +23,30 @@ final class SettingsRepository
             'banner_enabled' => true,
             'banner_title' => 'Your privacy matters',
             'banner_message' => 'Choose which categories of cookies you allow.',
+            'banner_accept_label' => 'Accept all',
+            'banner_reject_label' => 'Essential only',
+            'banner_customize_label' => 'Customize',
+            'banner_save_label' => 'Save preferences',
+            'banner_show_customize' => true,
+            'banner_show_cookie_details' => true,
+            'banner_show_category_counts' => true,
+            'banner_show_privacy_link' => true,
+            'banner_privacy_link_label' => 'Privacy policy',
+            'banner_selector_title' => 'Customize cookies',
+            'banner_selector_message' => 'Choose which cookie categories you allow on this website.',
+            'banner_position' => 'bottom',
+            'banner_width' => 1180,
+            'banner_radius' => 12,
+            'banner_font_size' => 14,
+            'banner_shadow' => true,
+            'banner_background_color' => '#ffffff',
+            'banner_text_color' => '#183153',
+            'banner_muted_color' => '#52657c',
+            'banner_primary_color' => '#2369d1',
+            'banner_primary_text_color' => '#ffffff',
+            'banner_secondary_color' => '#f1f6fc',
+            'banner_secondary_text_color' => '#1e477c',
+            'banner_border_color' => '#dce5f0',
             'scan_poll_interval_seconds' => 3,
             'api_timeout_seconds' => 20,
             'default_scan_mode' => 'manual',
@@ -40,6 +64,20 @@ final class SettingsRepository
         $current['banner_enabled'] = ! empty($settings['banner_enabled']);
         $current['banner_title'] = sanitize_text_field((string) ($settings['banner_title'] ?? $current['banner_title']));
         $current['banner_message'] = sanitize_textarea_field((string) ($settings['banner_message'] ?? $current['banner_message']));
+        foreach (['banner_accept_label', 'banner_reject_label', 'banner_customize_label', 'banner_save_label', 'banner_privacy_link_label', 'banner_selector_title'] as $key) {
+            $current[$key] = sanitize_text_field((string) ($settings[$key] ?? $current[$key]));
+        }
+        $current['banner_selector_message'] = sanitize_textarea_field((string) ($settings['banner_selector_message'] ?? $current['banner_selector_message']));
+        foreach (['banner_show_customize', 'banner_show_cookie_details', 'banner_show_category_counts', 'banner_show_privacy_link', 'banner_shadow'] as $key) {
+            $current[$key] = ! isset($settings[$key]) || ! empty($settings[$key]);
+        }
+        $current['banner_position'] = $this->allowedChoice($settings, 'banner_position', ['bottom', 'top', 'bottom_right', 'bottom_left', 'center'], $current['banner_position']);
+        $current['banner_width'] = max(520, min(1400, absint($settings['banner_width'] ?? $current['banner_width'])));
+        $current['banner_radius'] = max(0, min(32, absint($settings['banner_radius'] ?? $current['banner_radius'])));
+        $current['banner_font_size'] = max(12, min(20, absint($settings['banner_font_size'] ?? $current['banner_font_size'])));
+        foreach (['banner_background_color', 'banner_text_color', 'banner_muted_color', 'banner_primary_color', 'banner_primary_text_color', 'banner_secondary_color', 'banner_secondary_text_color', 'banner_border_color'] as $key) {
+            $current[$key] = sanitize_hex_color($settings[$key] ?? $current[$key]) ?: $current[$key];
+        }
         $current['scan_poll_interval_seconds'] = max(1, min(30, absint($settings['scan_poll_interval_seconds'] ?? $current['scan_poll_interval_seconds'])));
         $current['api_timeout_seconds'] = max(10, min(60, absint($settings['api_timeout_seconds'] ?? $current['api_timeout_seconds'])));
         $current['default_scan_mode'] = in_array($settings['default_scan_mode'] ?? $current['default_scan_mode'], ['manual', 'automatic'], true) ? $settings['default_scan_mode'] : $current['default_scan_mode'];
@@ -123,5 +161,12 @@ final class SettingsRepository
     private function hasValue(mixed $value): bool
     {
         return is_scalar($value) && trim((string) $value) !== '';
+    }
+
+    private function allowedChoice(array $settings, string $key, array $allowed, string $fallback): string
+    {
+        $value = (string) ($settings[$key] ?? $fallback);
+
+        return in_array($value, $allowed, true) ? $value : $fallback;
     }
 }

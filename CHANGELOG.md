@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### Commit 13 — Consent banner design studio
+
+- Added accordion-based banner configuration for behavior, layout, content, buttons, cookie selector and appearance.
+- Added configurable button labels, Customize visibility, cookie details/counts visibility and selector copy.
+- Added configurable position, width, radius, shadow, font size, text colors, button colors and border color.
+- Connected all values to the live preview and the public consent banner, with safe defaults and server-side sanitization.
+
 ### Commit 12 — Settings layout
 
 - Placed the API connection and connection details cards side by side on desktop.

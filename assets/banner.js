@@ -9,16 +9,28 @@
   }
 
   var root = document.createElement('section');
-  root.className = 'zion-privacy-banner';
+  root.className = 'zion-privacy-banner zion-privacy-banner--' + safePosition(config.position || 'bottom') + (config.shadow === false ? ' is-flat' : '');
   root.setAttribute('aria-label', 'Privacy preferences');
+  var colors = config.colors || {};
+  root.style.setProperty('--zion-banner-background', colors.background || '#ffffff');
+  root.style.setProperty('--zion-banner-text', colors.text || '#183153');
+  root.style.setProperty('--zion-banner-muted', colors.muted || '#52657c');
+  root.style.setProperty('--zion-banner-primary', colors.primary || '#2369d1');
+  root.style.setProperty('--zion-banner-primary-text', colors.primaryText || '#ffffff');
+  root.style.setProperty('--zion-banner-secondary', colors.secondary || '#f1f6fc');
+  root.style.setProperty('--zion-banner-secondary-text', colors.secondaryText || '#1e477c');
+  root.style.setProperty('--zion-banner-border', colors.border || '#dce5f0');
+  root.style.setProperty('--zion-banner-radius', Math.max(0, Number(config.radius || 12)) + 'px');
+  root.style.setProperty('--zion-banner-font-size', Math.max(12, Number(config.fontSize || 14)) + 'px');
+  root.style.setProperty('--zion-banner-width', Math.max(520, Number(config.width || 1180)) + 'px');
   root.innerHTML = '<div class="zion-privacy-banner__content">'
     + '<div><h2>' + escapeHtml(config.title || 'Your privacy matters') + '</h2>'
     + '<p>' + escapeHtml(config.message || 'Choose which categories of cookies you allow.') + '</p>'
-    + (config.privacyUrl ? '<a href="' + escapeAttribute(config.privacyUrl) + '">Privacy policy</a>' : '')
+    + (config.showPrivacyLink !== false && config.privacyUrl ? '<a href="' + escapeAttribute(config.privacyUrl) + '">' + escapeHtml(config.privacyLinkLabel || 'Privacy policy') + '</a>' : '')
     + '</div><div class="zion-privacy-banner__actions">'
-    + '<button type="button" data-zion-consent="reject">Essential only</button>'
-    + '<button type="button" data-zion-consent="customize">Customize</button>'
-    + '<button type="button" data-zion-consent="accept" class="is-primary">Accept all</button>'
+    + '<button type="button" data-zion-consent="reject">' + escapeHtml(config.rejectLabel || 'Essential only') + '</button>'
+    + (config.showCustomize !== false ? '<button type="button" data-zion-consent="customize">' + escapeHtml(config.customizeLabel || 'Customize') + '</button>' : '')
+    + '<button type="button" data-zion-consent="accept" class="is-primary">' + escapeHtml(config.acceptLabel || 'Accept all') + '</button>'
     + '</div></div>';
   document.body.appendChild(root);
 
@@ -75,18 +87,18 @@
 
       return '<section class="zion-privacy-banner__category"><div class="zion-privacy-banner__category-head">'
         + '<div><h3>' + escapeHtml(formatLabel(category)) + '</h3><p>'
-        + (category === 'necessary' ? 'Always active for core website functionality.' : categoryCookies.length + ' cookie' + (categoryCookies.length === 1 ? '' : 's') + ' detected')
+        + (category === 'necessary' ? 'Always active for core website functionality.' : (config.showCategoryCounts === false ? 'Optional cookies' : categoryCookies.length + ' cookie' + (categoryCookies.length === 1 ? '' : 's') + ' detected'))
         + '</p></div><label class="zion-privacy-banner__switch"><input type="checkbox" data-zion-category="' + category + '" ' + (category === 'necessary' ? 'checked disabled' : 'checked') + '><span></span></label></div>'
-        + (rows ? '<div class="zion-privacy-banner__cookies">' + rows + '</div>' : '')
+        + (config.showCookieDetails !== false && rows ? '<div class="zion-privacy-banner__cookies">' + rows + '</div>' : '')
         + '</section>';
     }).join('');
 
     var modal = document.createElement('div');
     modal.className = 'zion-privacy-banner__preferences';
     modal.innerHTML = '<div class="zion-privacy-banner__preferences-dialog" role="dialog" aria-modal="true" aria-label="Cookie preferences">'
-      + '<div class="zion-privacy-banner__preferences-header"><div><span>Privacy choices</span><h2>Customize cookies</h2></div><button type="button" data-zion-consent="close-preferences" aria-label="Close">×</button></div>'
+      + '<div class="zion-privacy-banner__preferences-header"><div><span>Privacy choices</span><h2>' + escapeHtml(config.selectorTitle || 'Customize cookies') + '</h2><p>' + escapeHtml(config.selectorMessage || 'Choose which cookie categories you allow on this website.') + '</p></div><button type="button" data-zion-consent="close-preferences" aria-label="Close">×</button></div>'
       + '<div class="zion-privacy-banner__preferences-body">' + html + '</div>'
-      + '<div class="zion-privacy-banner__preferences-footer"><button type="button" data-zion-consent="close-preferences">Cancel</button><button type="button" data-zion-consent="save-preferences" class="is-primary">Save preferences</button></div>'
+      + '<div class="zion-privacy-banner__preferences-footer"><button type="button" data-zion-consent="close-preferences">Cancel</button><button type="button" data-zion-consent="save-preferences" class="is-primary">' + escapeHtml(config.saveLabel || 'Save preferences') + '</button></div>'
       + '</div>';
     root.appendChild(modal);
   }
@@ -150,6 +162,10 @@
 
   function formatLabel(value) {
     return String(value).replace(/_/g, ' ').replace(/\b\w/g, function (character) { return character.toUpperCase(); });
+  }
+
+  function safePosition(value) {
+    return ['bottom', 'top', 'bottom_right', 'bottom_left', 'center'].indexOf(value) !== -1 ? value : 'bottom';
   }
 
   function escapeHtml(value) {

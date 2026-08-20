@@ -1,6 +1,6 @@
 {
   "name": "zion-privacy-client",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "private": true,
   "description": "Admin interface for the Zion Privacy WordPress client.",
   "scripts": {
