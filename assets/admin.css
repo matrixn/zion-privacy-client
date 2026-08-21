@@ -56,10 +56,18 @@ body.toplevel_page_zion-privacy #wpfooter { display: none; }
 .zion-admin__banner h2 { margin: 0 0 6px; color: #fff; font-size: 16px; }
 .zion-admin__banner p { margin: 0; color: #a9c4ef; font-size: 13px; line-height: 1.5; }
 .zion-admin__actions { display: flex; flex-wrap: wrap; gap: 9px; }
-.zion-admin .components-button { min-height: 36px; border-radius: 9px; font-weight: 700; }
-.zion-admin .components-button.is-primary { color: #071425; background: linear-gradient(135deg, var(--cyan), #60a5fa); box-shadow: 0 8px 20px rgba(34, 211, 238, .18); }
-.zion-admin .components-button.is-secondary { color: #dbeafe; background: rgba(255, 255, 255, .06); border: 1px solid rgba(147, 197, 253, .28); }
-.zion-admin .components-button.is-destructive { color: #fecdd3; background: rgba(225, 29, 72, .1); border: 1px solid rgba(251, 113, 133, .25); }
+.zion-admin .components-button { display: inline-flex; min-height: 38px; align-items: center; justify-content: center; padding: 0 14px; color: #e8efff; background: linear-gradient(135deg, #26396d, #192653); border: 1px solid rgba(130, 157, 230, .34); border-radius: 11px; box-shadow: 0 8px 18px rgba(2, 8, 27, .2), inset 0 1px 0 rgba(255, 255, 255, .08); font-weight: 750; letter-spacing: -.01em; transition: color .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease, filter .18s ease; }
+.zion-admin .components-button:hover { color: #fff; background: linear-gradient(135deg, #334d8e, #22356e); border-color: rgba(103, 232, 249, .58); box-shadow: 0 12px 26px rgba(2, 8, 27, .3), 0 0 0 3px rgba(34, 211, 238, .08); transform: translateY(-1px); filter: brightness(1.06); }
+.zion-admin .components-button:focus-visible { outline: 0; border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(34, 211, 238, .2), 0 10px 24px rgba(2, 8, 27, .28); }
+.zion-admin .components-button:active { transform: translateY(0); box-shadow: 0 5px 12px rgba(2, 8, 27, .24); }
+.zion-admin .components-button:disabled { opacity: .55; cursor: not-allowed; transform: none; filter: saturate(.55); }
+.zion-admin .components-button.is-primary { color: #061425; background: linear-gradient(135deg, #22d3ee, #60a5fa 55%, #8b5cf6); border-color: rgba(103, 232, 249, .7); box-shadow: 0 10px 24px rgba(34, 211, 238, .2), inset 0 1px 0 rgba(255, 255, 255, .42); }
+.zion-admin .components-button.is-primary:hover { color: #04101e; background: linear-gradient(135deg, #67e8f9, #93c5fd 55%, #a78bfa); border-color: #a5f3fc; box-shadow: 0 14px 30px rgba(34, 211, 238, .3), 0 0 0 3px rgba(34, 211, 238, .1); }
+.zion-admin .components-button.is-secondary { color: #dce7ff; background: linear-gradient(135deg, rgba(40, 58, 109, .94), rgba(25, 37, 79, .94)); border-color: rgba(130, 157, 230, .36); }
+.zion-admin .components-button.is-secondary:hover { color: #fff; background: linear-gradient(135deg, #385496, #293c79); border-color: rgba(103, 232, 249, .62); }
+.zion-admin .components-button.is-destructive { color: #ffe4e8; background: linear-gradient(135deg, rgba(159, 46, 83, .9), rgba(104, 35, 75, .94)); border-color: rgba(251, 113, 133, .55); box-shadow: 0 8px 18px rgba(136, 19, 55, .2), inset 0 1px 0 rgba(255, 255, 255, .08); }
+.zion-admin .components-button.is-destructive:hover { color: #fff1f2; background: linear-gradient(135deg, #c24168, #8b315f); border-color: #fda4af; box-shadow: 0 12px 26px rgba(136, 19, 55, .32), 0 0 0 3px rgba(251, 113, 133, .1); }
+.zion-admin__banner-form-actions { margin-top: 20px; padding-top: 18px; border-top: 1px solid rgba(143, 164, 224, .14); justify-content: flex-end; }
 .zion-admin__table-wrap { overflow-x: auto; }
 .zion-admin__table { width: 100%; border-collapse: collapse; color: #d9e2ff; font-size: 13px; }
 .zion-admin__table th { padding: 12px 14px; color: #8290b4; background: rgba(255, 255, 255, .035); font-size: 10px; font-weight: 800; letter-spacing: .08em; text-align: left; text-transform: uppercase; }

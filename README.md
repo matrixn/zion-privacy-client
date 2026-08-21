@@ -35,6 +35,7 @@ Zion Privacy API
 - a Consent banner design studio with grouped behavior, content, action, selector and appearance controls;
 - isolated consent banner and cookie preference modal styles, with an option to inherit the active website font or use a neutral system font;
 - server-side banner design reset and configurable button hover effects for the public banner and cookie preferences modal;
+- unified admin action button styling with consistent primary, secondary and destructive states across plugin pages;
 - local category overrides for cookie inventory entries;
 - documentation and changelog for each project checkpoint.
 

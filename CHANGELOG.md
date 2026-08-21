@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Commit 18 — Unified admin action buttons
+
+- Moved Reset design below the banner accordions, directly before Save banner settings.
+- Added spacing and a divider between the final settings section and the action row.
+- Reworked primary, secondary and destructive admin buttons with a unified gradient surface, hover lift, focus ring and active states across all plugin pages.
+
 ### Commit 17 — Banner reset and button hover controls
 
 - Added a server-side Reset design action that restores all consent banner defaults without changing application or connection settings.
