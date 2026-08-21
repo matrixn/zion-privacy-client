@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Commit 25 — Stop active scans
+
+- Replaced Run with Stop for queued and active scans in the plugin Scans table.
+- Added confirmation and AJAX handling for cancellation while keeping partial scanner results.
+- Added the cancelled status styling and bumped the plugin version to `0.1.20`.
+
 ### Commit 23 — Solid, high-contrast button states
 
 - Replaced ambiguous button gradients with readable solid surfaces, explicit borders and visible hover/active feedback across dark and light themes.

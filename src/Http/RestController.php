@@ -95,6 +95,11 @@ final class RestController
             'permission_callback' => [$this, 'permission'],
             'callback' => [$this, 'runScan'],
         ]);
+        register_rest_route('zion-privacy/v1', '/scans/(?P<scan>[\\w-]+)/stop', [
+            'methods' => 'POST',
+            'permission_callback' => [$this, 'permission'],
+            'callback' => [$this, 'stopScan'],
+        ]);
         register_rest_route('zion-privacy/v1', '/settings', [
             [
                 'methods' => 'GET',
@@ -353,6 +358,11 @@ final class RestController
     public function runScan(\WP_REST_Request $request): array|\WP_Error
     {
         return $this->api->post('scans/'.rawurlencode((string) $request->get_param('scan')).'/run');
+    }
+
+    public function stopScan(\WP_REST_Request $request): array|\WP_Error
+    {
+        return $this->api->post('scans/'.rawurlencode((string) $request->get_param('scan')).'/cancel');
     }
 
     private function publicSettings(): array

@@ -86,6 +86,7 @@ body.toplevel_page_zion-privacy #wpfooter { display: none; }
 .zion-admin__status-text { display: inline-flex; padding: 5px 9px; border-radius: 99px; font-size: 11px; font-weight: 800; }
 .zion-admin__status-text--completed { color: #86efac; background: rgba(34, 197, 94, .13); }
 .zion-admin__status-text--failed { color: #fda4af; background: rgba(244, 63, 94, .13); }
+.zion-admin__status-text--cancelled { color: #cbd5e1; background: rgba(100, 116, 139, .18); }
 .zion-admin__status-text--running, .zion-admin__status-text--queued, .zion-admin__status-text--pending { color: #fde68a; background: rgba(245, 158, 11, .13); }
 .zion-admin__status-text--unknown { color: #c4b5fd; background: rgba(139, 92, 246, .13); }
 .zion-admin__empty { padding: 28px 0; color: var(--muted); text-align: center; }
