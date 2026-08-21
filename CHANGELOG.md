@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Commit 20 — Runtime metadata and Google-only connection UI
+
+- Sent WordPress and PHP runtime versions with OAuth exchange and every authenticated API request so the API can display current client compatibility data.
+- Removed Facebook connection buttons from the plugin dashboard and Settings screens while preserving the provider implementation in code and API configuration.
+- Bumped the plugin version to 0.1.16.
+
 ### Commit 19 — Notifications below the page header
 
 - Moved plugin toast notifications into the normal page flow directly below the title and subtitle.

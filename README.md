@@ -28,7 +28,7 @@ Zion Privacy API
 - HMAC request signing compatible with the Laravel API;
 - encrypted-at-rest storage for the issued installation credential;
 - API REST bridge with nonce and capability protection;
-- OAuth redirect/exchange contract owned by the API, with no Google or Facebook secrets in the plugin;
+- OAuth redirect/exchange contract owned by the API, with no Google or Facebook secrets in the plugin; the client UI exposes Google connection while the API keeps optional Facebook configuration;
 - cookie banner with essential, analytics, marketing and preferences consent states;
 - consent analytics stored first in a local WordPress table and synchronized every 15 minutes to the API;
 - a native WordPress Dashboard donut widget for accepted, rejected and partially accepted choices;
@@ -41,8 +41,7 @@ Zion Privacy API
 
 ### Integration status
 
-The client contains the WordPress-side contract for the secure connection flow. The Google and
-Facebook buttons redirect to the API-owned OAuth endpoints
+The client contains the WordPress-side contract for the secure connection flow. The Google button redirects to the API-owned OAuth endpoints
 `/api/v1/oauth/{provider}/start` and `/api/v1/oauth/token`; those server-side OAuth endpoints
 must be enabled in the companion Zion Privacy API before connection can complete. The plugin
 does not store provider secrets and does not complete OAuth locally.
@@ -53,7 +52,7 @@ does not store provider secrets and does not complete OAuth locally.
 2. Run `composer install --no-dev`.
 3. Run `npm ci && npm run build`.
 4. Activate **Zion Privacy Client** in WordPress.
-5. Open **Zion Privacy → Dashboard** and connect the account with Google or Facebook. The production API URL is fixed in the plugin.
+5. Open **Zion Privacy → Dashboard** and connect the account with Google. The production API URL is fixed in the plugin.
 
 The API owns Google/Facebook OAuth credentials. Never add provider secrets, Gemini keys or API secrets to this repository or to a WordPress frontend bundle.
 

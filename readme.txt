@@ -12,7 +12,7 @@ Zion Privacy Client connects WordPress to the Zion Privacy API for cookie scanni
 
 The plugin provides a WordPress-native dashboard for connecting a site to Zion Privacy, reviewing discovered cookies, viewing website statistics and displaying a consent banner.
 
-OAuth credentials remain on the Zion Privacy API. The plugin does not contain Google, Facebook, Gemini or API provider secrets.
+OAuth credentials remain on the Zion Privacy API. The plugin does not contain Google, Facebook, Gemini or API provider secrets. The WordPress UI currently exposes Google connection only.
 
 == Installation ==
 

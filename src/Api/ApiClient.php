@@ -53,6 +53,9 @@ final class ApiClient
                 'X-Zion-Timestamp' => $timestamp,
                 'X-Zion-Nonce' => $nonce,
                 'X-Zion-Signature' => hash_hmac('sha256', $canonical, (string) $credentials['secret']),
+                'X-Zion-Plugin-Version' => ZION_PRIVACY_VERSION,
+                'X-Zion-WordPress-Version' => (string) get_bloginfo('version'),
+                'X-Zion-PHP-Version' => PHP_VERSION,
             ],
             'body' => $rawBody,
         ]);
@@ -87,6 +90,8 @@ final class ApiClient
                 'site_name' => get_bloginfo('name'),
                 'callback_url' => admin_url('admin.php?page=zion-privacy'),
                 'plugin_version' => ZION_PRIVACY_VERSION,
+                'wordpress_version' => get_bloginfo('version'),
+                'php_version' => PHP_VERSION,
             ],
         ]);
 
