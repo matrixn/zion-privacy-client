@@ -1,5 +1,10 @@
 # Changelog
 
+### Commit 32 — Keep custom banner text out of preferences modal
+
+- Removed the custom banner message from the preferences modal so the modal shows only its standard instructions and enabled legal links.
+- Bumped plugin version to `0.1.27`.
+
 ### Commit 31 — Expanded banner positions and quick consent actions
 
 - Added top centered, bottom centered, top right and top left banner positions in the admin settings and public banner CSS.
