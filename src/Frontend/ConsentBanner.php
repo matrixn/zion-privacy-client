@@ -42,6 +42,7 @@ final class ConsentBanner
             'showCategoryCounts' => (bool) $settings['banner_show_category_counts'],
             'showPrivacyLink' => (bool) $settings['banner_show_privacy_link'],
             'privacyLinkLabel' => $settings['banner_privacy_link_label'],
+            'policyLinks' => $this->policyLinks($settings),
             'selectorTitle' => $settings['banner_selector_title'],
             'selectorMessage' => $settings['banner_selector_message'],
             'position' => $settings['banner_position'],
@@ -71,6 +72,53 @@ final class ConsentBanner
             'consentTrackingEnabled' => $this->settings->consentTrackingEnabled(),
             'cookies' => $this->cookies(),
         ]);
+    }
+
+    private function policyLinks(array $settings): array
+    {
+        $links = [];
+        $definitions = [
+            [
+                'key' => 'privacy_policy',
+                'enabled' => 'banner_show_privacy_policy_link',
+                'page' => 'banner_privacy_policy_page_id',
+                'label' => 'banner_privacy_policy_link_label',
+                'fallback' => '',
+            ],
+            [
+                'key' => 'terms',
+                'enabled' => 'banner_show_terms_link',
+                'page' => 'banner_terms_page_id',
+                'label' => 'banner_terms_link_label',
+                'fallback' => '',
+            ],
+            [
+                'key' => 'cookie_policy',
+                'enabled' => 'banner_show_cookie_policy_link',
+                'page' => 'banner_cookie_policy_page_id',
+                'label' => 'banner_cookie_policy_link_label',
+                'fallback' => '',
+            ],
+        ];
+
+        foreach ($definitions as $definition) {
+            if (empty($settings[$definition['enabled']])) {
+                continue;
+            }
+
+            $pageUrl = ! empty($settings[$definition['page']]) ? get_permalink((int) $settings[$definition['page']]) : $definition['fallback'];
+            if (! is_string($pageUrl) || $pageUrl === '') {
+                continue;
+            }
+
+            $links[] = [
+                'key' => $definition['key'],
+                'label' => (string) ($settings[$definition['label']] ?? ucfirst(str_replace('_', ' ', $definition['key']))),
+                'url' => (string) $pageUrl,
+            ];
+        }
+
+        return $links;
     }
 
     private function cookies(): array

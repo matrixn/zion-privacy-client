@@ -20,7 +20,8 @@ final class SettingsRepository
 
     public function all(): array
     {
-        return wp_parse_args((array) get_option(self::SETTINGS_OPTION, []), array_merge($this->bannerDefaults(), [
+        $stored = (array) get_option(self::SETTINGS_OPTION, []);
+        $settings = wp_parse_args($stored, array_merge($this->bannerDefaults(), [
             'api_base_url' => self::API_BASE_URL,
             'scan_poll_interval_seconds' => 3,
             'api_timeout_seconds' => 20,
@@ -32,6 +33,19 @@ final class SettingsRepository
             'consent_revision' => 1,
             'consent_renewed_at' => null,
         ]));
+
+        // Migrate the original single privacy-policy link into the new legal-link settings.
+        if (! array_key_exists('banner_show_privacy_policy_link', $stored)) {
+            $settings['banner_show_privacy_policy_link'] = ! array_key_exists('banner_show_privacy_link', $stored) || ! empty($stored['banner_show_privacy_link']);
+        }
+        if (! array_key_exists('banner_privacy_policy_link_label', $stored)) {
+            $settings['banner_privacy_policy_link_label'] = (string) ($stored['banner_privacy_link_label'] ?? $settings['banner_privacy_policy_link_label']);
+        }
+        if (! array_key_exists('banner_privacy_policy_page_id', $stored)) {
+            $settings['banner_privacy_policy_page_id'] = (int) ($stored['banner_privacy_policy_page_id'] ?? get_option('wp_page_for_privacy_policy', 0));
+        }
+
+        return $settings;
     }
 
     public function resetBanner(): void
@@ -53,12 +67,15 @@ final class SettingsRepository
         $current['banner_enabled'] = ! empty($settings['banner_enabled']);
         $current['banner_title'] = sanitize_text_field((string) ($settings['banner_title'] ?? $current['banner_title']));
         $current['banner_message'] = sanitize_textarea_field((string) ($settings['banner_message'] ?? $current['banner_message']));
-        foreach (['banner_accept_label', 'banner_reject_label', 'banner_customize_label', 'banner_save_label', 'banner_privacy_link_label', 'banner_selector_title'] as $key) {
+        foreach (['banner_accept_label', 'banner_reject_label', 'banner_customize_label', 'banner_save_label', 'banner_privacy_link_label', 'banner_privacy_policy_link_label', 'banner_terms_link_label', 'banner_cookie_policy_link_label', 'banner_selector_title'] as $key) {
             $current[$key] = sanitize_text_field((string) ($settings[$key] ?? $current[$key]));
         }
         $current['banner_selector_message'] = sanitize_textarea_field((string) ($settings['banner_selector_message'] ?? $current['banner_selector_message']));
-        foreach (['banner_show_customize', 'banner_show_cookie_details', 'banner_show_category_counts', 'banner_show_privacy_link', 'banner_use_site_font', 'banner_shadow', 'banner_button_hover_enabled'] as $key) {
+        foreach (['banner_show_customize', 'banner_show_cookie_details', 'banner_show_category_counts', 'banner_show_privacy_link', 'banner_show_privacy_policy_link', 'banner_show_terms_link', 'banner_show_cookie_policy_link', 'banner_use_site_font', 'banner_shadow', 'banner_button_hover_enabled'] as $key) {
             $current[$key] = ! isset($settings[$key]) || ! empty($settings[$key]);
+        }
+        foreach (['banner_privacy_policy_page_id', 'banner_terms_page_id', 'banner_cookie_policy_page_id'] as $key) {
+            $current[$key] = $this->pageId($settings[$key] ?? $current[$key]);
         }
         $current['banner_position'] = $this->allowedChoice($settings, 'banner_position', ['bottom', 'top', 'bottom_right', 'bottom_left', 'center'], $current['banner_position']);
         $current['banner_button_hover_effect'] = $this->allowedChoice($settings, 'banner_button_hover_effect', ['none', 'lift', 'glow', 'lift_glow'], $current['banner_button_hover_effect']);
@@ -106,6 +123,15 @@ final class SettingsRepository
             'banner_show_category_counts' => true,
             'banner_show_privacy_link' => true,
             'banner_privacy_link_label' => 'Privacy policy',
+            'banner_show_privacy_policy_link' => true,
+            'banner_privacy_policy_page_id' => 0,
+            'banner_privacy_policy_link_label' => 'Privacy policy',
+            'banner_show_terms_link' => false,
+            'banner_terms_page_id' => 0,
+            'banner_terms_link_label' => 'Terms and Conditions',
+            'banner_show_cookie_policy_link' => false,
+            'banner_cookie_policy_page_id' => 0,
+            'banner_cookie_policy_link_label' => 'Cookie policy',
             'banner_selector_title' => 'Customize cookies',
             'banner_selector_message' => 'Choose which cookie categories you allow on this website.',
             'banner_position' => 'bottom',
@@ -132,6 +158,14 @@ final class SettingsRepository
     public function apiBaseUrl(): string
     {
         return self::API_BASE_URL;
+    }
+
+    private function pageId(mixed $value): int
+    {
+        $pageId = absint($value);
+        $page = $pageId > 0 ? get_post($pageId) : null;
+
+        return $page instanceof \WP_Post && $page->post_type === 'page' ? $pageId : 0;
     }
 
     public function apiTimeoutSeconds(): int

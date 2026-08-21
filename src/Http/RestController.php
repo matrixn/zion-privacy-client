@@ -112,6 +112,11 @@ final class RestController
                 'callback' => [$this, 'saveSettings'],
             ],
         ]);
+        register_rest_route('zion-privacy/v1', '/settings/pages', [
+            'methods' => 'GET',
+            'permission_callback' => [$this, 'permission'],
+            'callback' => fn (): array => $this->pages(),
+        ]);
         register_rest_route('zion-privacy/v1', '/settings/reset-banner', [
             'methods' => 'POST',
             'permission_callback' => [$this, 'permission'],
@@ -390,6 +395,15 @@ final class RestController
             'banner_show_category_counts' => (bool) $settings['banner_show_category_counts'],
             'banner_show_privacy_link' => (bool) $settings['banner_show_privacy_link'],
             'banner_privacy_link_label' => $settings['banner_privacy_link_label'],
+            'banner_show_privacy_policy_link' => (bool) $settings['banner_show_privacy_policy_link'],
+            'banner_privacy_policy_page_id' => (int) $settings['banner_privacy_policy_page_id'],
+            'banner_privacy_policy_link_label' => $settings['banner_privacy_policy_link_label'],
+            'banner_show_terms_link' => (bool) $settings['banner_show_terms_link'],
+            'banner_terms_page_id' => (int) $settings['banner_terms_page_id'],
+            'banner_terms_link_label' => $settings['banner_terms_link_label'],
+            'banner_show_cookie_policy_link' => (bool) $settings['banner_show_cookie_policy_link'],
+            'banner_cookie_policy_page_id' => (int) $settings['banner_cookie_policy_page_id'],
+            'banner_cookie_policy_link_label' => $settings['banner_cookie_policy_link_label'],
             'banner_selector_title' => $settings['banner_selector_title'],
             'banner_selector_message' => $settings['banner_selector_message'],
             'banner_position' => $settings['banner_position'],
@@ -420,6 +434,26 @@ final class RestController
             'consent_renewed_at' => $settings['consent_renewed_at'],
             'connected' => $this->settings->isConnected(),
             'account' => $this->settings->credentials()['account'] ?? [],
+        ];
+    }
+
+    private function pages(): array
+    {
+        $pages = get_posts([
+            'post_type' => 'page',
+            'post_status' => ['publish', 'private', 'draft'],
+            'posts_per_page' => 100,
+            'orderby' => ['menu_order' => 'ASC', 'title' => 'ASC'],
+            'order' => 'ASC',
+        ]);
+
+        return [
+            'data' => array_map(static fn (\WP_Post $page): array => [
+                'id' => $page->ID,
+                'title' => html_entity_decode(get_the_title($page), ENT_QUOTES, get_bloginfo('charset') ?: 'UTF-8'),
+                'url' => (string) get_permalink($page),
+                'status' => $page->post_status,
+            ], $pages),
         ];
     }
 

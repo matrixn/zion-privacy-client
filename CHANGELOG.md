@@ -1,5 +1,12 @@
 # Changelog
 
+### Commit 27 — Configurable legal links in the consent banner
+
+- Added independent Privacy Policy, Terms and Conditions and Cookie Policy switches in the Consent banner design settings.
+- Added WordPress page selectors and editable link labels for each legal document; enabled links are rendered together in the public banner and the live preview.
+- Added a protected page-list endpoint for the admin UI and preserved compatibility with the existing single privacy-policy link setting.
+- Bumped plugin version to `0.1.22`.
+
 ### Commit 26 — Dashboard consent intelligence and policy controls
 
 - Expanded the plugin dashboard with website connection status, regulation, Worldwide targeting, forced public banner preview, cookie summary details, consent trends, scan pageview chart and recent anonymized consent logs.

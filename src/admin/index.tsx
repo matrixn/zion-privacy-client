@@ -1049,6 +1049,7 @@ function ScanModal({
 function BannerPage() {
   const [settings, setSettings] = useState<RecordData | null>(null);
   const [cookies, setCookies] = useState<RecordData[]>([]);
+  const [pages, setPages] = useState<RecordData[]>([]);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [resetting, setResetting] = useState(false);
@@ -1064,10 +1065,21 @@ function BannerPage() {
     request<{ data: RecordData[] }>("cookies")
       .then((result) => setCookies(result.data || []))
       .catch(() => setCookies([]));
+    request<{ data: RecordData[] }>("settings/pages")
+      .then((result) => setPages(result.data || []))
+      .catch(() => setPages([]));
   }, []);
 
   if (error) return <PageError message={error} />;
   if (!settings) return <Loading />;
+
+  const pageOptions = [
+    { label: "Select a WordPress page", value: "0" },
+    ...pages.map((page) => ({
+      label: `${page.title}${page.status !== "publish" ? ` (${page.status})` : ""}`,
+      value: String(page.id),
+    })),
+  ];
 
   const update = (values: RecordData) =>
     setSettings((current) => ({ ...(current || {}), ...values }));
@@ -1253,8 +1265,8 @@ function BannerPage() {
                 </div>
               </BannerAccordion>
               <BannerAccordion
-                title="Content and privacy link"
-                description="Write the message visitors see and configure the privacy policy entry point."
+                title="Content and legal links"
+                description="Write the visitor message and optionally show links to your legal pages."
                 icon="✦"
               >
                 <div className="zion-admin__form">
@@ -1262,13 +1274,6 @@ function BannerPage() {
                     label="Banner title"
                     value={settings.banner_title || ""}
                     onChange={(value) => update({ banner_title: value })}
-                  />
-                  <TextControl
-                    label="Privacy link label"
-                    value={settings.banner_privacy_link_label || ""}
-                    onChange={(value) =>
-                      update({ banner_privacy_link_label: value })
-                    }
                   />
                   <TextareaControl
                     label="Banner message"
@@ -1289,15 +1294,33 @@ function BannerPage() {
                       update({ banner_selector_message: value })
                     }
                   />
-                  <div className="zion-admin__field zion-admin__field--full">
-                    <ToggleControl
-                      label="Show privacy policy link"
-                      checked={settings.banner_show_privacy_link !== false}
-                      onChange={(value) =>
-                        update({ banner_show_privacy_link: value })
-                      }
-                    />
-                  </div>
+                  <PolicyLinkSettings
+                    title="Privacy policy"
+                    enabled={settings.banner_show_privacy_policy_link !== false}
+                    pageId={settings.banner_privacy_policy_page_id || 0}
+                    label={settings.banner_privacy_policy_link_label || "Privacy policy"}
+                    pageOptions={pageOptions}
+                    onChange={(values) => update(values)}
+                    description="Link visitors to the privacy policy page selected below."
+                  />
+                  <PolicyLinkSettings
+                    title="Terms and Conditions"
+                    enabled={!!settings.banner_show_terms_link}
+                    pageId={settings.banner_terms_page_id || 0}
+                    label={settings.banner_terms_link_label || "Terms and Conditions"}
+                    pageOptions={pageOptions}
+                    onChange={(values) => update(values)}
+                    description="Add the terms page to the legal links shown in the banner."
+                  />
+                  <PolicyLinkSettings
+                    title="Cookie policy"
+                    enabled={!!settings.banner_show_cookie_policy_link}
+                    pageId={settings.banner_cookie_policy_page_id || 0}
+                    label={settings.banner_cookie_policy_link_label || "Cookie policy"}
+                    pageOptions={pageOptions}
+                    onChange={(values) => update(values)}
+                    description="Add the cookie policy page to the legal links shown in the banner."
+                  />
                 </div>
               </BannerAccordion>
               <BannerAccordion
@@ -1537,7 +1560,7 @@ function BannerPage() {
               </div>
             </CardHeader>
             <CardBody>
-              <BannerPreview settings={settings} cookies={cookies} />
+              <BannerPreview settings={settings} cookies={cookies} pages={pages} />
             </CardBody>
           </Card>
         </div>
@@ -1573,6 +1596,82 @@ function BannerAccordion({
     </details>
   );
 }
+
+function PolicyLinkSettings({
+  title,
+  description,
+  enabled,
+  pageId,
+  label,
+  pageOptions,
+  onChange,
+}: {
+  title: string;
+  description: string;
+  enabled: boolean;
+  pageId: number;
+  label: string;
+  pageOptions: { label: string; value: string }[];
+  onChange: (values: RecordData) => void;
+}) {
+  return (
+    <div className="zion-admin__field zion-admin__field--full zion-admin__policy-link-settings">
+      <div className="zion-admin__policy-link-heading">
+        <div>
+          <strong>{title}</strong>
+          <small>{description}</small>
+        </div>
+        <ToggleControl
+          label={`Show ${title.toLowerCase()} link`}
+          checked={enabled}
+          onChange={(value) => {
+            const key = title === "Privacy policy"
+              ? "banner_show_privacy_policy_link"
+              : title === "Terms and Conditions"
+                ? "banner_show_terms_link"
+                : "banner_show_cookie_policy_link";
+            onChange({ [key]: value });
+          }}
+        />
+      </div>
+      {enabled && (
+        <div className="zion-admin__policy-link-fields">
+          <SelectControl
+            label={`${title} page`}
+            value={String(pageId || 0)}
+            options={pageOptions}
+            onChange={(value) => {
+              const key = title === "Privacy policy"
+                ? "banner_privacy_policy_page_id"
+                : title === "Terms and Conditions"
+                  ? "banner_terms_page_id"
+                  : "banner_cookie_policy_page_id";
+              onChange({ [key]: Number(value) });
+            }}
+          />
+          <TextControl
+            label="Link text"
+            value={label}
+            onChange={(value) => {
+              const key = title === "Privacy policy"
+                ? "banner_privacy_policy_link_label"
+                : title === "Terms and Conditions"
+                  ? "banner_terms_link_label"
+                  : "banner_cookie_policy_link_label";
+              onChange({ [key]: value });
+            }}
+          />
+          {pageId === 0 && (
+            <small className="zion-admin__policy-link-warning">
+              Select a page to display this link in the live banner.
+            </small>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ColorControl({
   label,
   value,
@@ -1630,9 +1729,11 @@ function NumberControl({
 function BannerPreview({
   settings,
   cookies,
+  pages,
 }: {
   settings: RecordData;
   cookies: RecordData[];
+  pages: RecordData[];
 }) {
   const [customizing, setCustomizing] = useState(false);
   const hoverEffect =
@@ -1671,6 +1772,29 @@ function BannerPreview({
     (settings.banner_button_hover_enabled === false
       ? " zion-admin__banner-preview--hover-disabled"
       : "");
+  const policyLinks = [
+    {
+      enabled: settings.banner_show_privacy_policy_link !== false,
+      pageId: settings.banner_privacy_policy_page_id || 0,
+      label: settings.banner_privacy_policy_link_label || "Privacy policy",
+    },
+    {
+      enabled: !!settings.banner_show_terms_link,
+      pageId: settings.banner_terms_page_id || 0,
+      label: settings.banner_terms_link_label || "Terms and Conditions",
+    },
+    {
+      enabled: !!settings.banner_show_cookie_policy_link,
+      pageId: settings.banner_cookie_policy_page_id || 0,
+      label: settings.banner_cookie_policy_link_label || "Cookie policy",
+    },
+  ]
+    .filter((link) => link.enabled && link.pageId > 0)
+    .map((link) => ({
+      ...link,
+      url: pages.find((page) => Number(page.id) === Number(link.pageId))?.url || "",
+    }))
+    .filter((link) => link.url);
   return (
     <div className={previewClass} style={style}>
       <div className="zion-admin__banner-preview-content">
@@ -1680,13 +1804,20 @@ function BannerPreview({
             {settings.banner_message ||
               "Choose which categories of cookies you allow."}
           </p>
-          {settings.banner_show_privacy_link !== false && (
-            <a
-              href="https://privacy-api.zion3d.ro/"
-              onClick={(event) => event.preventDefault()}
-            >
-              {settings.banner_privacy_link_label || "Privacy policy"}
-            </a>
+          {policyLinks.length > 0 && (
+            <div className="zion-admin__banner-preview-policy-links">
+              {policyLinks.map((link, index) => (
+                <span key={link.pageId}>
+                  {index > 0 && <span aria-hidden="true"> · </span>}
+                  <a
+                    href={link.url}
+                    onClick={(event) => event.preventDefault()}
+                  >
+                    {link.label}
+                  </a>
+                </span>
+              ))}
+            </div>
           )}
         </div>
         <div className="zion-admin__banner-preview-actions">
