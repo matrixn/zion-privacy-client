@@ -230,7 +230,7 @@ final class RestController
         ];
     }
 
-    private function identifyCookie(\WP_REST_Request $request): array|\WP_Error
+    public function identifyCookie(\WP_REST_Request $request): array|\WP_Error
     {
         $websiteResponse = $this->api->get('websites', ['per_page' => 1]);
         if (is_wp_error($websiteResponse)) {

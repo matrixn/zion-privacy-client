@@ -76,6 +76,9 @@ body.toplevel_page_zion-privacy #wpfooter { display: none; }
 .zion-admin__table tbody tr { transition: background .15s ease; }
 .zion-admin__table tbody tr:hover { background: rgba(139, 92, 246, .07); }
 .zion-admin__table select { min-width: 130px; color: #d9e2ff; background: #151e40; border-color: #34416d; }
+.zion-admin__category-editor { display: grid; gap: 6px; min-width: 155px; }
+.zion-admin__category-editor .components-base-control { margin: 0; }
+.zion-admin__category-editor .components-button { min-height: 29px; justify-self: start; padding: 0 9px; font-size: 11px; }
 .zion-admin__table code { color: #9ddcf4; font-size: 12px; }
 .zion-admin__table-note { display: block; margin-top: 5px; color: #7585b0; font-size: 10px; }
 .zion-admin__table-actions { display: flex; flex-wrap: wrap; gap: 6px; min-width: 190px; }

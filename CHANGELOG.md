@@ -1,5 +1,11 @@
 # Changelog
 
+### Commit 28 — Site-local cookie category overrides and AI route fix
+
+- Added an explicit Save action and success notification when changing a cookie category; saved overrides remain local to this WordPress website and are reapplied after future scans.
+- Fixed the WordPress REST AI identification route by exposing its callback as a valid public handler.
+- Bumped plugin version to `0.1.23`.
+
 ### Commit 27 — Configurable legal links in the consent banner
 
 - Added independent Privacy Policy, Terms and Conditions and Cookie Policy switches in the Consent banner design settings.

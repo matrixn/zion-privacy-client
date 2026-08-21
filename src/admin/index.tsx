@@ -1971,6 +1971,8 @@ function CookiePreferenceModal({
 
 function Cookies() {
   const [cookies, setCookies] = useState<RecordData[]>([]);
+  const [categoryDrafts, setCategoryDrafts] = useState<Record<string, string>>({});
+  const [savingCategories, setSavingCategories] = useState<Record<string, boolean>>({});
   const [cacheInfo, setCacheInfo] = useState<RecordData>({});
   const [account, setAccount] = useState<RecordData>({});
   const [error, setError] = useState("");
@@ -1981,7 +1983,17 @@ function Cookies() {
     setError("");
     request<RecordData>(`cookies${force ? "?refresh=1" : ""}`)
       .then((result) => {
-        setCookies(result.data || []);
+        const nextCookies = result.data || [];
+        setCookies(nextCookies);
+        setCategoryDrafts(
+          nextCookies.reduce(
+            (drafts: Record<string, string>, item: RecordData) => {
+              drafts[String(item.id)] = item.category || "unknown";
+              return drafts;
+            },
+            {},
+          ),
+        );
         setAccount(result.account || {});
         setCacheInfo({
           saved_at: result.saved_at || null,
@@ -2008,12 +2020,15 @@ function Cookies() {
     );
     return () => window.clearInterval(timer);
   }, []);
-  const updateCategory = (cookie: RecordData, category: string) => {
+  const updateCategory = (cookie: RecordData) => {
+    const key = String(cookie.id);
+    const category = categoryDrafts[key] || cookie.category || "unknown";
     const identity = [
       cookie.name || "",
       cookie.domain || "",
       cookie.path || "",
     ].join("|");
+    setSavingCategories((items) => ({ ...items, [key]: true }));
     request("cookies/category", {
       method: "POST",
       body: JSON.stringify({ identity, category }),
@@ -2026,12 +2041,15 @@ function Cookies() {
               : item,
           ),
         );
-        announce("Cookie category updated.");
+        announce("Cookie category saved for this website.");
       })
       .catch((e) => {
         setError(e.message);
         announce(e.message, "error");
-      });
+      })
+      .finally(() =>
+        setSavingCategories((items) => ({ ...items, [key]: false })),
+      );
   };
   const identifyCookie = (cookie: RecordData) => {
     const key = String(cookie.id);
@@ -2044,6 +2062,11 @@ function Cookies() {
           setCookies((items) =>
             items.map((item) => (item.id === cookie.id ? result.data : item)),
           );
+        if (result.data)
+          setCategoryDrafts((items) => ({
+            ...items,
+            [key]: result.data.category || "unknown",
+          }));
         announce(
           result.source === "database"
             ? "Cookie identified from the local AI knowledge database."
@@ -2074,8 +2097,10 @@ function Cookies() {
               <div>
                 <h2>Cookie inventory</h2>
                 <p>
-                  Categories can be adjusted locally. Existing AI knowledge is
-                  reused before a new Gemini request is allowed.
+                  Categories can be adjusted locally per website. Select a
+                  category and save it; the override is reapplied after future
+                  scans. Existing AI knowledge is reused before a new Gemini
+                  request is allowed.
                 </p>
                 <div className="zion-admin__cookie-cache-meta">
                   <span
@@ -2119,6 +2144,10 @@ function Cookies() {
                   {cookies.length ? (
                     cookies.map((cookie) => {
                       const key = String(cookie.id);
+                      const selectedCategory =
+                        categoryDrafts[key] || cookie.category || "unknown";
+                      const categoryChanged =
+                        selectedCategory !== (cookie.category || "unknown");
                       const busy =
                         !!identifying[key] ||
                         ["queued", "processing"].includes(
@@ -2142,15 +2171,30 @@ function Cookies() {
                             </span>
                           </td>
                           <td>
-                            <SelectControl
-                              label=""
-                              hideLabelFromVision
-                              options={categories}
-                              value={cookie.category || "unknown"}
-                              onChange={(value) =>
-                                updateCategory(cookie, value)
-                              }
-                            />
+                            <div className="zion-admin__category-editor">
+                              <SelectControl
+                                label=""
+                                hideLabelFromVision
+                                options={categories}
+                                value={selectedCategory}
+                                onChange={(value) =>
+                                  setCategoryDrafts((items) => ({
+                                    ...items,
+                                    [key]: value,
+                                  }))
+                                }
+                              />
+                              <Button
+                                variant="primary"
+                                icon={<ButtonIcon name="dashicons-saved" />}
+                                onClick={() => updateCategory(cookie)}
+                                disabled={
+                                  !categoryChanged || !!savingCategories[key]
+                                }
+                              >
+                                {savingCategories[key] ? "Saving…" : "Save"}
+                              </Button>
+                            </div>
                           </td>
                           <td>{cookie.vendor || "—"}</td>
                           <td>{cookie.purpose || cookie.description || "—"}</td>
