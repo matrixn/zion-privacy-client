@@ -32,6 +32,7 @@ type AdminConfig = {
   page: string;
   connected: boolean;
   version: string;
+  siteUrl?: string;
   scanPollIntervalSeconds?: number;
   cookieCacheMinutes?: number;
   defaultScanMode?: string;
@@ -1233,11 +1234,15 @@ function BannerPage() {
                     options={[
                       { label: "Bottom — full width", value: "bottom" },
                       { label: "Top — full width", value: "top" },
+                      { label: "Bottom centered", value: "bottom_centered" },
+                      { label: "Top centered", value: "top_centered" },
                       {
                         label: "Bottom right — compact",
                         value: "bottom_right",
                       },
                       { label: "Bottom left — compact", value: "bottom_left" },
+                      { label: "Top right — compact", value: "top_right" },
+                      { label: "Top left — compact", value: "top_left" },
                       { label: "Centered dialog", value: "center" },
                     ]}
                     onChange={(value) => update({ banner_position: value })}
@@ -1264,11 +1269,18 @@ function BannerPage() {
                   </div>
                   <NumberControl
                     label="Maximum width (px)"
-                    value={settings.banner_width || 1180}
+                    value={settings.banner_width || ""}
                     min={520}
                     max={1400}
                     onChange={(value) => update({ banner_width: value })}
                   />
+                  <div className="zion-admin__field zion-admin__field--full">
+                    <small>
+                      Leave blank to let compact and centered banners use the
+                      available browser width. Full-width positions always span
+                      the entire browser and ignore this optional limit.
+                    </small>
+                  </div>
                   <NumberControl
                     label="Corner radius (px)"
                     value={settings.banner_radius || 12}
@@ -1746,7 +1758,7 @@ function NumberControl({
   onChange,
 }: {
   label: string;
-  value: number;
+  value: number | string;
   min: number;
   max: number;
   onChange: (value: number) => void;
@@ -2728,6 +2740,7 @@ function Sidebar({
   theme: ThemeMode;
   onThemeChange: () => void;
 }) {
+  const [renewing, setRenewing] = useState(false);
   const items: { key: ViewKey; label: string; icon: string }[] = [
     { key: "dashboard", label: "Dashboard", icon: "dashicons-dashboard" },
     { key: "scans", label: "Scans", icon: "dashicons-search" },
@@ -2736,6 +2749,26 @@ function Sidebar({
     { key: "banner", label: "Banner", icon: "dashicons-welcome-view-site" },
     { key: "settings", label: "Settings", icon: "dashicons-admin-generic" },
   ];
+  const renewConsents = () => {
+    if (
+      !window.confirm(
+        "Show the consent banner again to visitors who already made a choice? Existing consent history will be preserved.",
+      )
+    ) {
+      return;
+    }
+    setRenewing(true);
+    request<RecordData>("settings/renew-consents", { method: "POST" })
+      .then(() =>
+        announce(
+          "Consent renewal enabled. The banner will reappear for existing visitors.",
+        ),
+      )
+      .catch((error) => announce(error.message, "error"))
+      .finally(() => setRenewing(false));
+  };
+  const bannerUrl = previewUrlFor(config.siteUrl || window.location.origin);
+
   return (
     <aside className="zion-admin__sidebar">
       <div className="zion-admin__brand">
@@ -2762,12 +2795,14 @@ function Sidebar({
         ))}
       </nav>
       <div className="zion-admin__sidebar-footer">
-        <span
-          className={`zion-admin__sidebar-status ${
-            config.connected ? "is-online" : ""
-          }`}
-        />
-        {config.connected ? "API connected" : "Awaiting connection"}
+        <div className="zion-admin__sidebar-connection">
+          <span
+            className={`zion-admin__sidebar-status ${
+              config.connected ? "is-online" : ""
+            }`}
+          />
+          {config.connected ? "API connected" : "Awaiting connection"}
+        </div>
         <button
           type="button"
           className="zion-admin__theme-switcher"
@@ -2781,6 +2816,26 @@ function Sidebar({
           />
           {theme === "dark" ? "Light" : "Dark"}
         </button>
+        <button
+          type="button"
+          className="zion-admin__sidebar-action"
+          onClick={renewConsents}
+          disabled={renewing}
+          title="Show the consent banner again for visitors who already made a choice"
+        >
+          <span className="dashicons dashicons-update" />
+          {renewing ? "Renewing…" : "Renew consents"}
+        </button>
+        <a
+          className="zion-admin__sidebar-action"
+          href={bannerUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Open the public banner preview"
+        >
+          <span className="dashicons dashicons-welcome-view-site" />
+          View banner
+        </a>
         <small>v{config.version}</small>
       </div>
     </aside>

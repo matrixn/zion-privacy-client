@@ -1,5 +1,14 @@
 # Changelog
 
+### Commit 31 — Expanded banner positions and quick consent actions
+
+- Added top centered, bottom centered, top right and top left banner positions in the admin settings and public banner CSS.
+- Made full-width top and bottom positions span the complete browser width without applying the maximum-width setting.
+- Made the maximum-width field optional; leaving it blank lets compact and centered layouts use the available viewport width.
+- Added `Renew consents` and `View banner` actions below the API status and theme switcher in the plugin navigation bar.
+- Raised the consent banner host and preferences modal to the highest practical browser stacking level.
+- Bumped plugin version to `0.1.26`.
+
 ### Commit 30 — Fixed consent preferences modal scrolling
 
 - Made the preferences modal header and footer fixed while only the cookie category content scrolls vertically.

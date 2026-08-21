@@ -77,11 +77,16 @@ final class SettingsRepository
         foreach (['banner_privacy_policy_page_id', 'banner_terms_page_id', 'banner_cookie_policy_page_id'] as $key) {
             $current[$key] = $this->pageId($settings[$key] ?? $current[$key]);
         }
-        $current['banner_position'] = $this->allowedChoice($settings, 'banner_position', ['bottom', 'top', 'bottom_right', 'bottom_left', 'center'], $current['banner_position']);
+        $current['banner_position'] = $this->allowedChoice($settings, 'banner_position', ['bottom', 'top', 'bottom_centered', 'top_centered', 'bottom_right', 'bottom_left', 'top_right', 'top_left', 'center'], $current['banner_position']);
         $current['banner_launcher_position'] = $this->allowedChoice($settings, 'banner_launcher_position', ['top_left', 'top_right', 'bottom_left', 'bottom_right'], $current['banner_launcher_position']);
         $current['banner_policy_link_target'] = $this->allowedChoice($settings, 'banner_policy_link_target', ['_self', '_blank', '_parent', '_top'], $current['banner_policy_link_target']);
         $current['banner_button_hover_effect'] = $this->allowedChoice($settings, 'banner_button_hover_effect', ['none', 'lift', 'glow', 'lift_glow'], $current['banner_button_hover_effect']);
-        $current['banner_width'] = max(520, min(1400, absint($settings['banner_width'] ?? $current['banner_width'])));
+        if (array_key_exists('banner_width', $settings)) {
+            $width = trim((string) $settings['banner_width']);
+            $current['banner_width'] = $width === '' || absint($width) === 0
+                ? 0
+                : max(520, min(1400, absint($width)));
+        }
         $current['banner_radius'] = max(0, min(32, absint($settings['banner_radius'] ?? $current['banner_radius'])));
         $current['banner_font_size'] = max(12, min(20, absint($settings['banner_font_size'] ?? $current['banner_font_size'])));
         $current['banner_button_hover_duration'] = max(100, min(500, absint($settings['banner_button_hover_duration'] ?? $current['banner_button_hover_duration'])));
@@ -139,7 +144,7 @@ final class SettingsRepository
             'banner_position' => 'bottom',
             'banner_launcher_position' => 'bottom_right',
             'banner_policy_link_target' => '_self',
-            'banner_width' => 1180,
+            'banner_width' => 0,
             'banner_radius' => 12,
             'banner_font_size' => 14,
             'banner_use_site_font' => true,

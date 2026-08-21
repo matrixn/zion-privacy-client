@@ -40,7 +40,10 @@
   root.style.setProperty('--zion-banner-border', colors.border || '#dce5f0');
   root.style.setProperty('--zion-banner-radius', Math.max(0, Number(config.radius || 12)) + 'px');
   root.style.setProperty('--zion-banner-font-size', Math.max(12, Number(config.fontSize || 14)) + 'px');
-  root.style.setProperty('--zion-banner-width', Math.max(520, Number(config.width || 1180)) + 'px');
+  var configuredWidth = Number(config.width || 0);
+  root.style.setProperty('--zion-banner-width', configuredWidth > 0
+    ? Math.max(520, configuredWidth) + 'px'
+    : 'calc(100vw - 40px)');
   root.style.setProperty('--zion-banner-hover-duration', Math.max(100, Number(config.hoverDuration || 180)) + 'ms');
   root.style.setProperty('--zion-banner-hover-scale', Math.max(100, Number(config.hoverScale || 102)) / 100);
   root.innerHTML = '<div class="zion-privacy-banner__content">'
@@ -278,7 +281,7 @@
   }
 
   function safePosition(value) {
-    return ['bottom', 'top', 'bottom_right', 'bottom_left', 'center'].indexOf(value) !== -1 ? value : 'bottom';
+    return ['bottom', 'top', 'bottom_centered', 'top_centered', 'bottom_right', 'bottom_left', 'top_right', 'top_left', 'center'].indexOf(value) !== -1 ? value : 'bottom';
   }
 
   function safeLauncherPosition(value) {
