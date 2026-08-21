@@ -407,6 +407,8 @@ final class RestController
             'banner_selector_title' => $settings['banner_selector_title'],
             'banner_selector_message' => $settings['banner_selector_message'],
             'banner_position' => $settings['banner_position'],
+            'banner_launcher_position' => $settings['banner_launcher_position'],
+            'banner_policy_link_target' => $settings['banner_policy_link_target'],
             'banner_width' => (int) $settings['banner_width'],
             'banner_radius' => (int) $settings['banner_radius'],
             'banner_font_size' => (int) $settings['banner_font_size'],

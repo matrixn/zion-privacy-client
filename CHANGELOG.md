@@ -1,5 +1,13 @@
 # Changelog
 
+### Commit 29 — Floating cookie preferences launcher and legal link targets
+
+- Added a floating cookie icon that remains available after any consent choice and opens the preferences modal again from a configurable browser corner.
+- Added modal footer actions using the configured banner labels, legal links and a branded `Powered by ZionPrivacy` link to `https://zion3d.ro`.
+- Fixed the modal close control alignment and added `_self`, `_blank`, `_parent` and `_top` targets for legal links.
+- Selecting a legal page now copies its WordPress page title into the editable link label automatically.
+- Bumped plugin version to `0.1.24`.
+
 ### Commit 28 — Site-local cookie category overrides and AI route fix
 
 - Added an explicit Save action and success notification when changing a cookie category; saved overrides remain local to this WordPress website and are reapplied after future scans.

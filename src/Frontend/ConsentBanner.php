@@ -46,6 +46,8 @@ final class ConsentBanner
             'selectorTitle' => $settings['banner_selector_title'],
             'selectorMessage' => $settings['banner_selector_message'],
             'position' => $settings['banner_position'],
+            'launcherPosition' => $settings['banner_launcher_position'],
+            'policyLinkTarget' => $settings['banner_policy_link_target'],
             'width' => (int) $settings['banner_width'],
             'radius' => (int) $settings['banner_radius'],
             'fontSize' => (int) $settings['banner_font_size'],

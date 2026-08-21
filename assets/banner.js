@@ -3,10 +3,7 @@
 
   var config = window.ZionPrivacyBanner || {};
   var storageKey = config.storageKey || 'zion_privacy_consent_v1';
-
-  if (config.preview !== true && window.localStorage.getItem(storageKey)) {
-    return;
-  }
+  var hasStoredConsent = config.preview !== true && !!window.localStorage.getItem(storageKey);
 
   var host = document.createElement('section');
   host.setAttribute('data-zion-privacy-banner-host', '');
@@ -17,6 +14,8 @@
   shadowRoot.appendChild(stylesheet);
 
   var root = document.createElement('section');
+  var launcher = null;
+  var modalOnly = false;
   var regulation = safeRegulation(config.regulation || 'gdpr');
   var defaultRejectLabel = regulation === 'us_state_laws'
     ? 'Do not sell or share'
@@ -27,6 +26,7 @@
     + (config.shadow === false ? ' is-flat' : '')
     + (config.useSiteFont === false ? ' uses-system-font' : ' uses-site-font')
     + (config.hoverEnabled === false ? ' hover-disabled' : '')
+    + (hasStoredConsent ? ' is-hidden' : '')
     + ' hover-' + safeHoverEffect(config.hoverEffect || 'lift_glow');
   root.setAttribute('aria-label', 'Privacy preferences');
   var colors = config.colors || {};
@@ -86,9 +86,19 @@
     applyConsent(consent, action === 'accept' ? 'accepted' : 'rejected');
   });
 
-  function showPreferences() {
+  if (hasStoredConsent) {
+    showLauncher();
+  }
+
+  function showPreferences(fromLauncher) {
     if (root.querySelector('.zion-privacy-banner__preferences')) {
       return;
+    }
+
+    if (fromLauncher) {
+      modalOnly = true;
+      root.classList.remove('is-hidden');
+      root.classList.add('is-modal-only');
     }
 
     var groups = ['necessary', 'preferences', 'analytics', 'marketing', 'security', 'personalization', 'unknown'];
@@ -121,7 +131,16 @@
     modal.innerHTML = '<div class="zion-privacy-banner__preferences-dialog" role="dialog" aria-modal="true" aria-label="Cookie preferences">'
       + '<div class="zion-privacy-banner__preferences-header"><div><span>Privacy choices · ' + escapeHtml(formatRegulation(regulation)) + '</span><h2>' + escapeHtml(config.selectorTitle || 'Customize cookies') + '</h2><p>' + escapeHtml(selectorMessage) + '</p></div><button type="button" data-zion-consent="close-preferences" aria-label="Close">×</button></div>'
       + '<div class="zion-privacy-banner__preferences-body">' + html + '</div>'
-      + '<div class="zion-privacy-banner__preferences-footer"><button type="button" data-zion-consent="close-preferences">Cancel</button><button type="button" data-zion-consent="save-preferences" class="is-primary">' + escapeHtml(config.saveLabel || 'Save preferences') + '</button></div>'
+      + '<div class="zion-privacy-banner__preferences-footer">'
+      + '<div class="zion-privacy-banner__preferences-actions">'
+      + '<button type="button" data-zion-consent="reject">' + escapeHtml(rejectLabel) + '</button>'
+      + '<button type="button" data-zion-consent="close-preferences">Cancel</button>'
+      + '<button type="button" data-zion-consent="save-preferences">' + escapeHtml(config.saveLabel || 'Save preferences') + '</button>'
+      + '<button type="button" data-zion-consent="accept" class="is-primary">' + escapeHtml(config.acceptLabel || 'Accept all') + '</button>'
+      + '</div>'
+      + renderPolicyLinks()
+      + '<div class="zion-privacy-banner__powered">Powered by <a href="https://zion3d.ro" target="_blank" rel="noopener noreferrer" class="zion-privacy-banner__powered-link"><span class="zion-privacy-banner__powered-logo"><strong>zion</strong><span>Privacy</span></span></a></div>'
+      + '</div>'
       + '</div>';
     root.appendChild(modal);
   }
@@ -130,6 +149,11 @@
     var modal = root.querySelector('.zion-privacy-banner__preferences');
     if (modal) {
       modal.remove();
+    }
+    if (modalOnly) {
+      modalOnly = false;
+      root.classList.remove('is-modal-only');
+      root.classList.add('is-hidden');
     }
   }
 
@@ -149,8 +173,37 @@
       window.localStorage.setItem(storageKey, JSON.stringify(consent));
       sendConsentEvent(consent, status);
     }
-    host.remove();
+    if (config.preview === true) {
+      host.remove();
+    } else {
+      hasStoredConsent = true;
+      modalOnly = false;
+      var modal = root.querySelector('.zion-privacy-banner__preferences');
+      if (modal) {
+        modal.remove();
+      }
+      root.classList.remove('is-modal-only');
+      root.classList.add('is-hidden');
+      showLauncher();
+    }
     document.dispatchEvent(new CustomEvent('zionprivacy:consent', { detail: consent }));
+  }
+
+  function showLauncher() {
+    if (launcher || config.preview === true) {
+      return;
+    }
+
+    launcher = document.createElement('button');
+    launcher.type = 'button';
+    launcher.className = 'zion-privacy-banner__launcher zion-privacy-banner__launcher--' + safeLauncherPosition(config.launcherPosition || 'bottom_right');
+    launcher.setAttribute('aria-label', 'Review cookie preferences');
+    launcher.title = 'Review cookie preferences';
+    launcher.innerHTML = '<span class="zion-privacy-banner__launcher-icon" aria-hidden="true">🍪</span><span class="zion-privacy-banner__launcher-label">Review cookie preferences</span>';
+    launcher.addEventListener('click', function () {
+      showPreferences(true);
+    });
+    shadowRoot.appendChild(launcher);
   }
 
   function sendConsentEvent(consent, status) {
@@ -214,13 +267,24 @@
       return '';
     }
 
+    var target = safeLinkTarget(config.policyLinkTarget || '_self');
+    var targetAttribute = ' target="' + escapeAttribute(target) + '"' + (target === '_blank' ? ' rel="noopener noreferrer"' : '');
+
     return '<div class="zion-privacy-banner__policy-links">' + links.map(function (link) {
-      return '<a href="' + escapeAttribute(link.url) + '">' + escapeHtml(link.label) + '</a>';
+      return '<a href="' + escapeAttribute(link.url) + '"' + targetAttribute + '>' + escapeHtml(link.label) + '</a>';
     }).join('<span aria-hidden="true"> · </span>') + '</div>';
   }
 
   function safePosition(value) {
     return ['bottom', 'top', 'bottom_right', 'bottom_left', 'center'].indexOf(value) !== -1 ? value : 'bottom';
+  }
+
+  function safeLauncherPosition(value) {
+    return ['top_left', 'top_right', 'bottom_left', 'bottom_right'].indexOf(value) !== -1 ? value : 'bottom_right';
+  }
+
+  function safeLinkTarget(value) {
+    return ['_self', '_blank', '_parent', '_top'].indexOf(value) !== -1 ? value : '_self';
   }
 
   function safeHoverEffect(value) {

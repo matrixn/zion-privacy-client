@@ -78,6 +78,8 @@ final class SettingsRepository
             $current[$key] = $this->pageId($settings[$key] ?? $current[$key]);
         }
         $current['banner_position'] = $this->allowedChoice($settings, 'banner_position', ['bottom', 'top', 'bottom_right', 'bottom_left', 'center'], $current['banner_position']);
+        $current['banner_launcher_position'] = $this->allowedChoice($settings, 'banner_launcher_position', ['top_left', 'top_right', 'bottom_left', 'bottom_right'], $current['banner_launcher_position']);
+        $current['banner_policy_link_target'] = $this->allowedChoice($settings, 'banner_policy_link_target', ['_self', '_blank', '_parent', '_top'], $current['banner_policy_link_target']);
         $current['banner_button_hover_effect'] = $this->allowedChoice($settings, 'banner_button_hover_effect', ['none', 'lift', 'glow', 'lift_glow'], $current['banner_button_hover_effect']);
         $current['banner_width'] = max(520, min(1400, absint($settings['banner_width'] ?? $current['banner_width'])));
         $current['banner_radius'] = max(0, min(32, absint($settings['banner_radius'] ?? $current['banner_radius'])));
@@ -135,6 +137,8 @@ final class SettingsRepository
             'banner_selector_title' => 'Customize cookies',
             'banner_selector_message' => 'Choose which cookie categories you allow on this website.',
             'banner_position' => 'bottom',
+            'banner_launcher_position' => 'bottom_right',
+            'banner_policy_link_target' => '_self',
             'banner_width' => 1180,
             'banner_radius' => 12,
             'banner_font_size' => 14,

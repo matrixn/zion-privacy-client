@@ -1074,10 +1074,11 @@ function BannerPage() {
   if (!settings) return <Loading />;
 
   const pageOptions = [
-    { label: "Select a WordPress page", value: "0" },
+    { label: "Select a WordPress page", value: "0", pageTitle: "" },
     ...pages.map((page) => ({
       label: `${page.title}${page.status !== "publish" ? ` (${page.status})` : ""}`,
       value: String(page.id),
+      pageTitle: String(page.title || ""),
     })),
   ];
 
@@ -1241,6 +1242,26 @@ function BannerPage() {
                     ]}
                     onChange={(value) => update({ banner_position: value })}
                   />
+                  <SelectControl
+                    label="Cookie preferences icon position"
+                    value={settings.banner_launcher_position || "bottom_right"}
+                    options={[
+                      { label: "Top left", value: "top_left" },
+                      { label: "Top right", value: "top_right" },
+                      { label: "Bottom left", value: "bottom_left" },
+                      { label: "Bottom right", value: "bottom_right" },
+                    ]}
+                    onChange={(value) =>
+                      update({ banner_launcher_position: value })
+                    }
+                  />
+                  <div className="zion-admin__field zion-admin__field--full">
+                    <small>
+                      After a visitor chooses Accept, Reject or saves custom
+                      preferences, the floating cookie icon stays available in
+                      this corner so the consent modal can be revisited.
+                    </small>
+                  </div>
                   <NumberControl
                     label="Maximum width (px)"
                     value={settings.banner_width || 1180}
@@ -1320,6 +1341,19 @@ function BannerPage() {
                     pageOptions={pageOptions}
                     onChange={(values) => update(values)}
                     description="Add the cookie policy page to the legal links shown in the banner."
+                  />
+                  <SelectControl
+                    label="Legal link target"
+                    value={settings.banner_policy_link_target || "_self"}
+                    options={[
+                      { label: "Same window (_self)", value: "_self" },
+                      { label: "New tab (_blank)", value: "_blank" },
+                      { label: "Parent frame (_parent)", value: "_parent" },
+                      { label: "Top frame (_top)", value: "_top" },
+                    ]}
+                    onChange={(value) =>
+                      update({ banner_policy_link_target: value })
+                    }
                   />
                 </div>
               </BannerAccordion>
@@ -1611,7 +1645,7 @@ function PolicyLinkSettings({
   enabled: boolean;
   pageId: number;
   label: string;
-  pageOptions: { label: string; value: string }[];
+  pageOptions: { label: string; value: string; pageTitle?: string }[];
   onChange: (values: RecordData) => void;
 }) {
   return (
@@ -1641,12 +1675,21 @@ function PolicyLinkSettings({
             value={String(pageId || 0)}
             options={pageOptions}
             onChange={(value) => {
-              const key = title === "Privacy policy"
+              const pageKey = title === "Privacy policy"
                 ? "banner_privacy_policy_page_id"
                 : title === "Terms and Conditions"
                   ? "banner_terms_page_id"
                   : "banner_cookie_policy_page_id";
-              onChange({ [key]: Number(value) });
+              const labelKey = title === "Privacy policy"
+                ? "banner_privacy_policy_link_label"
+                : title === "Terms and Conditions"
+                  ? "banner_terms_link_label"
+                  : "banner_cookie_policy_link_label";
+              const selectedPage = pageOptions.find((page) => page.value === value);
+              onChange({
+                [pageKey]: Number(value),
+                ...(selectedPage?.pageTitle ? { [labelKey]: selectedPage.pageTitle } : {}),
+              });
             }}
           />
           <TextControl
