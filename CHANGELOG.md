@@ -1,8 +1,15 @@
 # Changelog
 
+### Commit 33 — Compact consent actions in navigation
+
+- Replaced the top-right theme, renew-consent and banner-preview labels with compact icon-only buttons so the navigation remains clean at narrow widths.
+- Preserved accessible labels and native tooltips for every action.
+- Bumped plugin version to `0.1.28`.
+
 ### Commit 32 — Keep custom banner text out of preferences modal
 
 - Removed the custom banner message from the preferences modal so the modal shows only its standard instructions and enabled legal links.
+- Changed the top-right consent and theme actions to compact icon-only buttons with accessible labels and tooltips.
 - Bumped plugin version to `0.1.27`.
 
 ### Commit 31 — Expanded banner positions and quick consent actions

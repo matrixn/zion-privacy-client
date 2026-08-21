@@ -2808,13 +2808,13 @@ function Sidebar({
           className="zion-admin__theme-switcher"
           onClick={onThemeChange}
           aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
+          title={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
         >
           <span
             className={`dashicons ${
               theme === "dark" ? "dashicons-sun" : "dashicons-moon"
             }`}
           />
-          {theme === "dark" ? "Light" : "Dark"}
         </button>
         <button
           type="button"
@@ -2822,9 +2822,9 @@ function Sidebar({
           onClick={renewConsents}
           disabled={renewing}
           title="Show the consent banner again for visitors who already made a choice"
+          aria-label="Renew consents"
         >
           <span className="dashicons dashicons-update" />
-          {renewing ? "Renewing…" : "Renew consents"}
         </button>
         <a
           className="zion-admin__sidebar-action"
@@ -2832,9 +2832,9 @@ function Sidebar({
           target="_blank"
           rel="noopener noreferrer"
           title="Open the public banner preview"
+          aria-label="View banner"
         >
           <span className="dashicons dashicons-welcome-view-site" />
-          View banner
         </a>
         <small>v{config.version}</small>
       </div>
