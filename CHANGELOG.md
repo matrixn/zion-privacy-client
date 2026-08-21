@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+### Commit 23 — Solid, high-contrast button states
+
+- Replaced ambiguous button gradients with readable solid surfaces, explicit borders and visible hover/active feedback across dark and light themes.
+- Kept primary, secondary and destructive actions visually distinct without sacrificing contrast.
+
+### Commit 24 — Scan controls and protected cookie AI identification
+
+- Added representative icons to scan actions, redesigned the destructive action state for clearer contrast and added visible last-scan and last-successful-scan timestamps.
+- Refreshing scans now clears the existing table before the fresh API response is rendered.
+- Added a cookie AI identification action that reuses the API knowledge database first and shows a Pro+ requirement for Free accounts; the API remains the authoritative server-side entitlement check.
+- Added AI source/status presentation and kept refresh/cache behavior intact.
+
 ### Commit 22 — Dashboard visual polish, theme switcher and local cookie cache
 
 - Replaced the Dashboard Cookie summary legend with a responsive category donut chart and improved the Website connection card with a visible site identity and status badge.

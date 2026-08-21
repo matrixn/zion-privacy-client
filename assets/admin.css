@@ -392,3 +392,20 @@ body.zion-privacy-theme-light.toplevel_page_zion-privacy .zion-admin__sidebar { 
 .zion-admin-shell[data-theme="light"] .zion-admin__nav-item.is-active { background: #fff0e6 !important; }
 .zion-admin-shell[data-theme="light"] .zion-admin__theme-switcher { color: #1e293b; background: #fff !important; }
 .zion-admin-shell[data-theme="light"] .zion-admin__theme-switcher:hover { background: #fff0e6 !important; }
+
+/* Final action treatment: solid surfaces keep destructive actions readable in both themes. */
+.zion-admin .components-button { gap: 7px; }
+.zion-admin__button-icon { width: 14px; height: 14px; font-size: 14px; line-height: 1; }
+.zion-admin__table-actions .components-button { gap: 5px; }
+.zion-admin .components-button.is-destructive { color: #ffd7dc; background: #3b2941 !important; border-color: #e8797f; box-shadow: 0 6px 15px rgba(232, 121, 127, .16); }
+.zion-admin .components-button.is-destructive:hover { color: #fff; background: #b94b5e !important; border-color: #ffb0b4; box-shadow: 0 9px 20px rgba(185, 75, 94, .28), 0 0 0 3px rgba(232, 121, 127, .12); }
+.zion-admin .components-button.is-destructive:active { background: #963d50 !important; }
+.zion-admin__ai-plan-lock { display: inline-flex; align-items: center; min-height: 30px; padding: 0 9px; color: #fbbf24; background: rgba(245, 158, 11, .11); border: 1px solid rgba(245, 158, 11, .34); border-radius: 7px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.zion-admin__scan-timestamps { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.zion-admin__scan-timestamps span { display: inline-flex; align-items: baseline; gap: 6px; padding: 6px 9px; color: var(--muted); background: rgba(96, 165, 250, .08); border: 1px solid rgba(96, 165, 250, .18); border-radius: 8px; font-size: 11px; }
+.zion-admin__scan-timestamps small { color: var(--muted); font-size: 9px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.zion-admin__scan-timestamps strong { color: var(--ink); font-size: 11px; font-weight: 700; }
+.zion-admin-shell[data-theme="light"] .zion-admin .components-button.is-destructive { color: #9a3412; background: #fff7ed !important; border-color: #fb923c; }
+.zion-admin-shell[data-theme="light"] .zion-admin .components-button.is-destructive:hover { color: #fff; background: #f97316 !important; border-color: #fdba74; }
+.zion-admin-shell[data-theme="light"] .zion-admin .components-button.is-destructive:active { background: #ea580c !important; }
+.zion-admin-shell[data-theme="light"] .zion-admin__ai-plan-lock { color: #9a3412; background: #fff7ed; border-color: #fdba74; }

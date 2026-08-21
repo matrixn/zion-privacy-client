@@ -53,6 +53,11 @@ final class RestController
             'permission_callback' => [$this, 'permission'],
             'callback' => [$this, 'saveCookieCategory'],
         ]);
+        register_rest_route('zion-privacy/v1', '/cookies/(?P<cookie>[0-9]+)/identify', [
+            'methods' => 'POST',
+            'permission_callback' => [$this, 'permission'],
+            'callback' => [$this, 'identifyCookie'],
+        ]);
         register_rest_route('zion-privacy/v1', '/statistics', [
             'methods' => 'GET',
             'permission_callback' => [$this, 'permission'],
@@ -197,12 +202,30 @@ final class RestController
             return $response;
         }
 
+        $accountResponse = $this->api->get('installation/account');
+
         return [
             'data' => $this->applyOverrides((array) ($response['data'] ?? [])),
             'saved_at' => $response['saved_at'] ?? null,
             'cached' => ! empty($response['cached']),
             'stale' => ! empty($response['stale']),
+            'account' => is_wp_error($accountResponse) ? null : $accountResponse,
         ];
+    }
+
+    private function identifyCookie(\WP_REST_Request $request): array|\WP_Error
+    {
+        $websiteResponse = $this->api->get('websites', ['per_page' => 1]);
+        if (is_wp_error($websiteResponse)) {
+            return $websiteResponse;
+        }
+
+        $website = $this->firstData($websiteResponse);
+        if (! $website) {
+            return new \WP_Error('zion_privacy_no_website', 'No website is linked to this WordPress installation.');
+        }
+
+        return $this->api->post('websites/'.rawurlencode((string) $website['id']).'/cookies/'.rawurlencode((string) $request['cookie']).'/identify');
     }
 
     private function statistics(): array|\WP_Error
