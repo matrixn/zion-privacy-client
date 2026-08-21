@@ -16,6 +16,7 @@
   box-shadow: 0 16px 55px rgba(20, 43, 74, .2);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: var(--zion-banner-font-size, 14px);
+  pointer-events: auto;
 }
 
 .zion-privacy-banner,
@@ -67,7 +68,7 @@
 .zion-privacy-banner.hover-lift_glow button:hover { box-shadow: 0 8px 22px rgba(35, 105, 209, .24); filter: brightness(1.04); }
 .zion-privacy-banner.hover-disabled button:hover { transform: none; box-shadow: none; filter: none; }
 .zion-privacy-banner.is-customizing::after { display: block; margin-top: 12px; color: #52657c; content: "Customization controls will be available after the API consent policy is connected."; font-size: 13px; }
-.zion-privacy-banner__preferences { position: fixed; z-index: 2147483647; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(17, 32, 55, .62); }
+.zion-privacy-banner__preferences { position: fixed; z-index: 2147483647; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(17, 32, 55, .62); pointer-events: auto; }
 .zion-privacy-banner__preferences-dialog { display: flex; flex-direction: column; width: min(620px, 100%); height: min(82vh, 720px); max-height: min(82vh, 720px); overflow: hidden; color: var(--zion-banner-text, #183153); background: var(--zion-banner-background, #fff); border-radius: var(--zion-banner-radius, 12px); box-shadow: 0 24px 70px rgba(2, 13, 34, .38); }
 .zion-privacy-banner__preferences-header { display: flex; flex: 0 0 auto; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 18px 20px; border-bottom: 1px solid #dce5f0; }
 .zion-privacy-banner__preferences-header span { color: var(--zion-banner-primary, #2369d1); font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
@@ -101,7 +102,7 @@
 .zion-privacy-banner__powered-logo { display: inline-flex; align-items: baseline; gap: 1px; font-size: 13px; font-weight: 800; letter-spacing: -.04em; }
 .zion-privacy-banner__powered-logo strong { color: #21b477; font-weight: 900; }
 .zion-privacy-banner__powered-logo span { color: var(--zion-banner-primary, #2369d1); }
-.zion-privacy-banner__launcher { position: fixed; z-index: 2147483647; display: grid; width: 50px; height: 50px; place-items: center; padding: 0; color: var(--zion-banner-primary-text, #fff); background: var(--zion-banner-primary, #2369d1); border: 2px solid var(--zion-banner-background, #fff); border-radius: 50%; box-shadow: 0 10px 28px rgba(2, 13, 34, .3), 0 0 0 4px rgba(35, 105, 209, .14); cursor: pointer; font: inherit; transition: transform .2s ease, box-shadow .2s ease, filter .2s ease; }
+.zion-privacy-banner__launcher { position: fixed; z-index: 2147483647; display: grid; width: 50px; height: 50px; place-items: center; padding: 0; color: var(--zion-banner-primary-text, #fff); background: var(--zion-banner-primary, #2369d1); border: 2px solid var(--zion-banner-background, #fff); border-radius: 50%; box-shadow: 0 10px 28px rgba(2, 13, 34, .3), 0 0 0 4px rgba(35, 105, 209, .14); cursor: pointer; font: inherit; pointer-events: auto; transition: transform .2s ease, box-shadow .2s ease, filter .2s ease; }
 .zion-privacy-banner__launcher:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 14px 34px rgba(2, 13, 34, .38), 0 0 0 6px rgba(35, 105, 209, .18); filter: brightness(1.06); }
 .zion-privacy-banner__launcher--top_left { top: 20px; left: 20px; }
 .zion-privacy-banner__launcher--top_right { top: 20px; right: 20px; }

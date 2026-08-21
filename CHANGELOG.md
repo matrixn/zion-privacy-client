@@ -1,5 +1,11 @@
 # Changelog
 
+### Commit 35 — Raise consent host stacking context
+
+- Applied the maximum practical z-index to the Shadow DOM host itself, not only its internal modal elements.
+- Made the host transparent to pointer events outside the consent UI while preserving interaction with the modal and floating cookie launcher.
+- Bumped plugin version to `0.1.30`.
+
 ### Commit 34 — Refined top-right navigation toolbar
 
 - Replaced the stacked top-right controls with a horizontal toolbar containing the API status pill and compact icon actions.

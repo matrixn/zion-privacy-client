@@ -7,6 +7,12 @@
 
   var host = document.createElement('section');
   host.setAttribute('data-zion-privacy-banner-host', '');
+  host.style.position = 'fixed';
+  host.style.inset = '0';
+  host.style.width = '100vw';
+  host.style.height = '100vh';
+  host.style.zIndex = '2147483647';
+  host.style.pointerEvents = 'none';
   var shadowRoot = host.attachShadow ? host.attachShadow({ mode: 'open' }) : host;
   var stylesheet = document.createElement('link');
   stylesheet.rel = 'stylesheet';
