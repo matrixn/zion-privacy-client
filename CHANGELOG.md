@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### Commit 21 — Plan-aware scan limits and live entitlement usage
+
+- Displayed real scan usage in the Dashboard plan cards, including latest pages, total pages, website usage and completed/failed scan counts.
+- Added API usage fields for completed pages, cookies and scans so the plugin no longer presents entitlements without their current consumption.
+- Updated the API scan flow to use the connected user’s package limit before the global scanner default, while keeping per-site scanner overrides available.
+- Bumped the plugin version to 0.1.17.
+
 ### Commit 20 — Runtime metadata and Google-only connection UI
 
 - Sent WordPress and PHP runtime versions with OAuth exchange and every authenticated API request so the API can display current client compatibility data.
