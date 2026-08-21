@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Commit 19 — Notifications below the page header
+
+- Moved plugin toast notifications into the normal page flow directly below the title and subtitle.
+- Prevented notifications from covering the Zion Privacy navigation or blocking controls underneath it.
+- Kept the existing pause-on-hover, click-to-copy and progress timer behavior, with responsive full-width placement on small screens.
+
 ### Commit 18 — Unified admin action buttons
 
 - Moved Reset design below the banner accordions, directly before Save banner settings.
