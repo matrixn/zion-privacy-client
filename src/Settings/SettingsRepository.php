@@ -14,6 +14,8 @@ final class SettingsRepository
 
     private const COOKIE_OVERRIDES_OPTION = 'zion_privacy_cookie_overrides';
 
+    private const COOKIE_CACHE_OPTION = 'zion_privacy_cookie_cache';
+
     public function __construct(private readonly CredentialVault $vault) {}
 
     public function all(): array
@@ -181,6 +183,23 @@ final class SettingsRepository
         ];
 
         update_option(self::COOKIE_OVERRIDES_OPTION, $overrides, false);
+    }
+
+    public function cookieCache(): array
+    {
+        $cache = get_option(self::COOKIE_CACHE_OPTION, []);
+
+        return is_array($cache) ? $cache : [];
+    }
+
+    public function saveCookieCache(string $websiteId, array $cookies): void
+    {
+        update_option(self::COOKIE_CACHE_OPTION, [
+            'website_id' => sanitize_text_field($websiteId),
+            'data' => array_values($cookies),
+            'saved_at' => gmdate('c'),
+            'saved_at_timestamp' => time(),
+        ], false);
     }
 
     private function hasValue(mixed $value): bool

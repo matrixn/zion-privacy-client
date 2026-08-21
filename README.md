@@ -1,5 +1,7 @@
 # Zion Privacy Client
 
+The admin dashboard uses a dark-first blue/orange visual system with a persistent light theme option. Cookie inventory results are cached in the WordPress database, refreshed manually or periodically, and display the timestamp of the local snapshot. If the API is temporarily unavailable, the latest saved snapshot remains visible as stale data.
+
 Zion Privacy Client is the WordPress client for the Zion Privacy API. It provides a native WordPress administration experience for connecting a site, reviewing scanner results and showing a privacy consent banner.
 
 The plugin is intentionally separated from the Laravel API and browser scanner:

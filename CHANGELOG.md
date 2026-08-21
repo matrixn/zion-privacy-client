@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### Commit 22 — Dashboard visual polish, theme switcher and local cookie cache
+
+- Replaced the Dashboard Cookie summary legend with a responsive category donut chart and improved the Website connection card with a visible site identity and status badge.
+- Added a professional dark-first blue/orange theme system with a light variant, a menu theme switcher and `localStorage` persistence.
+- Added a WordPress database-backed cookie snapshot with saved timestamp, manual refresh, periodic refresh and stale-cache fallback when the API is temporarily unavailable.
+- Added an hourly WP-Cron refresh for the local cookie snapshot and removed the scheduled event on plugin deactivation.
+- Bumped the plugin version to 0.1.18.
+
 ### Commit 21 — Plan-aware scan limits and live entitlement usage
 
 - Displayed real scan usage in the Dashboard plan cards, including latest pages, total pages, website usage and completed/failed scan counts.

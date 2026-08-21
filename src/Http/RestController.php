@@ -19,6 +19,11 @@ final class RestController
     public function register(): void
     {
         add_action('rest_api_init', [$this, 'routes']);
+        add_action('zion_privacy_refresh_cookie_cache', [$this, 'refreshCookieCache']);
+
+        if (! wp_next_scheduled('zion_privacy_refresh_cookie_cache')) {
+            wp_schedule_event(time() + 300, 'hourly', 'zion_privacy_refresh_cookie_cache');
+        }
     }
 
     public function routes(): void
@@ -41,7 +46,7 @@ final class RestController
         register_rest_route('zion-privacy/v1', '/cookies', [
             'methods' => 'GET',
             'permission_callback' => [$this, 'permission'],
-            'callback' => fn (): array|\WP_Error => $this->cookies(),
+            'callback' => fn (\WP_REST_Request $request): array|\WP_Error => $this->cookies($request),
         ]);
         register_rest_route('zion-privacy/v1', '/cookies/category', [
             'methods' => 'POST',
@@ -158,23 +163,46 @@ final class RestController
         }
 
         $scansResponse = $this->api->get('websites/'.rawurlencode((string) $website['id']).'/scans', ['per_page' => 10]);
-        $cookiesResponse = $this->api->get('websites/'.rawurlencode((string) $website['id']).'/cookies');
+        $cookiesResponse = $this->cachedCookiesForWebsite($website);
         $accountResponse = $this->api->get('installation/account');
 
         return [
             'website' => $website,
             'scans' => is_wp_error($scansResponse) ? [] : (array) ($scansResponse['data'] ?? []),
             'cookies' => is_wp_error($cookiesResponse) ? [] : $this->applyOverrides((array) ($cookiesResponse['data'] ?? [])),
+            'cookies_synced_at' => is_wp_error($cookiesResponse) ? null : ($cookiesResponse['saved_at'] ?? null),
             'stats' => $this->statsFrom($website, $scansResponse, $cookiesResponse),
             'account' => is_wp_error($accountResponse) ? null : $accountResponse,
         ];
     }
 
-    private function cookies(): array|\WP_Error
+    private function cookies(\WP_REST_Request $request): array|\WP_Error
     {
-        $dashboard = $this->dashboard();
+        if (! $this->settings->isConnected()) {
+            return ['data' => [], 'saved_at' => null, 'cached' => false, 'stale' => false];
+        }
 
-        return is_wp_error($dashboard) ? $dashboard : ['data' => $dashboard['cookies']];
+        $websiteResponse = $this->api->get('websites', ['per_page' => 1]);
+        if (is_wp_error($websiteResponse)) {
+            return $websiteResponse;
+        }
+
+        $website = $this->firstData($websiteResponse);
+        if (! $website) {
+            return ['data' => [], 'saved_at' => null, 'cached' => false, 'stale' => false];
+        }
+
+        $response = $this->cachedCookiesForWebsite($website, (string) $request->get_param('refresh') === '1');
+        if (is_wp_error($response)) {
+            return $response;
+        }
+
+        return [
+            'data' => $this->applyOverrides((array) ($response['data'] ?? [])),
+            'saved_at' => $response['saved_at'] ?? null,
+            'cached' => ! empty($response['cached']),
+            'stale' => ! empty($response['stale']),
+        ];
     }
 
     private function statistics(): array|\WP_Error
@@ -223,6 +251,65 @@ final class RestController
     public function account(): array|\WP_Error
     {
         return $this->api->get('installation/account');
+    }
+
+    public function refreshCookieCache(): void
+    {
+        if (! $this->settings->isConnected()) {
+            return;
+        }
+
+        $websiteResponse = $this->api->get('websites', ['per_page' => 1]);
+        $website = is_wp_error($websiteResponse) ? null : $this->firstData($websiteResponse);
+
+        if ($website) {
+            $this->cachedCookiesForWebsite($website, true);
+        }
+    }
+
+    private function cachedCookiesForWebsite(array $website, bool $force = false): array|\WP_Error
+    {
+        $cache = $this->settings->cookieCache();
+        $websiteId = (string) ($website['id'] ?? '');
+        $hasCache = $websiteId !== ''
+            && (string) ($cache['website_id'] ?? '') === $websiteId
+            && is_array($cache['data'] ?? null);
+        $savedAt = (int) ($cache['saved_at_timestamp'] ?? 0);
+        $freshUntil = time() - ($this->settings->bannerCookieCacheMinutes() * MINUTE_IN_SECONDS);
+
+        if (! $force && $hasCache && $savedAt >= $freshUntil) {
+            return [
+                'data' => $cache['data'],
+                'saved_at' => $cache['saved_at'] ?? null,
+                'cached' => true,
+                'stale' => false,
+            ];
+        }
+
+        $response = $this->api->get('websites/'.rawurlencode($websiteId).'/cookies');
+        if (is_wp_error($response)) {
+            if ($hasCache) {
+                return [
+                    'data' => $cache['data'],
+                    'saved_at' => $cache['saved_at'] ?? null,
+                    'cached' => true,
+                    'stale' => true,
+                ];
+            }
+
+            return $response;
+        }
+
+        $data = (array) ($response['data'] ?? []);
+        $this->settings->saveCookieCache($websiteId, $data);
+        $saved = $this->settings->cookieCache();
+
+        return [
+            'data' => $data,
+            'saved_at' => $saved['saved_at'] ?? null,
+            'cached' => false,
+            'stale' => false,
+        ];
     }
 
     public function createScan(\WP_REST_Request $request): array|\WP_Error

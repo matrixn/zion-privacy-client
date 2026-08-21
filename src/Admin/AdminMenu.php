@@ -58,6 +58,7 @@ final class AdminMenu
             'scanPollIntervalSeconds' => $this->settings->scanPollIntervalSeconds(),
             'defaultScanMode' => $this->settings->all()['default_scan_mode'],
             'defaultScanScenario' => $this->settings->all()['default_scan_scenario'],
+            'cookieCacheMinutes' => $this->settings->bannerCookieCacheMinutes(),
         ]);
     }
 
