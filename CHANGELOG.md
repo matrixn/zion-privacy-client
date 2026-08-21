@@ -137,3 +137,8 @@
 - Added the HMAC API client, encrypted credential vault, REST bridge and API-owned OAuth exchange contract.
 - Added the initial consent banner and local cookie-category override storage.
 - Added English project documentation and development commands.
+### Commit 23 — Solid, high-contrast button states
+
+- Replaced gradients from admin and consent-banner buttons with clear solid action colors for neutral, primary and destructive actions.
+- Added consistent readable text contrast, keyboard focus rings and subtle hover/pressed feedback in dark and light themes.
+- Kept the configured consent-banner colors intact while preventing inherited site backgrounds or gradients from reducing button legibility.

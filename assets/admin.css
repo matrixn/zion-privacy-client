@@ -260,3 +260,135 @@ body.zion-privacy-theme-light.toplevel_page_zion-privacy .zion-admin__sidebar { 
 .zion-admin-shell[data-theme="light"] .zion-admin__empty { color: #667085; }
 .zion-admin-shell[data-theme="light"] .zion-admin__theme-switcher { color: #344054; background: rgba(59, 130, 246, .07); }
 @media (max-width: 700px) { .zion-admin__cookie-summary { grid-template-columns: 1fr; } .zion-admin__cookie-chart { width: min(180px, 60vw); } }
+
+/* Solid action buttons: keep every state readable on both themes. */
+.zion-admin .components-button,
+.zion-admin .components-button.is-secondary,
+.zion-admin .components-button.is-primary,
+.zion-admin .components-button.is-destructive,
+.zion-admin__theme-switcher,
+.zion-admin__nav-item,
+.zion-admin__banner-preview button,
+.zion-admin__preference-header button {
+  background-image: none !important;
+  transition: color .16s ease, background-color .16s ease, border-color .16s ease, box-shadow .16s ease, transform .16s ease;
+}
+
+.zion-admin .components-button {
+  color: #f8fafc;
+  background: #263554 !important;
+  border-color: #58709d;
+  box-shadow: 0 5px 13px rgba(2, 8, 27, .22);
+}
+
+.zion-admin .components-button:hover {
+  color: #fff;
+  background: #344a73 !important;
+  border-color: #8da9d8;
+  box-shadow: 0 8px 18px rgba(2, 8, 27, .3), 0 0 0 3px rgba(96, 165, 250, .12);
+  transform: translateY(-1px);
+}
+
+.zion-admin .components-button:focus-visible,
+.zion-admin__theme-switcher:focus-visible,
+.zion-admin__nav-item:focus-visible,
+.zion-admin__banner-preview button:focus-visible,
+.zion-admin__preference-header button:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, .28), 0 5px 13px rgba(2, 8, 27, .22);
+}
+
+.zion-admin .components-button:active,
+.zion-admin__theme-switcher:active,
+.zion-admin__nav-item:active,
+.zion-admin__banner-preview button:active,
+.zion-admin__preference-header button:active {
+  transform: translateY(0) scale(.98);
+  box-shadow: 0 2px 6px rgba(2, 8, 27, .24);
+}
+
+.zion-admin .components-button.is-primary {
+  color: #fff;
+  background: #f97316 !important;
+  border-color: #fb923c;
+  box-shadow: 0 7px 16px rgba(249, 115, 22, .25);
+}
+
+.zion-admin .components-button.is-primary:hover {
+  color: #fff;
+  background: #ea580c !important;
+  border-color: #fdba74;
+  box-shadow: 0 10px 22px rgba(249, 115, 22, .32), 0 0 0 3px rgba(249, 115, 22, .12);
+}
+
+.zion-admin .components-button.is-primary:active { background: #c2410c !important; }
+
+.zion-admin .components-button.is-secondary {
+  color: #e2e8f0;
+  background: #263554 !important;
+  border-color: #58709d;
+}
+
+.zion-admin .components-button.is-secondary:hover {
+  color: #fff;
+  background: #344a73 !important;
+  border-color: #8da9d8;
+}
+
+.zion-admin .components-button.is-destructive {
+  color: #fff1f2;
+  background: #be123c !important;
+  border-color: #fb7185;
+  box-shadow: 0 6px 15px rgba(190, 18, 60, .24);
+}
+
+.zion-admin .components-button.is-destructive:hover {
+  color: #fff;
+  background: #9f1239 !important;
+  border-color: #fda4af;
+  box-shadow: 0 9px 20px rgba(190, 18, 60, .3), 0 0 0 3px rgba(251, 113, 133, .12);
+}
+
+.zion-admin .components-button.is-destructive:active { background: #881337 !important; }
+
+.zion-admin__nav-item { background: transparent !important; }
+.zion-admin__nav-item:hover { background: #182544 !important; }
+.zion-admin__nav-item.is-active { background: #202d51 !important; }
+.zion-admin__theme-switcher { background: #202d51 !important; border-color: #58709d; }
+.zion-admin__theme-switcher:hover { background: #344a73 !important; border-color: #8da9d8; transform: translateY(-1px); }
+.zion-admin__banner-preview button { background: var(--zion-preview-secondary, #f1f6fc); background-image: none !important; }
+.zion-admin__banner-preview button:hover { background: var(--zion-preview-secondary, #e2e8f0); }
+.zion-admin__banner-preview button.is-primary { background: var(--zion-preview-primary, #2369d1); background-image: none !important; }
+.zion-admin__banner-preview button.is-primary:hover { background: var(--zion-preview-primary, #1d4ed8); }
+.zion-admin__preference-header button { background: #f1f5f9; background-image: none !important; }
+.zion-admin__preference-header button:hover { background: #e2e8f0; }
+
+.zion-admin-shell[data-theme="light"] .zion-admin .components-button,
+.zion-admin-shell[data-theme="light"] .zion-admin .components-button.is-secondary {
+  color: #1e293b;
+  background: #fff !important;
+  border-color: #b8c6dc;
+  box-shadow: 0 4px 11px rgba(62, 86, 124, .12);
+}
+
+.zion-admin-shell[data-theme="light"] .zion-admin .components-button:hover,
+.zion-admin-shell[data-theme="light"] .zion-admin .components-button.is-secondary:hover {
+  color: #172033;
+  background: #e8eff8 !important;
+  border-color: #7b96c1;
+  box-shadow: 0 7px 16px rgba(62, 86, 124, .18), 0 0 0 3px rgba(59, 130, 246, .1);
+}
+
+.zion-admin-shell[data-theme="light"] .zion-admin .components-button.is-primary,
+.zion-admin-shell[data-theme="light"] .zion-admin .components-button.is-primary:hover,
+.zion-admin-shell[data-theme="light"] .zion-admin .components-button.is-destructive,
+.zion-admin-shell[data-theme="light"] .zion-admin .components-button.is-destructive:hover { color: #fff; }
+
+.zion-admin-shell[data-theme="light"] .zion-admin .components-button.is-primary { background: #f97316 !important; }
+.zion-admin-shell[data-theme="light"] .zion-admin .components-button.is-primary:hover { background: #ea580c !important; }
+.zion-admin-shell[data-theme="light"] .zion-admin .components-button.is-destructive { background: #be123c !important; }
+.zion-admin-shell[data-theme="light"] .zion-admin .components-button.is-destructive:hover { background: #9f1239 !important; }
+.zion-admin-shell[data-theme="light"] .zion-admin__nav-item:hover { background: #fff1e8 !important; }
+.zion-admin-shell[data-theme="light"] .zion-admin__nav-item.is-active { background: #fff0e6 !important; }
+.zion-admin-shell[data-theme="light"] .zion-admin__theme-switcher { color: #1e293b; background: #fff !important; }
+.zion-admin-shell[data-theme="light"] .zion-admin__theme-switcher:hover { background: #fff0e6 !important; }
