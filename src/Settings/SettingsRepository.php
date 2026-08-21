@@ -18,8 +18,66 @@ final class SettingsRepository
 
     public function all(): array
     {
-        return wp_parse_args((array) get_option(self::SETTINGS_OPTION, []), [
+        return wp_parse_args((array) get_option(self::SETTINGS_OPTION, []), array_merge($this->bannerDefaults(), [
             'api_base_url' => self::API_BASE_URL,
+            'scan_poll_interval_seconds' => 3,
+            'api_timeout_seconds' => 20,
+            'default_scan_mode' => 'manual',
+            'default_scan_scenario' => 'pre_consent',
+            'banner_cookie_cache_minutes' => 5,
+            'consent_tracking_enabled' => true,
+        ]));
+    }
+
+    public function resetBanner(): void
+    {
+        $current = $this->all();
+
+        foreach ($this->bannerDefaults() as $key => $value) {
+            $current[$key] = $value;
+        }
+
+        update_option(self::SETTINGS_OPTION, $current, false);
+    }
+
+    public function update(array $settings): void
+    {
+        $current = $this->all();
+        // The production API is intentionally immutable from WordPress.
+        $current['api_base_url'] = self::API_BASE_URL;
+        $current['banner_enabled'] = ! empty($settings['banner_enabled']);
+        $current['banner_title'] = sanitize_text_field((string) ($settings['banner_title'] ?? $current['banner_title']));
+        $current['banner_message'] = sanitize_textarea_field((string) ($settings['banner_message'] ?? $current['banner_message']));
+        foreach (['banner_accept_label', 'banner_reject_label', 'banner_customize_label', 'banner_save_label', 'banner_privacy_link_label', 'banner_selector_title'] as $key) {
+            $current[$key] = sanitize_text_field((string) ($settings[$key] ?? $current[$key]));
+        }
+        $current['banner_selector_message'] = sanitize_textarea_field((string) ($settings['banner_selector_message'] ?? $current['banner_selector_message']));
+        foreach (['banner_show_customize', 'banner_show_cookie_details', 'banner_show_category_counts', 'banner_show_privacy_link', 'banner_use_site_font', 'banner_shadow', 'banner_button_hover_enabled'] as $key) {
+            $current[$key] = ! isset($settings[$key]) || ! empty($settings[$key]);
+        }
+        $current['banner_position'] = $this->allowedChoice($settings, 'banner_position', ['bottom', 'top', 'bottom_right', 'bottom_left', 'center'], $current['banner_position']);
+        $current['banner_button_hover_effect'] = $this->allowedChoice($settings, 'banner_button_hover_effect', ['none', 'lift', 'glow', 'lift_glow'], $current['banner_button_hover_effect']);
+        $current['banner_width'] = max(520, min(1400, absint($settings['banner_width'] ?? $current['banner_width'])));
+        $current['banner_radius'] = max(0, min(32, absint($settings['banner_radius'] ?? $current['banner_radius'])));
+        $current['banner_font_size'] = max(12, min(20, absint($settings['banner_font_size'] ?? $current['banner_font_size'])));
+        $current['banner_button_hover_duration'] = max(100, min(500, absint($settings['banner_button_hover_duration'] ?? $current['banner_button_hover_duration'])));
+        $current['banner_button_hover_scale'] = max(100, min(106, absint($settings['banner_button_hover_scale'] ?? $current['banner_button_hover_scale'])));
+        foreach (['banner_background_color', 'banner_text_color', 'banner_muted_color', 'banner_primary_color', 'banner_primary_text_color', 'banner_secondary_color', 'banner_secondary_text_color', 'banner_border_color'] as $key) {
+            $current[$key] = sanitize_hex_color($settings[$key] ?? $current[$key]) ?: $current[$key];
+        }
+        $current['scan_poll_interval_seconds'] = max(1, min(30, absint($settings['scan_poll_interval_seconds'] ?? $current['scan_poll_interval_seconds'])));
+        $current['api_timeout_seconds'] = max(10, min(60, absint($settings['api_timeout_seconds'] ?? $current['api_timeout_seconds'])));
+        $current['default_scan_mode'] = in_array($settings['default_scan_mode'] ?? $current['default_scan_mode'], ['manual', 'automatic'], true) ? $settings['default_scan_mode'] : $current['default_scan_mode'];
+        $current['default_scan_scenario'] = in_array($settings['default_scan_scenario'] ?? $current['default_scan_scenario'], ['pre_consent', 'reject_all', 'accept_all'], true) ? $settings['default_scan_scenario'] : $current['default_scan_scenario'];
+        $current['banner_cookie_cache_minutes'] = max(1, min(60, absint($settings['banner_cookie_cache_minutes'] ?? $current['banner_cookie_cache_minutes'])));
+        $current['consent_tracking_enabled'] = ! isset($settings['consent_tracking_enabled']) || ! empty($settings['consent_tracking_enabled']);
+
+        update_option(self::SETTINGS_OPTION, $current, false);
+    }
+
+    private function bannerDefaults(): array
+    {
+        return [
             'banner_enabled' => true,
             'banner_title' => 'Your privacy matters',
             'banner_message' => 'Choose which categories of cookies you allow.',
@@ -40,6 +98,10 @@ final class SettingsRepository
             'banner_font_size' => 14,
             'banner_use_site_font' => true,
             'banner_shadow' => true,
+            'banner_button_hover_enabled' => true,
+            'banner_button_hover_effect' => 'lift_glow',
+            'banner_button_hover_duration' => 180,
+            'banner_button_hover_scale' => 102,
             'banner_background_color' => '#ffffff',
             'banner_text_color' => '#183153',
             'banner_muted_color' => '#52657c',
@@ -48,45 +110,7 @@ final class SettingsRepository
             'banner_secondary_color' => '#f1f6fc',
             'banner_secondary_text_color' => '#1e477c',
             'banner_border_color' => '#dce5f0',
-            'scan_poll_interval_seconds' => 3,
-            'api_timeout_seconds' => 20,
-            'default_scan_mode' => 'manual',
-            'default_scan_scenario' => 'pre_consent',
-            'banner_cookie_cache_minutes' => 5,
-            'consent_tracking_enabled' => true,
-        ]);
-    }
-
-    public function update(array $settings): void
-    {
-        $current = $this->all();
-        // The production API is intentionally immutable from WordPress.
-        $current['api_base_url'] = self::API_BASE_URL;
-        $current['banner_enabled'] = ! empty($settings['banner_enabled']);
-        $current['banner_title'] = sanitize_text_field((string) ($settings['banner_title'] ?? $current['banner_title']));
-        $current['banner_message'] = sanitize_textarea_field((string) ($settings['banner_message'] ?? $current['banner_message']));
-        foreach (['banner_accept_label', 'banner_reject_label', 'banner_customize_label', 'banner_save_label', 'banner_privacy_link_label', 'banner_selector_title'] as $key) {
-            $current[$key] = sanitize_text_field((string) ($settings[$key] ?? $current[$key]));
-        }
-        $current['banner_selector_message'] = sanitize_textarea_field((string) ($settings['banner_selector_message'] ?? $current['banner_selector_message']));
-        foreach (['banner_show_customize', 'banner_show_cookie_details', 'banner_show_category_counts', 'banner_show_privacy_link', 'banner_use_site_font', 'banner_shadow'] as $key) {
-            $current[$key] = ! isset($settings[$key]) || ! empty($settings[$key]);
-        }
-        $current['banner_position'] = $this->allowedChoice($settings, 'banner_position', ['bottom', 'top', 'bottom_right', 'bottom_left', 'center'], $current['banner_position']);
-        $current['banner_width'] = max(520, min(1400, absint($settings['banner_width'] ?? $current['banner_width'])));
-        $current['banner_radius'] = max(0, min(32, absint($settings['banner_radius'] ?? $current['banner_radius'])));
-        $current['banner_font_size'] = max(12, min(20, absint($settings['banner_font_size'] ?? $current['banner_font_size'])));
-        foreach (['banner_background_color', 'banner_text_color', 'banner_muted_color', 'banner_primary_color', 'banner_primary_text_color', 'banner_secondary_color', 'banner_secondary_text_color', 'banner_border_color'] as $key) {
-            $current[$key] = sanitize_hex_color($settings[$key] ?? $current[$key]) ?: $current[$key];
-        }
-        $current['scan_poll_interval_seconds'] = max(1, min(30, absint($settings['scan_poll_interval_seconds'] ?? $current['scan_poll_interval_seconds'])));
-        $current['api_timeout_seconds'] = max(10, min(60, absint($settings['api_timeout_seconds'] ?? $current['api_timeout_seconds'])));
-        $current['default_scan_mode'] = in_array($settings['default_scan_mode'] ?? $current['default_scan_mode'], ['manual', 'automatic'], true) ? $settings['default_scan_mode'] : $current['default_scan_mode'];
-        $current['default_scan_scenario'] = in_array($settings['default_scan_scenario'] ?? $current['default_scan_scenario'], ['pre_consent', 'reject_all', 'accept_all'], true) ? $settings['default_scan_scenario'] : $current['default_scan_scenario'];
-        $current['banner_cookie_cache_minutes'] = max(1, min(60, absint($settings['banner_cookie_cache_minutes'] ?? $current['banner_cookie_cache_minutes'])));
-        $current['consent_tracking_enabled'] = ! isset($settings['consent_tracking_enabled']) || ! empty($settings['consent_tracking_enabled']);
-
-        update_option(self::SETTINGS_OPTION, $current, false);
+        ];
     }
 
     public function apiBaseUrl(): string

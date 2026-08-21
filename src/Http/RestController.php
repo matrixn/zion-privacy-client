@@ -97,6 +97,11 @@ final class RestController
                 'callback' => [$this, 'saveSettings'],
             ],
         ]);
+        register_rest_route('zion-privacy/v1', '/settings/reset-banner', [
+            'methods' => 'POST',
+            'permission_callback' => [$this, 'permission'],
+            'callback' => [$this, 'resetBanner'],
+        ]);
         register_rest_route('zion-privacy/v1', '/connect', [
             'methods' => 'POST',
             'permission_callback' => [$this, 'permission'],
@@ -265,6 +270,10 @@ final class RestController
             'banner_font_size' => (int) $settings['banner_font_size'],
             'banner_use_site_font' => (bool) $settings['banner_use_site_font'],
             'banner_shadow' => (bool) $settings['banner_shadow'],
+            'banner_button_hover_enabled' => (bool) $settings['banner_button_hover_enabled'],
+            'banner_button_hover_effect' => $settings['banner_button_hover_effect'],
+            'banner_button_hover_duration' => (int) $settings['banner_button_hover_duration'],
+            'banner_button_hover_scale' => (int) $settings['banner_button_hover_scale'],
             'banner_background_color' => $settings['banner_background_color'],
             'banner_text_color' => $settings['banner_text_color'],
             'banner_muted_color' => $settings['banner_muted_color'],
@@ -287,6 +296,13 @@ final class RestController
     public function saveSettings(\WP_REST_Request $request): array
     {
         $this->settings->update((array) $request->get_json_params());
+
+        return $this->publicSettings();
+    }
+
+    public function resetBanner(): array
+    {
+        $this->settings->resetBanner();
 
         return $this->publicSettings();
     }

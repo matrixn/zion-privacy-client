@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Commit 17 — Banner reset and button hover controls
+
+- Added a server-side Reset design action that restores all consent banner defaults without changing application or connection settings.
+- Added configurable button hover animations for the banner and cookie preferences modal: enable/disable, effect, duration and scale.
+- Connected the hover settings to the live preview and the isolated public banner.
+
 ### Commit 16 — Isolated consent banner styles
 
 - Rendered the consent banner and cookie preferences modal inside an isolated Shadow DOM so theme CSS cannot override their layout, controls or typography.

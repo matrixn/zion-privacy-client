@@ -47,6 +47,10 @@ final class ConsentBanner
             'fontSize' => (int) $settings['banner_font_size'],
             'useSiteFont' => (bool) $settings['banner_use_site_font'],
             'shadow' => (bool) $settings['banner_shadow'],
+            'hoverEnabled' => (bool) $settings['banner_button_hover_enabled'],
+            'hoverEffect' => $settings['banner_button_hover_effect'],
+            'hoverDuration' => (int) $settings['banner_button_hover_duration'],
+            'hoverScale' => (int) $settings['banner_button_hover_scale'],
             'colors' => [
                 'background' => $settings['banner_background_color'],
                 'text' => $settings['banner_text_color'],

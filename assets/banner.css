@@ -45,8 +45,15 @@
 .zion-privacy-banner p { margin: 0 0 6px; color: var(--zion-banner-muted, #52657c); font-size: 1em; }
 .zion-privacy-banner a { color: var(--zion-banner-primary, #2369d1); font-size: .93em; }
 .zion-privacy-banner__actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
-.zion-privacy-banner button { padding: 9px 13px; color: var(--zion-banner-secondary-text, #1e477c); background: var(--zion-banner-secondary, #f1f6fc); border: 1px solid var(--zion-banner-border, #cddbeb); border-radius: calc(var(--zion-banner-radius, 12px) / 2); cursor: pointer; font-size: .93em; }
+.zion-privacy-banner button { padding: 9px 13px; color: var(--zion-banner-secondary-text, #1e477c); background: var(--zion-banner-secondary, #f1f6fc); border: 1px solid var(--zion-banner-border, #cddbeb); border-radius: calc(var(--zion-banner-radius, 12px) / 2); cursor: pointer; font-size: .93em; transition: transform var(--zion-banner-hover-duration, 180ms) ease, box-shadow var(--zion-banner-hover-duration, 180ms) ease, filter var(--zion-banner-hover-duration, 180ms) ease; }
 .zion-privacy-banner button.is-primary { color: var(--zion-banner-primary-text, #fff); background: var(--zion-banner-primary, #2369d1); border-color: var(--zion-banner-primary, #2369d1); }
+.zion-privacy-banner.hover-disabled button,
+.zion-privacy-banner.hover-none button { transition: none; }
+.zion-privacy-banner.hover-lift button:hover,
+.zion-privacy-banner.hover-lift_glow button:hover { transform: translateY(-2px) scale(var(--zion-banner-hover-scale, 1.02)); }
+.zion-privacy-banner.hover-glow button:hover,
+.zion-privacy-banner.hover-lift_glow button:hover { box-shadow: 0 8px 22px rgba(35, 105, 209, .24); filter: brightness(1.04); }
+.zion-privacy-banner.hover-disabled button:hover { transform: none; box-shadow: none; filter: none; }
 .zion-privacy-banner.is-customizing::after { display: block; margin-top: 12px; color: #52657c; content: "Customization controls will be available after the API consent policy is connected."; font-size: 13px; }
 .zion-privacy-banner__preferences { position: fixed; z-index: 2; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(17, 32, 55, .62); }
 .zion-privacy-banner__preferences-dialog { width: min(620px, 100%); max-height: min(82vh, 720px); overflow: auto; color: var(--zion-banner-text, #183153); background: var(--zion-banner-background, #fff); border-radius: var(--zion-banner-radius, 12px); box-shadow: 0 24px 70px rgba(2, 13, 34, .38); }

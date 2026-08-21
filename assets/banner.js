@@ -19,7 +19,9 @@
   var root = document.createElement('section');
   root.className = 'zion-privacy-banner zion-privacy-banner--' + safePosition(config.position || 'bottom')
     + (config.shadow === false ? ' is-flat' : '')
-    + (config.useSiteFont === false ? ' uses-system-font' : ' uses-site-font');
+    + (config.useSiteFont === false ? ' uses-system-font' : ' uses-site-font')
+    + (config.hoverEnabled === false ? ' hover-disabled' : '')
+    + ' hover-' + safeHoverEffect(config.hoverEffect || 'lift_glow');
   root.setAttribute('aria-label', 'Privacy preferences');
   var colors = config.colors || {};
   root.style.setProperty('--zion-banner-background', colors.background || '#ffffff');
@@ -33,6 +35,8 @@
   root.style.setProperty('--zion-banner-radius', Math.max(0, Number(config.radius || 12)) + 'px');
   root.style.setProperty('--zion-banner-font-size', Math.max(12, Number(config.fontSize || 14)) + 'px');
   root.style.setProperty('--zion-banner-width', Math.max(520, Number(config.width || 1180)) + 'px');
+  root.style.setProperty('--zion-banner-hover-duration', Math.max(100, Number(config.hoverDuration || 180)) + 'ms');
+  root.style.setProperty('--zion-banner-hover-scale', Math.max(100, Number(config.hoverScale || 102)) / 100);
   root.innerHTML = '<div class="zion-privacy-banner__content">'
     + '<div><h2>' + escapeHtml(config.title || 'Your privacy matters') + '</h2>'
     + '<p>' + escapeHtml(config.message || 'Choose which categories of cookies you allow.') + '</p>'
@@ -177,6 +181,10 @@
 
   function safePosition(value) {
     return ['bottom', 'top', 'bottom_right', 'bottom_left', 'center'].indexOf(value) !== -1 ? value : 'bottom';
+  }
+
+  function safeHoverEffect(value) {
+    return ['none', 'lift', 'glow', 'lift_glow'].indexOf(value) !== -1 ? value : 'lift_glow';
   }
 
   function escapeHtml(value) {
