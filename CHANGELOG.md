@@ -1,5 +1,11 @@
 # Changelog
 
+### Commit 34 — Refined top-right navigation toolbar
+
+- Replaced the stacked top-right controls with a horizontal toolbar containing the API status pill and compact icon actions.
+- Added spacing, consistent button surfaces and light-theme contrast so the controls no longer overlap or resemble a vertical stack.
+- Bumped plugin version to `0.1.29`.
+
 ### Commit 33 — Compact consent actions in navigation
 
 - Replaced the top-right theme, renew-consent and banner-preview labels with compact icon-only buttons so the navigation remains clean at narrow widths.

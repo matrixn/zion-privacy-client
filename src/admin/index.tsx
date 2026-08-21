@@ -2803,39 +2803,41 @@ function Sidebar({
           />
           {config.connected ? "API connected" : "Awaiting connection"}
         </div>
-        <button
-          type="button"
-          className="zion-admin__theme-switcher"
-          onClick={onThemeChange}
-          aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
-          title={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
-        >
-          <span
-            className={`dashicons ${
-              theme === "dark" ? "dashicons-sun" : "dashicons-moon"
-            }`}
-          />
-        </button>
-        <button
-          type="button"
-          className="zion-admin__sidebar-action"
-          onClick={renewConsents}
-          disabled={renewing}
-          title="Show the consent banner again for visitors who already made a choice"
-          aria-label="Renew consents"
-        >
-          <span className="dashicons dashicons-update" />
-        </button>
-        <a
-          className="zion-admin__sidebar-action"
-          href={bannerUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          title="Open the public banner preview"
-          aria-label="View banner"
-        >
-          <span className="dashicons dashicons-welcome-view-site" />
-        </a>
+        <div className="zion-admin__sidebar-toolbar">
+          <button
+            type="button"
+            className="zion-admin__theme-switcher"
+            onClick={onThemeChange}
+            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
+            title={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
+          >
+            <span
+              className={`dashicons ${
+                theme === "dark" ? "dashicons-sun" : "dashicons-moon"
+              }`}
+            />
+          </button>
+          <button
+            type="button"
+            className="zion-admin__sidebar-action"
+            onClick={renewConsents}
+            disabled={renewing}
+            title="Show the consent banner again to visitors who already made a choice"
+            aria-label="Renew consents"
+          >
+            <span className="dashicons dashicons-update" />
+          </button>
+          <a
+            className="zion-admin__sidebar-action"
+            href={bannerUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Open the public banner preview"
+            aria-label="View banner"
+          >
+            <span className="dashicons dashicons-welcome-view-site" />
+          </a>
+        </div>
         <small>v{config.version}</small>
       </div>
     </aside>
