@@ -28,6 +28,9 @@ final class SettingsRepository
             'default_scan_scenario' => 'pre_consent',
             'banner_cookie_cache_minutes' => 5,
             'consent_tracking_enabled' => true,
+            'banner_regulation' => 'gdpr',
+            'consent_revision' => 1,
+            'consent_renewed_at' => null,
         ]));
     }
 
@@ -73,6 +76,16 @@ final class SettingsRepository
         $current['default_scan_scenario'] = in_array($settings['default_scan_scenario'] ?? $current['default_scan_scenario'], ['pre_consent', 'reject_all', 'accept_all'], true) ? $settings['default_scan_scenario'] : $current['default_scan_scenario'];
         $current['banner_cookie_cache_minutes'] = max(1, min(60, absint($settings['banner_cookie_cache_minutes'] ?? $current['banner_cookie_cache_minutes'])));
         $current['consent_tracking_enabled'] = ! isset($settings['consent_tracking_enabled']) || ! empty($settings['consent_tracking_enabled']);
+        $current['banner_regulation'] = $this->allowedChoice($settings, 'banner_regulation', ['gdpr', 'us_state_laws', 'gdpr_us_state_laws'], $current['banner_regulation']);
+
+        update_option(self::SETTINGS_OPTION, $current, false);
+    }
+
+    public function renewConsents(): void
+    {
+        $current = $this->all();
+        $current['consent_revision'] = max(1, (int) ($current['consent_revision'] ?? 1) + 1);
+        $current['consent_renewed_at'] = gmdate('c');
 
         update_option(self::SETTINGS_OPTION, $current, false);
     }
@@ -81,6 +94,7 @@ final class SettingsRepository
     {
         return [
             'banner_enabled' => true,
+            'banner_regulation' => 'gdpr',
             'banner_title' => 'Your privacy matters',
             'banner_message' => 'Choose which categories of cookies you allow.',
             'banner_accept_label' => 'Accept all',

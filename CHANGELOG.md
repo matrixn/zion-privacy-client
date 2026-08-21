@@ -1,5 +1,14 @@
 # Changelog
 
+### Commit 26 — Dashboard consent intelligence and policy controls
+
+- Expanded the plugin dashboard with website connection status, regulation, Worldwide targeting, forced public banner preview, cookie summary details, consent trends, scan pageview chart and recent anonymized consent logs.
+- Added GDPR, US State Laws and GDPR + US State Laws regulation choices; the public banner changes its consent selector defaults and legal action labels accordingly.
+- Added Consent log settings with an audit-purpose help tooltip and anonymous visitor identifiers; no names, emails or IP addresses are collected.
+- Added Renew user consents, which increments the banner policy version so returning visitors see the banner again while previous consent history remains preserved.
+- Added public preview mode at `?zion_priv_preview=true`, including when the banner is disabled or an older consent decision exists.
+- Bumped plugin version to `0.1.21`.
+
 ## Unreleased
 
 ### Commit 25 — Stop active scans

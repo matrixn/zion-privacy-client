@@ -20,8 +20,9 @@ final class ConsentBanner
     public function enqueue(): void
     {
         $settings = $this->settings->all();
+        $preview = isset($_GET['zion_priv_preview']) && sanitize_key((string) $_GET['zion_priv_preview']) === 'true';
 
-        if (is_admin() || empty($settings['banner_enabled'])) {
+        if (is_admin() || (empty($settings['banner_enabled']) && ! $preview)) {
             return;
         }
 
@@ -29,6 +30,8 @@ final class ConsentBanner
         wp_localize_script('zion-privacy-banner', 'ZionPrivacyBanner', [
             'styleUrl' => ZION_PRIVACY_URL.'assets/banner.css?ver='.rawurlencode(ZION_PRIVACY_VERSION),
             'title' => $settings['banner_title'],
+            'preview' => $preview,
+            'regulation' => $settings['banner_regulation'],
             'message' => $settings['banner_message'],
             'acceptLabel' => $settings['banner_accept_label'],
             'rejectLabel' => $settings['banner_reject_label'],
@@ -62,7 +65,7 @@ final class ConsentBanner
                 'border' => $settings['banner_border_color'],
             ],
             'privacyUrl' => (string) apply_filters('zion_privacy_privacy_policy_url', get_privacy_policy_url()),
-            'storageKey' => 'zion_privacy_consent_v1',
+            'storageKey' => 'zion_privacy_consent_v'.max(1, (int) $settings['consent_revision']),
             'consentUrl' => esc_url_raw(rest_url('zion-privacy/v1/consent')),
             'consentToken' => $this->settings->publicConsentToken(),
             'consentTrackingEnabled' => $this->settings->consentTrackingEnabled(),

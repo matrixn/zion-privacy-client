@@ -117,6 +117,11 @@ final class RestController
             'permission_callback' => [$this, 'permission'],
             'callback' => [$this, 'resetBanner'],
         ]);
+        register_rest_route('zion-privacy/v1', '/settings/renew-consents', [
+            'methods' => 'POST',
+            'permission_callback' => [$this, 'permission'],
+            'callback' => [$this, 'renewConsents'],
+        ]);
         register_rest_route('zion-privacy/v1', '/connect', [
             'methods' => 'POST',
             'permission_callback' => [$this, 'permission'],
@@ -175,6 +180,7 @@ final class RestController
         $scansResponse = $this->api->get('websites/'.rawurlencode((string) $website['id']).'/scans', ['per_page' => 10]);
         $cookiesResponse = $this->cachedCookiesForWebsite($website);
         $accountResponse = $this->api->get('installation/account');
+        $consentResponse = $this->api->get('installation/consent-statistics', ['days' => 7]);
 
         return [
             'website' => $website,
@@ -183,6 +189,7 @@ final class RestController
             'cookies_synced_at' => is_wp_error($cookiesResponse) ? null : ($cookiesResponse['saved_at'] ?? null),
             'stats' => $this->statsFrom($website, $scansResponse, $cookiesResponse),
             'account' => is_wp_error($accountResponse) ? null : $accountResponse,
+            'consent' => is_wp_error($consentResponse) ? null : $consentResponse,
         ];
     }
 
@@ -371,6 +378,7 @@ final class RestController
 
         return [
             'banner_enabled' => (bool) $settings['banner_enabled'],
+            'banner_regulation' => $settings['banner_regulation'],
             'banner_title' => $settings['banner_title'],
             'banner_message' => $settings['banner_message'],
             'banner_accept_label' => $settings['banner_accept_label'],
@@ -408,6 +416,8 @@ final class RestController
             'default_scan_scenario' => $settings['default_scan_scenario'],
             'banner_cookie_cache_minutes' => (int) $settings['banner_cookie_cache_minutes'],
             'consent_tracking_enabled' => $this->settings->consentTrackingEnabled(),
+            'consent_revision' => (int) $settings['consent_revision'],
+            'consent_renewed_at' => $settings['consent_renewed_at'],
             'connected' => $this->settings->isConnected(),
             'account' => $this->settings->credentials()['account'] ?? [],
         ];
@@ -423,6 +433,13 @@ final class RestController
     public function resetBanner(): array
     {
         $this->settings->resetBanner();
+
+        return $this->publicSettings();
+    }
+
+    public function renewConsents(): array
+    {
+        $this->settings->renewConsents();
 
         return $this->publicSettings();
     }

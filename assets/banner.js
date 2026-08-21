@@ -4,7 +4,7 @@
   var config = window.ZionPrivacyBanner || {};
   var storageKey = config.storageKey || 'zion_privacy_consent_v1';
 
-  if (window.localStorage.getItem(storageKey)) {
+  if (config.preview !== true && window.localStorage.getItem(storageKey)) {
     return;
   }
 
@@ -17,7 +17,13 @@
   shadowRoot.appendChild(stylesheet);
 
   var root = document.createElement('section');
+  var regulation = safeRegulation(config.regulation || 'gdpr');
+  var defaultRejectLabel = regulation === 'us_state_laws'
+    ? 'Do not sell or share'
+    : (regulation === 'gdpr_us_state_laws' ? 'Reject / do not sell or share' : 'Essential only');
+  var rejectLabel = config.rejectLabel && config.rejectLabel !== 'Essential only' ? config.rejectLabel : defaultRejectLabel;
   root.className = 'zion-privacy-banner zion-privacy-banner--' + safePosition(config.position || 'bottom')
+    + ' zion-privacy-banner--regulation-' + regulation
     + (config.shadow === false ? ' is-flat' : '')
     + (config.useSiteFont === false ? ' uses-system-font' : ' uses-site-font')
     + (config.hoverEnabled === false ? ' hover-disabled' : '')
@@ -42,7 +48,7 @@
     + '<p>' + escapeHtml(config.message || 'Choose which categories of cookies you allow.') + '</p>'
     + (config.showPrivacyLink !== false && config.privacyUrl ? '<a href="' + escapeAttribute(config.privacyUrl) + '">' + escapeHtml(config.privacyLinkLabel || 'Privacy policy') + '</a>' : '')
     + '</div><div class="zion-privacy-banner__actions">'
-    + '<button type="button" data-zion-consent="reject">' + escapeHtml(config.rejectLabel || 'Essential only') + '</button>'
+    + '<button type="button" data-zion-consent="reject">' + escapeHtml(rejectLabel) + '</button>'
     + (config.showCustomize !== false ? '<button type="button" data-zion-consent="customize">' + escapeHtml(config.customizeLabel || 'Customize') + '</button>' : '')
     + '<button type="button" data-zion-consent="accept" class="is-primary">' + escapeHtml(config.acceptLabel || 'Accept all') + '</button>'
     + '</div></div>';
@@ -87,6 +93,7 @@
 
     var groups = ['necessary', 'preferences', 'analytics', 'marketing', 'security', 'personalization', 'unknown'];
     var cookies = Array.isArray(config.cookies) ? config.cookies : [];
+    var optionalDefault = regulation === 'us_state_laws';
     var html = groups.map(function (category) {
       var categoryCookies = cookies.filter(function (cookie) { return (cookie.category || 'unknown') === category; });
       var rows = categoryCookies.map(function (cookie) {
@@ -103,15 +110,16 @@
       return '<section class="zion-privacy-banner__category"><div class="zion-privacy-banner__category-head">'
         + '<div><h3>' + escapeHtml(formatLabel(category)) + '</h3><p>'
         + (category === 'necessary' ? 'Always active for core website functionality.' : (config.showCategoryCounts === false ? 'Optional cookies' : categoryCookies.length + ' cookie' + (categoryCookies.length === 1 ? '' : 's') + ' detected'))
-        + '</p></div><label class="zion-privacy-banner__switch"><input type="checkbox" data-zion-category="' + category + '" ' + (category === 'necessary' ? 'checked disabled' : 'checked') + '><span></span></label></div>'
+        + '</p></div><label class="zion-privacy-banner__switch"><input type="checkbox" data-zion-category="' + category + '" ' + (category === 'necessary' ? 'checked disabled' : (optionalDefault ? 'checked' : '')) + '><span></span></label></div>'
         + (config.showCookieDetails !== false && rows ? '<div class="zion-privacy-banner__cookies">' + rows + '</div>' : '')
         + '</section>';
     }).join('');
 
     var modal = document.createElement('div');
     modal.className = 'zion-privacy-banner__preferences';
+    var selectorMessage = config.selectorMessage || (regulation === 'us_state_laws' ? 'Choose whether optional cookies may be used or opt out of sale and sharing.' : 'Choose which cookie categories you allow on this website.');
     modal.innerHTML = '<div class="zion-privacy-banner__preferences-dialog" role="dialog" aria-modal="true" aria-label="Cookie preferences">'
-      + '<div class="zion-privacy-banner__preferences-header"><div><span>Privacy choices</span><h2>' + escapeHtml(config.selectorTitle || 'Customize cookies') + '</h2><p>' + escapeHtml(config.selectorMessage || 'Choose which cookie categories you allow on this website.') + '</p></div><button type="button" data-zion-consent="close-preferences" aria-label="Close">×</button></div>'
+      + '<div class="zion-privacy-banner__preferences-header"><div><span>Privacy choices · ' + escapeHtml(formatRegulation(regulation)) + '</span><h2>' + escapeHtml(config.selectorTitle || 'Customize cookies') + '</h2><p>' + escapeHtml(selectorMessage) + '</p></div><button type="button" data-zion-consent="close-preferences" aria-label="Close">×</button></div>'
       + '<div class="zion-privacy-banner__preferences-body">' + html + '</div>'
       + '<div class="zion-privacy-banner__preferences-footer"><button type="button" data-zion-consent="close-preferences">Cancel</button><button type="button" data-zion-consent="save-preferences" class="is-primary">' + escapeHtml(config.saveLabel || 'Save preferences') + '</button></div>'
       + '</div>';
@@ -137,8 +145,10 @@
   }
 
   function applyConsent(consent, status) {
-    window.localStorage.setItem(storageKey, JSON.stringify(consent));
-    sendConsentEvent(consent, status);
+    if (config.preview !== true) {
+      window.localStorage.setItem(storageKey, JSON.stringify(consent));
+      sendConsentEvent(consent, status);
+    }
     host.remove();
     document.dispatchEvent(new CustomEvent('zionprivacy:consent', { detail: consent }));
   }
@@ -155,6 +165,8 @@
         token: config.consentToken,
         event_uuid: uuid(),
         status: status,
+        visitor_token: visitorToken(),
+        regulation: regulation,
         categories: consent,
         page_url: window.location.href,
         occurred_at: new Date().toISOString()
@@ -175,6 +187,16 @@
     });
   }
 
+  function visitorToken() {
+    var key = 'zion_privacy_visitor_v1';
+    var token = window.localStorage.getItem(key);
+    if (!token) {
+      token = uuid();
+      window.localStorage.setItem(key, token);
+    }
+    return token;
+  }
+
   function formatLabel(value) {
     return String(value).replace(/_/g, ' ').replace(/\b\w/g, function (character) { return character.toUpperCase(); });
   }
@@ -185,6 +207,14 @@
 
   function safeHoverEffect(value) {
     return ['none', 'lift', 'glow', 'lift_glow'].indexOf(value) !== -1 ? value : 'lift_glow';
+  }
+
+  function safeRegulation(value) {
+    return ['gdpr', 'us_state_laws', 'gdpr_us_state_laws'].indexOf(value) !== -1 ? value : 'gdpr';
+  }
+
+  function formatRegulation(value) {
+    return value === 'us_state_laws' ? 'US State Laws' : (value === 'gdpr_us_state_laws' ? 'GDPR + US State Laws' : 'GDPR');
   }
 
   function escapeHtml(value) {
