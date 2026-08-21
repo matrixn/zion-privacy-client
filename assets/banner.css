@@ -23,6 +23,7 @@
 .zion-privacy-banner *::before,
 .zion-privacy-banner *::after { box-sizing: border-box; }
 .zion-privacy-banner.is-hidden { display: none !important; }
+.zion-privacy-banner.is-modal-only { position: static; inset: auto; width: auto; max-width: none; height: 0; min-height: 0; margin: 0; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
 .zion-privacy-banner.is-modal-only > .zion-privacy-banner__content { display: none; }
 
 .zion-privacy-banner.uses-site-font { font-family: inherit; }
@@ -61,13 +62,15 @@
 .zion-privacy-banner.hover-disabled button:hover { transform: none; box-shadow: none; filter: none; }
 .zion-privacy-banner.is-customizing::after { display: block; margin-top: 12px; color: #52657c; content: "Customization controls will be available after the API consent policy is connected."; font-size: 13px; }
 .zion-privacy-banner__preferences { position: fixed; z-index: 2; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(17, 32, 55, .62); }
-.zion-privacy-banner__preferences-dialog { width: min(620px, 100%); max-height: min(82vh, 720px); overflow: auto; color: var(--zion-banner-text, #183153); background: var(--zion-banner-background, #fff); border-radius: var(--zion-banner-radius, 12px); box-shadow: 0 24px 70px rgba(2, 13, 34, .38); }
-.zion-privacy-banner__preferences-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 18px 20px; border-bottom: 1px solid #dce5f0; }
+.zion-privacy-banner__preferences-dialog { display: flex; flex-direction: column; width: min(620px, 100%); height: min(82vh, 720px); max-height: min(82vh, 720px); overflow: hidden; color: var(--zion-banner-text, #183153); background: var(--zion-banner-background, #fff); border-radius: var(--zion-banner-radius, 12px); box-shadow: 0 24px 70px rgba(2, 13, 34, .38); }
+.zion-privacy-banner__preferences-header { display: flex; flex: 0 0 auto; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 18px 20px; border-bottom: 1px solid #dce5f0; }
 .zion-privacy-banner__preferences-header span { color: var(--zion-banner-primary, #2369d1); font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
 .zion-privacy-banner__preferences-header h2 { margin: 4px 0 0; color: var(--zion-banner-text, #183153); font-size: 20px; }
 .zion-privacy-banner__preferences-header p { margin: 5px 0 0; color: var(--zion-banner-muted, #52657c); font-size: 12px; }
+.zion-privacy-banner__preferences-header .zion-privacy-banner__preferences-message { margin-top: 8px; padding-top: 8px; border-top: 1px solid #dce5f0; }
+.zion-privacy-banner__preferences-header .zion-privacy-banner__policy-links { margin-top: 8px; font-size: 12px; }
 .zion-privacy-banner__preferences-header button { display: grid; width: 30px; height: 30px; flex: 0 0 30px; place-items: center; padding: 0; color: var(--zion-banner-muted, #52657c); background: var(--zion-banner-secondary, #f1f6fc); background-image: none; border: 1px solid var(--zion-banner-border, #cddbeb); border-radius: 6px; cursor: pointer; font-size: 20px; line-height: 1; }
-.zion-privacy-banner__preferences-body { display: grid; gap: 9px; padding: 15px 20px; }
+.zion-privacy-banner__preferences-body { display: grid; flex: 1 1 auto; min-height: 0; gap: 9px; overflow-y: auto; padding: 15px 20px; scrollbar-gutter: stable; }
 .zion-privacy-banner__category { padding: 12px; background: #f7faff; border: 1px solid #dce5f0; border-radius: 8px; }
 .zion-privacy-banner__category-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .zion-privacy-banner__category h3 { margin: 0; color: #183153; font-size: 14px; }
@@ -82,7 +85,7 @@
 .zion-privacy-banner__switch span::before { position: absolute; bottom: 3px; left: 3px; width: 14px; height: 14px; background: #fff; border-radius: 50%; content: ""; transition: transform .2s ease; }
 .zion-privacy-banner__switch input:checked + span { background: #2369d1; }
 .zion-privacy-banner__switch input:checked + span::before { transform: translateX(14px); }
-.zion-privacy-banner__preferences-footer { display: grid; gap: 12px; padding: 14px 20px 16px; border-top: 1px solid #dce5f0; }
+.zion-privacy-banner__preferences-footer { display: grid; flex: 0 0 auto; gap: 12px; padding: 14px 20px 16px; border-top: 1px solid #dce5f0; }
 .zion-privacy-banner__preferences-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 .zion-privacy-banner__preferences-footer button { padding: 9px 13px; color: var(--zion-banner-secondary-text, #1e477c); background: var(--zion-banner-secondary, #f1f6fc); background-image: none; border: 1px solid var(--zion-banner-border, #cddbeb); border-radius: 6px; cursor: pointer; font-size: 13px; }
 .zion-privacy-banner__preferences-footer button.is-primary { color: var(--zion-banner-primary-text, #fff); background: var(--zion-banner-primary, #2369d1); border-color: var(--zion-banner-primary, #2369d1); }

@@ -1,5 +1,12 @@
 # Changelog
 
+### Commit 30 — Fixed consent preferences modal scrolling
+
+- Made the preferences modal header and footer fixed while only the cookie category content scrolls vertically.
+- Moved the custom banner message and all enabled legal links into the fixed modal header beneath the preference instructions.
+- Removed the residual base-banner strip that remained visible behind the modal and kept the configured action buttons and `Powered by ZionPrivacy` branding fixed in the footer.
+- Bumped plugin version to `0.1.25`.
+
 ### Commit 29 — Floating cookie preferences launcher and legal link targets
 
 - Added a floating cookie icon that remains available after any consent choice and opens the preferences modal again from a configurable browser corner.

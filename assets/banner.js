@@ -125,11 +125,14 @@
         + '</section>';
     }).join('');
 
+    var selectorMessage = config.selectorMessage || (regulation === 'us_state_laws' ? 'Choose whether optional cookies may be used or opt out of sale and sharing.' : 'Choose which cookie categories you allow on this website.');
+    var bannerMessage = config.message && config.message !== selectorMessage
+      ? '<p class="zion-privacy-banner__preferences-message">' + escapeHtml(config.message) + '</p>'
+      : '';
     var modal = document.createElement('div');
     modal.className = 'zion-privacy-banner__preferences';
-    var selectorMessage = config.selectorMessage || (regulation === 'us_state_laws' ? 'Choose whether optional cookies may be used or opt out of sale and sharing.' : 'Choose which cookie categories you allow on this website.');
     modal.innerHTML = '<div class="zion-privacy-banner__preferences-dialog" role="dialog" aria-modal="true" aria-label="Cookie preferences">'
-      + '<div class="zion-privacy-banner__preferences-header"><div><span>Privacy choices · ' + escapeHtml(formatRegulation(regulation)) + '</span><h2>' + escapeHtml(config.selectorTitle || 'Customize cookies') + '</h2><p>' + escapeHtml(selectorMessage) + '</p></div><button type="button" data-zion-consent="close-preferences" aria-label="Close">×</button></div>'
+      + '<div class="zion-privacy-banner__preferences-header"><div><span>Privacy choices · ' + escapeHtml(formatRegulation(regulation)) + '</span><h2>' + escapeHtml(config.selectorTitle || 'Customize cookies') + '</h2><p>' + escapeHtml(selectorMessage) + '</p>' + bannerMessage + renderPolicyLinks() + '</div><button type="button" data-zion-consent="close-preferences" aria-label="Close">×</button></div>'
       + '<div class="zion-privacy-banner__preferences-body">' + html + '</div>'
       + '<div class="zion-privacy-banner__preferences-footer">'
       + '<div class="zion-privacy-banner__preferences-actions">'
@@ -138,7 +141,6 @@
       + '<button type="button" data-zion-consent="save-preferences">' + escapeHtml(config.saveLabel || 'Save preferences') + '</button>'
       + '<button type="button" data-zion-consent="accept" class="is-primary">' + escapeHtml(config.acceptLabel || 'Accept all') + '</button>'
       + '</div>'
-      + renderPolicyLinks()
       + '<div class="zion-privacy-banner__powered">Powered by <a href="https://zion3d.ro" target="_blank" rel="noopener noreferrer" class="zion-privacy-banner__powered-link"><span class="zion-privacy-banner__powered-logo"><strong>zion</strong><span>Privacy</span></span></a></div>'
       + '</div>'
       + '</div>';
