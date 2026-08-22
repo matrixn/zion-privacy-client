@@ -242,7 +242,15 @@ final class RestController
             return new \WP_Error('zion_privacy_no_website', 'No website is linked to this WordPress installation.');
         }
 
-        return $this->api->post('websites/'.rawurlencode((string) $website['id']).'/cookies/'.rawurlencode((string) $request['cookie']).'/identify');
+        $response = $this->api->post('websites/'.rawurlencode((string) $website['id']).'/cookies/'.rawurlencode((string) $request['cookie']).'/identify');
+
+        if (is_wp_error($response)) {
+            return $response;
+        }
+
+        $this->mergeIdentifiedCookieIntoCache($website, $response);
+
+        return $response;
     }
 
     private function statistics(): array|\WP_Error
@@ -532,6 +540,51 @@ final class RestController
         }
 
         return is_array($data) ? $data : null;
+    }
+
+    private function mergeIdentifiedCookieIntoCache(array $website, array $response): void
+    {
+        $cookie = $response['data'] ?? null;
+        $cache = $this->settings->cookieCache();
+        $websiteId = (string) ($website['id'] ?? '');
+
+        if (! is_array($cookie)
+            || $websiteId === ''
+            || (string) ($cache['website_id'] ?? '') !== $websiteId
+            || ! is_array($cache['data'] ?? null)) {
+            return;
+        }
+
+        $cookieIdentity = implode('|', [
+            (string) ($cookie['name'] ?? ''),
+            (string) ($cookie['domain'] ?? ''),
+            (string) ($cookie['path'] ?? ''),
+        ]);
+        $changed = false;
+
+        foreach ($cache['data'] as $index => $item) {
+            if (! is_array($item)) {
+                continue;
+            }
+
+            $itemIdentity = implode('|', [
+                (string) ($item['name'] ?? ''),
+                (string) ($item['domain'] ?? ''),
+                (string) ($item['path'] ?? ''),
+            ]);
+            $sameId = isset($cookie['id'], $item['id'])
+                && (string) $cookie['id'] === (string) $item['id'];
+
+            if ($sameId || ($cookieIdentity !== '||' && $cookieIdentity === $itemIdentity)) {
+                $cache['data'][$index] = array_merge($item, $cookie);
+                $changed = true;
+                break;
+            }
+        }
+
+        if ($changed) {
+            $this->settings->saveCookieCache($websiteId, array_values($cache['data']));
+        }
     }
 
     private function statsFrom(array $website, array|\WP_Error $scansResponse, array|\WP_Error $cookiesResponse): array

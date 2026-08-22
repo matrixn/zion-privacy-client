@@ -1,5 +1,13 @@
 # Changelog
 
+### Commit 40 — Automatic cookie category saves and refreshed AI inventory
+
+- Removed the category Save button; changing a category now persists the local website override immediately through AJAX.
+- Added loading, success and error feedback beside the category selector, followed by a refreshed cookie list after a successful save.
+- Updated the local cookie cache from individual AI identification responses so newly returned metadata remains visible after refresh.
+- Added polling for queued Gemini classifications so the cookie table updates when the background identification completes.
+- Bumped plugin version to `0.1.34`.
+
 ### Commit 39 — WordPress 6.5 compatibility baseline
 
 - Set the supported WordPress baseline to 6.5.

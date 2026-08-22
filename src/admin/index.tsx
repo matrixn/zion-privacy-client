@@ -2036,16 +2036,18 @@ function CookiePreferenceModal({
 function Cookies() {
   const [cookies, setCookies] = useState<RecordData[]>([]);
   const [categoryDrafts, setCategoryDrafts] = useState<Record<string, string>>({});
-  const [savingCategories, setSavingCategories] = useState<Record<string, boolean>>({});
+  const [categorySaveStates, setCategorySaveStates] = useState<
+    Record<string, "saving" | "saved" | "error">
+  >({});
   const [cacheInfo, setCacheInfo] = useState<RecordData>({});
   const [account, setAccount] = useState<RecordData>({});
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [identifying, setIdentifying] = useState<Record<string, boolean>>({});
-  const load = (force = false) => {
+  const load = (force = false): Promise<RecordData | null> => {
     setLoading(true);
     setError("");
-    request<RecordData>(`cookies${force ? "?refresh=1" : ""}`)
+    return request<RecordData>(`cookies${force ? "?refresh=1" : ""}`)
       .then((result) => {
         const nextCookies = result.data || [];
         setCookies(nextCookies);
@@ -2069,10 +2071,12 @@ function Cookies() {
             "The API is unavailable. Showing the last locally saved cookie set.",
             "info",
           );
+        return result;
       })
       .catch((e) => {
         setError(e.message);
         announce(e.message, "error");
+        return null;
       })
       .finally(() => setLoading(false));
   };
@@ -2084,15 +2088,16 @@ function Cookies() {
     );
     return () => window.clearInterval(timer);
   }, []);
-  const updateCategory = (cookie: RecordData) => {
+  const updateCategory = (cookie: RecordData, requestedCategory?: string) => {
     const key = String(cookie.id);
-    const category = categoryDrafts[key] || cookie.category || "unknown";
+    const category = requestedCategory || categoryDrafts[key] || cookie.category || "unknown";
+    if (category === (cookie.category || "unknown")) return;
     const identity = [
       cookie.name || "",
       cookie.domain || "",
       cookie.path || "",
     ].join("|");
-    setSavingCategories((items) => ({ ...items, [key]: true }));
+    setCategorySaveStates((items) => ({ ...items, [key]: "saving" }));
     request("cookies/category", {
       method: "POST",
       body: JSON.stringify({ identity, category }),
@@ -2106,14 +2111,30 @@ function Cookies() {
           ),
         );
         announce("Cookie category saved for this website.");
+        setCategorySaveStates((items) => ({ ...items, [key]: "saved" }));
+        load();
       })
       .catch((e) => {
         setError(e.message);
         announce(e.message, "error");
-      })
-      .finally(() =>
-        setSavingCategories((items) => ({ ...items, [key]: false })),
-      );
+        setCategorySaveStates((items) => ({ ...items, [key]: "error" }));
+      });
+  };
+  const pollIdentification = (key: string, attempt = 0) => {
+    if (attempt >= 20) return;
+    window.setTimeout(() => {
+      load().then((result) => {
+        const current = (result?.data || []).find(
+          (item: RecordData) => String(item.id) === key,
+        );
+        if (
+          current &&
+          ["queued", "processing"].includes(String(current.ai_status || ""))
+        ) {
+          pollIdentification(key, attempt + 1);
+        }
+      });
+    }, 1500);
   };
   const identifyCookie = (cookie: RecordData) => {
     const key = String(cookie.id);
@@ -2137,7 +2158,17 @@ function Cookies() {
             : "Cookie identification queued for Gemini.",
           result.source === "database" ? "success" : "info",
         );
-        load();
+        load().then((refreshed) => {
+          const current = (refreshed?.data || []).find(
+            (item: RecordData) => String(item.id) === key,
+          );
+          if (
+            current &&
+            ["queued", "processing"].includes(String(current.ai_status || ""))
+          ) {
+            pollIdentification(key);
+          }
+        });
       })
       .catch((e) => announce(e.message, "error"))
       .finally(() => setIdentifying((items) => ({ ...items, [key]: false })));
@@ -2210,8 +2241,7 @@ function Cookies() {
                       const key = String(cookie.id);
                       const selectedCategory =
                         categoryDrafts[key] || cookie.category || "unknown";
-                      const categoryChanged =
-                        selectedCategory !== (cookie.category || "unknown");
+                      const categorySaveState = categorySaveStates[key];
                       const busy =
                         !!identifying[key] ||
                         ["queued", "processing"].includes(
@@ -2241,23 +2271,49 @@ function Cookies() {
                                 hideLabelFromVision
                                 options={categories}
                                 value={selectedCategory}
-                                onChange={(value) =>
+                                disabled={categorySaveState === "saving"}
+                                onChange={(value) => {
                                   setCategoryDrafts((items) => ({
                                     ...items,
                                     [key]: value,
-                                  }))
-                                }
+                                  }));
+                                  updateCategory(cookie, value);
+                                }}
                               />
-                              <Button
-                                variant="primary"
-                                icon={<ButtonIcon name="dashicons-saved" />}
-                                onClick={() => updateCategory(cookie)}
-                                disabled={
-                                  !categoryChanged || !!savingCategories[key]
+                              <span
+                                className={`zion-admin__category-status ${
+                                  categorySaveState
+                                    ? `zion-admin__category-status--${categorySaveState}`
+                                    : ""
+                                }`}
+                                aria-live="polite"
+                                aria-label={
+                                  categorySaveState === "saving"
+                                    ? "Saving cookie category"
+                                    : categorySaveState === "saved"
+                                      ? "Cookie category saved"
+                                      : categorySaveState === "error"
+                                        ? "Cookie category could not be saved"
+                                        : ""
+                                }
+                                title={
+                                  categorySaveState === "saving"
+                                    ? "Saving…"
+                                    : categorySaveState === "saved"
+                                      ? "Saved"
+                                      : categorySaveState === "error"
+                                        ? "Save failed"
+                                        : ""
                                 }
                               >
-                                {savingCategories[key] ? "Saving…" : "Save"}
-                              </Button>
+                                {categorySaveState === "saving" ? (
+                                  <Spinner />
+                                ) : categorySaveState === "saved" ? (
+                                  "✓"
+                                ) : categorySaveState === "error" ? (
+                                  "×"
+                                ) : null}
+                              </span>
                             </div>
                           </td>
                           <td>{cookie.vendor || "—"}</td>
