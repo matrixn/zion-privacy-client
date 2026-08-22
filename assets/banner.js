@@ -60,7 +60,10 @@
     + '<button type="button" data-zion-consent="reject">' + escapeHtml(rejectLabel) + '</button>'
     + (config.showCustomize !== false ? '<button type="button" data-zion-consent="customize">' + escapeHtml(config.customizeLabel || 'Customize') + '</button>' : '')
     + '<button type="button" data-zion-consent="accept" class="is-primary">' + escapeHtml(config.acceptLabel || 'Accept all') + '</button>'
-    + '</div></div>';
+    + '</div></div>'
+    + '<div class="zion-privacy-banner__footer">'
+    + '<div class="zion-privacy-banner__powered">Powered by <a href="https://zion3d.ro" target="_blank" rel="noopener noreferrer" class="zion-privacy-banner__powered-link"><span class="zion-privacy-banner__powered-logo"><strong>zion</strong><span>Privacy</span></span></a></div>'
+    + '</div>';
   shadowRoot.appendChild(root);
   document.body.appendChild(host);
 

@@ -1,5 +1,11 @@
 # Changelog
 
+### Commit 36 — Add public banner branding
+
+- Added a subtle `Powered by ZionPrivacy` footer to the public consent banner, matching the existing branded footer in the preferences modal.
+- Linked the branding to `https://zion3d.ro` in a new tab with isolated banner styling.
+- Bumped plugin version to `0.1.31`.
+
 ### Commit 35 — Raise consent host stacking context
 
 - Applied the maximum practical z-index to the Shadow DOM host itself, not only its internal modal elements.

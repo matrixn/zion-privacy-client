@@ -26,6 +26,7 @@
 .zion-privacy-banner.is-hidden { display: none !important; }
 .zion-privacy-banner.is-modal-only { position: static; inset: auto; width: auto; max-width: none; height: 0; min-height: 0; margin: 0; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
 .zion-privacy-banner.is-modal-only > .zion-privacy-banner__content { display: none; }
+.zion-privacy-banner.is-modal-only > .zion-privacy-banner__footer { display: none; }
 
 .zion-privacy-banner.uses-site-font { font-family: inherit; }
 .zion-privacy-banner.uses-system-font { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
@@ -57,6 +58,8 @@
 .zion-privacy-banner__policy-links { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-top: 7px; color: var(--zion-banner-muted, #52657c); font-size: .93em; }
 .zion-privacy-banner__policy-links a { font-size: inherit; }
 .zion-privacy-banner__actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+.zion-privacy-banner__footer { display: flex; justify-content: flex-end; margin-top: 13px; padding-top: 9px; border-top: 1px solid var(--zion-banner-border, #dce5f0); }
+.zion-privacy-banner__footer .zion-privacy-banner__powered { font-size: 11px; }
 .zion-privacy-banner button { padding: 9px 13px; color: var(--zion-banner-secondary-text, #1e477c); background: var(--zion-banner-secondary, #f1f6fc); background-image: none; border: 1px solid var(--zion-banner-border, #cddbeb); border-radius: calc(var(--zion-banner-radius, 12px) / 2); cursor: pointer; font-size: .93em; transition: transform var(--zion-banner-hover-duration, 180ms) ease, box-shadow var(--zion-banner-hover-duration, 180ms) ease, filter var(--zion-banner-hover-duration, 180ms) ease; }
 .zion-privacy-banner button.is-primary { color: var(--zion-banner-primary-text, #fff); background: var(--zion-banner-primary, #2369d1); border-color: var(--zion-banner-primary, #2369d1); }
 .zion-privacy-banner button.is-primary { background-image: none; }
