@@ -64,6 +64,7 @@ final class CallbackHandler
 
         $this->settings->saveCredentials($credentials + [
             'account' => $response['account'] ?? ($response['data']['account'] ?? []),
+            'branding' => $response['branding'] ?? ($response['data']['branding'] ?? []),
         ]);
         $this->redirectWithNotice('success', 'Zion Privacy account connected.');
     }

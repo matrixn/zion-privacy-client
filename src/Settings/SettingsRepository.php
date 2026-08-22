@@ -6,6 +6,8 @@ use ZionPrivacy\Infrastructure\CredentialVault;
 
 final class SettingsRepository
 {
+    public const DEFAULT_POWERED_BY_URL = 'https://zion3d.ro';
+
     private const API_BASE_URL = 'https://privacy-api.zion3d.ro';
 
     private const SETTINGS_OPTION = 'zion_privacy_settings';
@@ -210,6 +212,33 @@ final class SettingsRepository
     public function saveCredentials(array $credentials): void
     {
         update_option(self::CREDENTIALS_OPTION, $this->vault->encrypt($credentials), false);
+    }
+
+    public function branding(): array
+    {
+        $credentials = $this->credentials();
+        $branding = is_array($credentials['branding'] ?? null) ? $credentials['branding'] : [];
+        $poweredByUrl = esc_url_raw((string) ($branding['powered_by_url'] ?? ''));
+
+        if (! in_array(strtolower((string) wp_parse_url($poweredByUrl, PHP_URL_SCHEME)), ['http', 'https'], true)) {
+            $poweredByUrl = self::DEFAULT_POWERED_BY_URL;
+        }
+
+        return [
+            'powered_by_url' => rtrim($poweredByUrl, '/'),
+            'copyright_enabled' => ! array_key_exists('copyright_enabled', $branding) || ! empty($branding['copyright_enabled']),
+        ];
+    }
+
+    public function saveBranding(array $branding): void
+    {
+        $credentials = $this->credentials();
+        $credentials['branding'] = [
+            'powered_by_url' => esc_url_raw((string) ($branding['powered_by_url'] ?? self::DEFAULT_POWERED_BY_URL)) ?: self::DEFAULT_POWERED_BY_URL,
+            'copyright_enabled' => ! array_key_exists('copyright_enabled', $branding) || ! empty($branding['copyright_enabled']),
+        ];
+
+        $this->saveCredentials($credentials);
     }
 
     public function clearCredentials(): void

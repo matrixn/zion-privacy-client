@@ -1,5 +1,12 @@
 # Changelog
 
+### Commit 37 — Sync configurable branding and website copyright
+
+- Persisted the API-provided Powered by URL and per-website copyright preference during OAuth connection and website refreshes.
+- Added a safe fallback to `https://zion3d.ro` when the API branding response is missing or invalid.
+- Made both the public consent banner and preferences modal honor the website copyright setting and use the configured branding URL.
+- Bumped plugin version to `0.1.32`.
+
 ### Commit 36 — Add public banner branding
 
 - Added a subtle `Powered by ZionPrivacy` footer to the public consent banner, matching the existing branded footer in the preferences modal.

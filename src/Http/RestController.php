@@ -527,6 +527,10 @@ final class RestController
     {
         $data = $response['data'][0] ?? null;
 
+        if (is_array($data) && is_array($data['branding'] ?? null)) {
+            $this->settings->saveBranding($data['branding']);
+        }
+
         return is_array($data) ? $data : null;
     }
 

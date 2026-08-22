@@ -26,6 +26,8 @@ final class ConsentBanner
             return;
         }
 
+        $branding = $this->settings->branding();
+
         wp_enqueue_script('zion-privacy-banner', ZION_PRIVACY_URL.'assets/banner.js', [], ZION_PRIVACY_VERSION, true);
         wp_localize_script('zion-privacy-banner', 'ZionPrivacyBanner', [
             'styleUrl' => ZION_PRIVACY_URL.'assets/banner.css?ver='.rawurlencode(ZION_PRIVACY_VERSION),
@@ -72,6 +74,8 @@ final class ConsentBanner
             'consentUrl' => esc_url_raw(rest_url('zion-privacy/v1/consent')),
             'consentToken' => $this->settings->publicConsentToken(),
             'consentTrackingEnabled' => $this->settings->consentTrackingEnabled(),
+            'poweredByUrl' => $branding['powered_by_url'],
+            'showPoweredBy' => $branding['copyright_enabled'],
             'cookies' => $this->cookies(),
         ]);
     }
