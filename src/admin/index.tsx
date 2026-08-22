@@ -1,4 +1,13 @@
-import { createRoot, useEffect, useState } from "@wordpress/element";
+/** @jsxRuntime classic */
+/** @jsx createElement */
+/** @jsxFrag Fragment */
+import {
+  Fragment,
+  createElement,
+  createRoot,
+  useEffect,
+  useState,
+} from "@wordpress/element";
 import {
   Button,
   Card,

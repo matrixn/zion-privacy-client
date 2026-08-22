@@ -1,5 +1,12 @@
 # Changelog
 
+### Commit 39 — WordPress 6.5 compatibility baseline
+
+- Set the supported WordPress baseline to 6.5.
+- Changed the admin JSX build to the classic `wp-element` transform so the generated asset does not require the newer `react-jsx-runtime` script handle.
+- Kept the admin bundle compatible with the standard WordPress 6.5 `wp-element` and `wp-components` dependencies.
+- Bumped plugin version to `0.1.33`.
+
 ### Commit 38 — Add Zion license SDK and automated GitHub releases
 
 - Added `zion/wordpress-license-sdk` `0.4.11` with the `zion-privacy-client` product configuration for the Zion licensing server.
