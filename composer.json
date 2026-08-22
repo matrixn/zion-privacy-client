@@ -3,7 +3,8 @@
   "description": "WordPress client for the Zion Privacy API.",
   "type": "wordpress-plugin",
   "require": {
-    "php": ">=8.1"
+    "php": ">=8.1",
+    "zion/wordpress-license-sdk": "0.4.11"
   },
   "autoload": {
     "psr-4": {

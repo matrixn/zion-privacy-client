@@ -37,6 +37,26 @@ if (file_exists(ZION_PRIVACY_DIR.'vendor/autoload.php')) {
     });
 }
 
+if (class_exists(\Zion\WordPressLicense\Config::class) && class_exists(\Zion\WordPressLicense\LicenseManager::class)) {
+    $zionPrivacyLicenseManager = new \Zion\WordPressLicense\LicenseManager(new \Zion\WordPressLicense\Config(
+        apiUrl: 'https://license.zion3d.ro/api/v1',
+        productSlug: 'zion-privacy-client',
+        productKey: 'zion_hnhf5pqyudikt06evlookutfufqdwc96miyfvjzl',
+        pluginFile: ZION_PRIVACY_FILE,
+        pluginName: 'Zion Privacy Client',
+        textDomain: 'zion-privacy-client',
+        licenseOption: 'zion_privacy_license_key',
+    ));
+
+    register_activation_hook(ZION_PRIVACY_FILE, static function () use ($zionPrivacyLicenseManager): void {
+        try {
+            $zionPrivacyLicenseManager->ping(get_option('zion_privacy_license_key') ?: null);
+        } catch (\Throwable) {
+            // Licensing failures must not prevent the privacy client from activating.
+        }
+    });
+}
+
 register_activation_hook(ZION_PRIVACY_FILE, static function (): void {
     ZionPrivacy\Consent\ConsentEventRepository::install();
 });

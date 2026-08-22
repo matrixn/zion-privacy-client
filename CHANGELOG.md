@@ -1,5 +1,11 @@
 # Changelog
 
+### Commit 38 — Add Zion license SDK and automated GitHub releases
+
+- Added `zion/wordpress-license-sdk` `0.4.11` with the `zion-privacy-client` product configuration for the Zion licensing server.
+- Registered license heartbeat, activation ping, update metadata and the SDK license management flow without interrupting the privacy client if a licensing request fails.
+- Added a GitHub Actions release workflow that reads the product configuration from the licensing server using the existing `ZION_PUBLISH_TOKEN` secret, builds the production package and uploads the versioned plugin ZIP to the GitHub release.
+
 ### Commit 37 — Sync configurable branding and website copyright
 
 - Persisted the API-provided Powered by URL and per-website copyright preference during OAuth connection and website refreshes.

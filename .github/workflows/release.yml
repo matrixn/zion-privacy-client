@@ -1,0 +1,163 @@
+name: Build Zion Privacy Client release
+
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and publish plugin ZIP
+    runs-on: ubuntu-latest
+    env:
+      ZION_API_URL: https://license.zion3d.ro/api/v1
+
+    steps:
+      - name: Checkout release tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, json, zip
+          tools: composer:v2
+          coverage: none
+
+      - name: Validate repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f composer.json
+          test -f composer.lock
+          test -f bin/build-release.sh
+          composer validate --no-check-publish --no-check-lock
+
+      - name: Load product release configuration
+        id: zion
+        shell: bash
+        env:
+          ZION_PUBLISH_TOKEN: ${{ secrets.ZION_PUBLISH_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${ZION_PUBLISH_TOKEN:-}" ]; then
+            echo "::error::GitHub secret ZION_PUBLISH_TOKEN is missing."
+            exit 1
+          fi
+
+          response_file="$(mktemp)"
+          http_status="$(curl --silent --show-error \
+            --output "$response_file" \
+            --write-out '%{http_code}' \
+            --request POST \
+            --header "Authorization: Bearer ${ZION_PUBLISH_TOKEN}" \
+            --header 'Accept: application/json' \
+            --header 'Content-Type: application/json' \
+            --data "$(jq -n \
+              --arg repository "${GITHUB_REPOSITORY}" \
+              --arg ref "${{ github.ref_name }}" \
+              '{repository: $repository, ref: $ref}')" \
+            "${ZION_API_URL}/publishing/config")"
+
+          if [ "$http_status" -lt 200 ] || [ "$http_status" -ge 300 ]; then
+            echo "::error::Zion licensing API returned HTTP ${http_status}."
+            cat "$response_file"
+            exit 1
+          fi
+
+          product_slug="$(jq -r '.data.product_slug // empty' "$response_file")"
+          product_key="$(jq -r '.data.product_key // empty' "$response_file")"
+          asset_name="$(jq -r '.data.expected_asset_name // empty' "$response_file")"
+
+          if [ "$product_slug" != 'zion-privacy-client' ]; then
+            echo "::error::The licensing server returned unexpected product slug: ${product_slug}"
+            exit 1
+          fi
+          if [ -z "$product_key" ]; then
+            echo "::error::The licensing server did not return a product key."
+            exit 1
+          fi
+          if [ -z "$asset_name" ]; then
+            asset_name="${product_slug}.zip"
+          fi
+
+          {
+            echo "product_slug=${product_slug}"
+            echo "product_key=${product_key}"
+            echo "asset_name=${asset_name}"
+          } >> "$GITHUB_OUTPUT"
+          rm -f "$response_file"
+
+      - name: Inject server product configuration
+        shell: bash
+        env:
+          PRODUCT_SLUG: ${{ steps.zion.outputs.product_slug }}
+          PRODUCT_KEY: ${{ steps.zion.outputs.product_key }}
+        run: |
+          set -euo pipefail
+
+          # The privacy client keeps its SDK configuration in the bootstrap as
+          # named arguments. Replace the values using a deterministic script.
+          php -r '
+              $file = "zion-privacy-client.php";
+              $contents = file_get_contents($file);
+              $slug = $argv[1];
+              $key = $argv[2];
+              $contents = preg_replace(
+                  "/productSlug:\\s*[\"\\x27][^\"\\x27]*[\"\\x27]/",
+                  "productSlug: ".var_export($slug, true),
+                  $contents,
+                  1,
+                  $slugCount
+              );
+              $contents = preg_replace(
+                  "/productKey:\\s*[\"\\x27][^\"\\x27]*[\"\\x27]/",
+                  "productKey: ".var_export($key, true),
+                  $contents,
+                  1,
+                  $keyCount
+              );
+              if ($contents === null || $slugCount !== 1 || $keyCount !== 1 || file_put_contents($file, $contents) === false) {
+                  throw new RuntimeException("Could not inject the Zion product configuration.");
+              }
+          ' "$PRODUCT_SLUG" "$PRODUCT_KEY"
+
+      - name: Build production plugin package
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash bin/build-release.sh
+
+      - name: Create GitHub release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          if ! gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release create "$RELEASE_TAG" --title "$RELEASE_TAG" --generate-notes
+          fi
+
+      - name: Upload release asset
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ASSET_NAME: ${{ steps.zion.outputs.asset_name }}
+          PRODUCT_SLUG: ${{ steps.zion.outputs.product_slug }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          source_archive="$(find .dist -maxdepth 1 -type f -name "${PRODUCT_SLUG}-*.zip" | sort | head -n 1)"
+          test -n "$source_archive"
+          cp "$source_archive" "$ASSET_NAME"
+          gh release upload "$RELEASE_TAG" "$ASSET_NAME" --clobber
+          sha256sum "$ASSET_NAME" >> "$GITHUB_STEP_SUMMARY"

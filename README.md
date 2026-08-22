@@ -1,5 +1,20 @@
 # Zion Privacy Client
 
+## Zion licensing and releases
+
+The plugin includes `zion/wordpress-license-sdk` `0.4.11` and is registered with the Zion licensing server as `zion-privacy-client`. Licensing and update metadata use the production endpoint `https://license.zion3d.ro/api/v1`.
+
+Release packages are built automatically by `.github/workflows/release.yml` whenever a version tag such as `v0.1.32` is pushed. The workflow reads the product configuration from the licensing server with the repository secret `ZION_PUBLISH_TOKEN`, builds the production ZIP with Composer dependencies included and uploads the asset to the matching GitHub release.
+
+To publish a release:
+
+```bash
+git tag v0.1.32
+git push origin v0.1.32
+```
+
+The product key is used only as the SDK product identifier. The GitHub publishing token must remain a repository secret and must never be committed to the plugin.
+
 The admin dashboard uses a dark-first blue/orange visual system with a persistent light theme option. Cookie inventory results are cached in the WordPress database, refreshed manually or periodically, and display the timestamp of the local snapshot. If the API is temporarily unavailable, the latest saved snapshot remains visible as stale data.
 
 Zion Privacy Client is the WordPress client for the Zion Privacy API. It provides a native WordPress administration experience for connecting a site, reviewing scanner results and showing a privacy consent banner.
