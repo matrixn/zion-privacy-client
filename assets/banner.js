@@ -67,6 +67,7 @@
     + '<div class="zion-privacy-banner__footer">' + renderPoweredBy() + '</div>';
   shadowRoot.appendChild(root);
   document.body.appendChild(host);
+  recordVisitorView();
 
   root.addEventListener('click', function (event) {
     var button = event.target.closest('[data-zion-consent]');
@@ -259,6 +260,25 @@
       }),
       keepalive: true
     }).catch(function () {});
+  }
+
+  function recordVisitorView() {
+    if (isPreview || config.consentTrackingEnabled === false || !config.consentUrl || !config.consentToken || !window.fetch) {
+      return;
+    }
+
+    var seenKey = storageKey + '_visitor_seen';
+    try {
+      if (window.localStorage.getItem(seenKey) === '1') {
+        return;
+      }
+
+      window.localStorage.setItem(seenKey, '1');
+    } catch (error) {
+      // Continue without local deduplication when storage is unavailable.
+    }
+
+    sendConsentEvent(null, 'viewed');
   }
 
   function uuid() {

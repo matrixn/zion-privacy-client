@@ -282,6 +282,50 @@ function ConsentTrendChart({ totals }: { totals: RecordData }) {
   );
 }
 
+function ConsentVisitorComparison({ comparison }: { comparison: RecordData }) {
+  const rows = [
+    ["Visitors", "total", "#60a5fa"],
+    ["Accepted", "accepted", "#8fe3c0"],
+    ["Rejected", "rejected", "#f2a0aa"],
+    ["Partially accepted", "partially_accepted", "#81c8e8"],
+    ["Undecided", "undecided", "#94a3b8"],
+  ] as const;
+  const total = Math.max(1, Number(comparison.total || 0));
+
+  return (
+    <div className="zion-admin__visitor-comparison">
+      <div className="zion-admin__visitor-comparison-summary">
+        <strong>{Number(comparison.total || 0)}</strong>
+        <span>unique visitors</span>
+      </div>
+      <div className="zion-admin__visitor-comparison-rows">
+        {rows.map(([label, key, color]) => {
+          const value = Number(comparison[key] || 0);
+          const width = key === "total" ? 100 : Math.min(100, (value / total) * 100);
+
+          return (
+            <div className="zion-admin__visitor-comparison-row" key={key}>
+              <div className="zion-admin__visitor-comparison-label">
+                <span>
+                  <i style={{ background: color }} />
+                  {label}
+                </span>
+                <strong>{value}</strong>
+              </div>
+              <div className="zion-admin__visitor-comparison-track">
+                <span style={{ width: `${width}%`, background: color }} />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <small className="zion-admin__visitor-comparison-note">
+        Latest anonymous decision per visitor · selected period: {comparison.days || 7} days
+      </small>
+    </div>
+  );
+}
+
 function PageviewsChart({ scans }: { scans: RecordData[] }) {
   const entries = scans.slice().reverse().slice(-7);
   const max = Math.max(
@@ -349,6 +393,7 @@ function Dashboard() {
   const packageData = account.package || {};
   const usage = account.usage || {};
   const consent = data.consent || { totals: {}, recent: [] };
+  const visitorComparison = consent.visitor_comparison || {};
   const nextScan = scans
     .filter((scan: RecordData) => scan.next_run_at)
     .sort((a: RecordData, b: RecordData) =>
@@ -594,6 +639,25 @@ function Dashboard() {
               </CardBody>
             </Card>
           </div>
+          <Card className="zion-admin__dashboard-chart-card">
+            <CardHeader>
+              <div className="zion-admin__card-heading">
+                <div>
+                  <h2>Visitors vs consent decisions</h2>
+                  <p>
+                    Anonymous visitors compared with their latest consent
+                    choice for this website.
+                  </p>
+                </div>
+                <span className="zion-admin__muted">
+                  Last {visitorComparison.days || 7} days
+                </span>
+              </div>
+            </CardHeader>
+            <CardBody>
+              <ConsentVisitorComparison comparison={visitorComparison} />
+            </CardBody>
+          </Card>
           <Card>
             <CardHeader>
               <h2>Recent consent logs</h2>

@@ -53,7 +53,7 @@ final class ConsentEventRepository
         global $wpdb;
 
         $status = sanitize_key((string) ($event['status'] ?? ''));
-        if (! in_array($status, ['accepted', 'rejected', 'partially_accepted'], true)) {
+        if (! in_array($status, ['viewed', 'accepted', 'rejected', 'partially_accepted'], true)) {
             return false;
         }
 
