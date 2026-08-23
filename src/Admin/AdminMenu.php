@@ -11,7 +11,13 @@ final class AdminMenu
     public function register(): void
     {
         add_action('admin_menu', [$this, 'registerPages']);
+        add_action('admin_head', [$this, 'renderMenuIconStyles']);
         add_action('admin_enqueue_scripts', [$this, 'enqueueAssets']);
+    }
+
+    public function renderMenuIconStyles(): void
+    {
+        echo '<style id="zion-privacy-menu-icon-styles">#adminmenu #toplevel_page_zion-privacy .wp-menu-image { background-position: center center !important; background-repeat: no-repeat !important; background-size: 20px 20px !important; }</style>';
     }
 
     public function registerPages(): void

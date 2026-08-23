@@ -1,5 +1,10 @@
 # Changelog
 
+### Commit 42 — Fix WordPress admin menu icon sizing
+
+- Constrained the Zion Privacy menu logo background to the standard 20×20px WordPress admin menu area so it no longer overlaps the menu label.
+- Kept the larger logo used by the plugin interface unchanged.
+
 ### Commit 41 — Add official Zion Privacy branding icon
 
 - Added the official 100px and 150px Zion Privacy logo assets to the plugin.
