@@ -28,7 +28,7 @@ final class AdminMenu
             'manage_options',
             'zion-privacy',
             [$this, 'renderPage'],
-            ZION_PRIVACY_URL.'assets/logo-zion-privacy-100x100.png',
+            ZION_PRIVACY_URL.'assets/logo-zion-privacy-menu-20x20.png',
             80,
         );
 

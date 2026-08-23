@@ -1,5 +1,10 @@
 # Changelog
 
+### Commit 43 — Add a dedicated 20px menu icon
+
+- Added a resized 20×20px PNG specifically for the WordPress admin menu.
+- Updated the menu registration to load the compact asset directly instead of loading the 100×100px logo.
+
 ### Commit 42 — Fix WordPress admin menu icon sizing
 
 - Constrained the Zion Privacy menu logo background to the standard 20×20px WordPress admin menu area so it no longer overlaps the menu label.
