@@ -291,24 +291,30 @@ function PageviewsChart({ scans }: { scans: RecordData[] }) {
   return (
     <div className="zion-admin__pageview-chart">
       {entries.length ? (
-        entries.map((scan) => (
-          <div className="zion-admin__pageview-bar" key={scan.id}>
-            <span
-              style={{
-                height: `${Math.max(
-                  4,
-                  (Number(scan.page_count || 0) / max) * 100,
-                )}%`,
-              }}
-              title={`${scan.page_count || 0} pages — ${formatLabel(
-                scan.status || "unknown",
-              )}`}
-            />
-            <small>
-              {scan.finished_at ? shortDate(scan.finished_at) : "—"}
-            </small>
-          </div>
-        ))
+        entries.map((scan) => {
+          const pageviews = Number(scan.page_count || 0);
+          const barHeight = Math.max(4, (pageviews / max) * 100);
+
+          return (
+            <div className="zion-admin__pageview-bar" key={scan.id}>
+              <span
+                style={{ height: `${barHeight}%` }}
+                title={`${pageviews} pageviews — ${formatLabel(
+                  scan.status || "unknown",
+                )}`}
+              />
+              <strong
+                className="zion-admin__pageview-value"
+                style={{ bottom: `calc(${barHeight}% + 4px)` }}
+              >
+                {pageviews}
+              </strong>
+              <small>
+                {scan.finished_at ? shortDate(scan.finished_at) : "—"}
+              </small>
+            </div>
+          );
+        })
       ) : (
         <div className="zion-admin__empty">No pageview data available yet.</div>
       )}
@@ -524,8 +530,7 @@ function Dashboard() {
                   </div>
                   <a
                     className="zion-admin__dashboard-link"
-                    href="#"
-                    onClick={(event) => event.preventDefault()}
+                    href={pluginViewUrl("cookies")}
                   >
                     Manage cookies ›
                   </a>
@@ -3135,6 +3140,12 @@ function previewUrlFor(value: string) {
   } catch (error) {
     return `${value.replace(/\/$/, "")}/?zion_priv_preview=true`;
   }
+}
+function pluginViewUrl(view: ViewKey) {
+  const url = new URL(window.location.href);
+  url.searchParams.set("page", "zion-privacy");
+  url.searchParams.set("view", view);
+  return url.toString();
 }
 function websiteStatusClass(value: string) {
   return value === "active" ? "active" : "inactive";

@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Added visible numeric pageview labels above every bar in the WordPress Dashboard Pageviews chart, so recent scan coverage can be read without relying on hover tooltips.
+- Linked the Dashboard Cookie summary **Manage cookies** action to the plugin Cookies tab instead of leaving it as a placeholder anchor.
+
 ### Commit 43 — Add a dedicated 20px menu icon
 
 - Added a resized 20×20px PNG specifically for the WordPress admin menu.

@@ -459,8 +459,9 @@ body.zion-privacy-theme-light.toplevel_page_zion-privacy .zion-admin__sidebar { 
 .zion-admin__consent-swatch--rejected { background: #f2a0aa; }
 .zion-admin__consent-swatch--partial { background: #81c8e8; }
 .zion-admin__pageview-chart { display: flex; align-items: flex-end; gap: 10px; height: 210px; padding: 20px 10px 0; border-bottom: 1px solid var(--line); }
-.zion-admin__pageview-bar { display: flex; flex: 1; min-width: 18px; height: 100%; align-items: flex-end; gap: 5px; }
+.zion-admin__pageview-bar { position: relative; display: flex; flex: 1; min-width: 18px; height: 100%; align-items: flex-end; gap: 5px; }
 .zion-admin__pageview-bar span { display: block; width: 100%; min-height: 4px; background: #60a5fa; border-radius: 5px 5px 0 0; }
+.zion-admin__pageview-value { position: absolute; left: 50%; color: var(--ink); font-size: 10px; line-height: 1; text-align: center; transform: translateX(-50%); white-space: nowrap; }
 .zion-admin__pageview-bar small { display: block; color: var(--muted); font-size: 9px; text-align: center; white-space: nowrap; transform: translateY(18px); }
 .zion-admin__consent-log-table td { padding-top: 10px; padding-bottom: 10px; }
 .zion-admin__consent-status { display: inline-flex; padding: 4px 8px; border-radius: 5px; font-size: 11px; font-weight: 700; }
