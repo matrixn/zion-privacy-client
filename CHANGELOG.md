@@ -7,6 +7,10 @@
 - Reworked the Dashboard Cookie summary layout so scan metadata appears to the right of the cookie chart and category legend on wider screens, with a responsive single-column layout on mobile.
 - Hardened forced banner preview detection on both PHP and JavaScript sides. Any page containing `zion_priv_preview=true` now displays the consent banner regardless of stored consent or the banner enabled setting.
 
+## 0.1.35
+
+- Published the dashboard chart and forced banner preview improvements as the `v0.1.35` release.
+
 ### Commit 43 — Add a dedicated 20px menu icon
 
 - Added a resized 20×20px PNG specifically for the WordPress admin menu.
