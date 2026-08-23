@@ -20,7 +20,10 @@ final class ConsentBanner
     public function enqueue(): void
     {
         $settings = $this->settings->all();
-        $preview = isset($_GET['zion_priv_preview']) && sanitize_key((string) $_GET['zion_priv_preview']) === 'true';
+        $previewValue = isset($_GET['zion_priv_preview']) && is_scalar($_GET['zion_priv_preview'])
+            ? strtolower(trim((string) wp_unslash($_GET['zion_priv_preview'])))
+            : '';
+        $preview = in_array($previewValue, ['true', '1', 'yes'], true);
 
         if (is_admin() || (empty($settings['banner_enabled']) && ! $preview)) {
             return;

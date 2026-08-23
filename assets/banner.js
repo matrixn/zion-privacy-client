@@ -3,7 +3,10 @@
 
   var config = window.ZionPrivacyBanner || {};
   var storageKey = config.storageKey || 'zion_privacy_consent_v1';
-  var hasStoredConsent = config.preview !== true && !!window.localStorage.getItem(storageKey);
+  var isPreview = config.preview === true
+    || String(config.preview || '').toLowerCase() === 'true'
+    || /(?:^|&)zion_priv_preview=(?:true|1|yes)(?:&|$)/i.test(window.location.search.replace(/^\?/, ''));
+  var hasStoredConsent = !isPreview && !!window.localStorage.getItem(storageKey);
 
   var host = document.createElement('section');
   host.setAttribute('data-zion-privacy-banner-host', '');
@@ -188,11 +191,11 @@
   }
 
   function applyConsent(consent, status) {
-    if (config.preview !== true) {
+    if (!isPreview) {
       window.localStorage.setItem(storageKey, JSON.stringify(consent));
       sendConsentEvent(consent, status);
     }
-    if (config.preview === true) {
+    if (isPreview) {
       host.remove();
     } else {
       hasStoredConsent = true;
@@ -209,7 +212,7 @@
   }
 
   function showLauncher() {
-    if (launcher || config.preview === true) {
+    if (launcher || isPreview) {
       return;
     }
 

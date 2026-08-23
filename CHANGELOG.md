@@ -4,6 +4,8 @@
 
 - Added visible numeric pageview labels above every bar in the WordPress Dashboard Pageviews chart, so recent scan coverage can be read without relying on hover tooltips.
 - Linked the Dashboard Cookie summary **Manage cookies** action to the plugin Cookies tab instead of leaving it as a placeholder anchor.
+- Reworked the Dashboard Cookie summary layout so scan metadata appears to the right of the cookie chart and category legend on wider screens, with a responsive single-column layout on mobile.
+- Hardened forced banner preview detection on both PHP and JavaScript sides. Any page containing `zion_priv_preview=true` now displays the consent banner regardless of stored consent or the banner enabled setting.
 
 ### Commit 43 — Add a dedicated 20px menu icon
 

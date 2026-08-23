@@ -537,30 +537,32 @@ function Dashboard() {
                 </div>
               </CardHeader>
               <CardBody>
-                <CookieSummaryChart
-                  categories={categories}
-                  total={Number(stats.total_cookies || 0)}
-                />
-                <div className="zion-admin__dashboard-website-meta">
-                  <div>
-                    <span>Last successful scan</span>
-                    <strong>
-                      {data.website.last_successful_scan_at
-                        ? formatDate(data.website.last_successful_scan_at)
-                        : "—"}
-                    </strong>
-                  </div>
-                  <div>
-                    <span>Pages scanned</span>
-                    <strong>{stats.pages_scanned || 0}</strong>
-                  </div>
-                  <div>
-                    <span>Next scan</span>
-                    <strong>
-                      {nextScan?.next_run_at
-                        ? formatDate(nextScan.next_run_at)
-                        : "Not scheduled"}
-                    </strong>
+                <div className="zion-admin__cookie-summary-layout">
+                  <CookieSummaryChart
+                    categories={categories}
+                    total={Number(stats.total_cookies || 0)}
+                  />
+                  <div className="zion-admin__dashboard-website-meta">
+                    <div>
+                      <span>Last successful scan</span>
+                      <strong>
+                        {data.website.last_successful_scan_at
+                          ? formatDate(data.website.last_successful_scan_at)
+                          : "—"}
+                      </strong>
+                    </div>
+                    <div>
+                      <span>Pages scanned</span>
+                      <strong>{stats.pages_scanned || 0}</strong>
+                    </div>
+                    <div>
+                      <span>Next scan</span>
+                      <strong>
+                        {nextScan?.next_run_at
+                          ? formatDate(nextScan.next_run_at)
+                          : "Not scheduled"}
+                      </strong>
+                    </div>
                   </div>
                 </div>
               </CardBody>
