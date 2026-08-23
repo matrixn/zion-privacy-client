@@ -209,6 +209,17 @@
       showLauncher();
     }
     document.dispatchEvent(new CustomEvent('zionprivacy:consent', { detail: consent }));
+    redirectAfterRejection(status);
+  }
+
+  function redirectAfterRejection(status) {
+    if (isPreview || status !== 'rejected' || config.rejectRedirectEnabled !== true || !config.rejectRedirectUrl) {
+      return;
+    }
+
+    window.setTimeout(function () {
+      window.location.assign(config.rejectRedirectUrl);
+    }, 150);
   }
 
   function showLauncher() {

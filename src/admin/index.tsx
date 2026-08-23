@@ -1229,6 +1229,34 @@ function BannerPage() {
                       {renewing ? "Renewing…" : "Renew user consents"}
                     </Button>
                   </div>
+                  <div className="zion-admin__field zion-admin__field--full">
+                    <div className="zion-admin__help-label">
+                      Reject navigation{" "}
+                      <span title="When enabled, visitors who choose Reject are redirected away from this website. Their rejection is still recorded before the redirect.">
+                        ?
+                      </span>
+                    </div>
+                    <ToggleControl
+                      label="Redirect visitors after Reject"
+                      checked={settings.banner_reject_redirect_enabled === true}
+                      onChange={(value) =>
+                        update({ banner_reject_redirect_enabled: value })
+                      }
+                    />
+                    <TextControl
+                      label="Redirect URL after rejection"
+                      value={settings.banner_reject_redirect_url || ""}
+                      onChange={(value) =>
+                        update({ banner_reject_redirect_url: value })
+                      }
+                    />
+                    <small>
+                      The default searches Google for this website with a
+                      site-specific query. Edit it to use any trusted HTTP or
+                      HTTPS destination. The redirect is disabled by default
+                      and does not run in the live preview.
+                    </small>
+                  </div>
                 </div>
               </BannerAccordion>
               <BannerAccordion

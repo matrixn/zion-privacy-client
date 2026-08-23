@@ -77,6 +77,8 @@ final class ConsentBanner
             'consentUrl' => esc_url_raw(rest_url('zion-privacy/v1/consent')),
             'consentToken' => $this->settings->publicConsentToken(),
             'consentTrackingEnabled' => $this->settings->consentTrackingEnabled(),
+            'rejectRedirectEnabled' => (bool) $settings['banner_reject_redirect_enabled'],
+            'rejectRedirectUrl' => (string) $settings['banner_reject_redirect_url'],
             'poweredByUrl' => $branding['powered_by_url'],
             'showPoweredBy' => $branding['copyright_enabled'],
             'cookies' => $this->cookies(),

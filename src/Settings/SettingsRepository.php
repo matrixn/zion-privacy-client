@@ -31,6 +31,8 @@ final class SettingsRepository
             'default_scan_scenario' => 'pre_consent',
             'banner_cookie_cache_minutes' => 5,
             'consent_tracking_enabled' => true,
+            'banner_reject_redirect_enabled' => false,
+            'banner_reject_redirect_url' => $this->defaultRejectRedirectUrl(),
             'banner_regulation' => 'gdpr',
             'consent_revision' => 1,
             'consent_renewed_at' => null,
@@ -76,6 +78,9 @@ final class SettingsRepository
         foreach (['banner_show_customize', 'banner_show_cookie_details', 'banner_show_category_counts', 'banner_show_privacy_link', 'banner_show_privacy_policy_link', 'banner_show_terms_link', 'banner_show_cookie_policy_link', 'banner_use_site_font', 'banner_shadow', 'banner_button_hover_enabled'] as $key) {
             $current[$key] = ! isset($settings[$key]) || ! empty($settings[$key]);
         }
+        $current['banner_reject_redirect_enabled'] = ! empty($settings['banner_reject_redirect_enabled']);
+        $redirectUrl = trim((string) ($settings['banner_reject_redirect_url'] ?? $current['banner_reject_redirect_url']));
+        $current['banner_reject_redirect_url'] = $this->safeHttpUrl($redirectUrl, $this->defaultRejectRedirectUrl());
         foreach (['banner_privacy_policy_page_id', 'banner_terms_page_id', 'banner_cookie_policy_page_id'] as $key) {
             $current[$key] = $this->pageId($settings[$key] ?? $current[$key]);
         }
@@ -155,6 +160,8 @@ final class SettingsRepository
             'banner_button_hover_effect' => 'lift_glow',
             'banner_button_hover_duration' => 180,
             'banner_button_hover_scale' => 102,
+            'banner_reject_redirect_enabled' => false,
+            'banner_reject_redirect_url' => $this->defaultRejectRedirectUrl(),
             'banner_background_color' => '#ffffff',
             'banner_text_color' => '#183153',
             'banner_muted_color' => '#52657c',
@@ -177,6 +184,23 @@ final class SettingsRepository
         $page = $pageId > 0 ? get_post($pageId) : null;
 
         return $page instanceof \WP_Post && $page->post_type === 'page' ? $pageId : 0;
+    }
+
+    private function defaultRejectRedirectUrl(): string
+    {
+        $hostname = (string) wp_parse_url(home_url('/'), PHP_URL_HOST);
+
+        return $hostname !== ''
+            ? 'https://www.google.com/search?q='.rawurlencode('site:'.$hostname)
+            : 'https://www.google.com/';
+    }
+
+    private function safeHttpUrl(string $value, string $fallback): string
+    {
+        $url = esc_url_raw($value, ['http', 'https']);
+        $scheme = strtolower((string) wp_parse_url($url, PHP_URL_SCHEME));
+
+        return $url !== '' && in_array($scheme, ['http', 'https'], true) ? $url : $fallback;
     }
 
     public function apiTimeoutSeconds(): int

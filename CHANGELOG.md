@@ -7,6 +7,11 @@
 - Reworked the Dashboard Cookie summary layout so scan metadata appears to the right of the cookie chart and category legend on wider screens, with a responsive single-column layout on mobile.
 - Hardened forced banner preview detection on both PHP and JavaScript sides. Any page containing `zion_priv_preview=true` now displays the consent banner regardless of stored consent or the banner enabled setting.
 
+## 0.1.36
+
+- Added an optional Consent banner setting that redirects visitors after they choose Reject, while preserving the consent event before navigation.
+- Added an editable, safe HTTP/HTTPS redirect URL with a site-specific Google search URL as the default; the behavior remains disabled by default and is skipped in preview mode.
+
 ## 0.1.35
 
 - Published the dashboard chart and forced banner preview improvements as the `v0.1.35` release.

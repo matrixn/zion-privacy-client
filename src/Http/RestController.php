@@ -440,6 +440,8 @@ final class RestController
             'default_scan_scenario' => $settings['default_scan_scenario'],
             'banner_cookie_cache_minutes' => (int) $settings['banner_cookie_cache_minutes'],
             'consent_tracking_enabled' => $this->settings->consentTrackingEnabled(),
+            'banner_reject_redirect_enabled' => (bool) $settings['banner_reject_redirect_enabled'],
+            'banner_reject_redirect_url' => (string) $settings['banner_reject_redirect_url'],
             'consent_revision' => (int) $settings['consent_revision'],
             'consent_renewed_at' => $settings['consent_renewed_at'],
             'connected' => $this->settings->isConnected(),
