@@ -11,6 +11,7 @@ body.toplevel_page_zion-privacy #wpfooter { display: none; }
 .zion-admin { position: relative; z-index: 1; width: 100%; max-width: 1480px; margin: 0 auto; }
 .zion-admin__sidebar { position: fixed; z-index: 1000; top: 32px; right: 0; left: 0; display: flex; width: 100%; min-height: 78px; align-items: center; gap: 30px; padding: 13px clamp(18px, 4vw, 62px); background: linear-gradient(90deg, #111832 0%, #0d1229 100%); border-bottom: 1px solid var(--line); box-sizing: border-box; }
 .zion-admin__brand { display: flex; flex: 0 0 auto; align-items: center; gap: 12px; padding: 0; }
+.zion-admin__brand-logo { display: block; width: 42px; height: 42px; object-fit: contain; border-radius: 14px; filter: drop-shadow(0 8px 22px rgba(0, 0, 0, .24)); }
 .zion-admin__brand-mark { display: grid; width: 42px; height: 42px; place-items: center; color: #fff; background: linear-gradient(135deg, var(--cyan), var(--purple)); border-radius: 14px; box-shadow: 0 8px 26px rgba(34, 211, 238, .22); font-size: 20px; font-weight: 800; }
 .zion-admin__brand strong { display: block; color: #fff; font-size: 15px; letter-spacing: -.02em; }
 .zion-admin__brand small { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; }

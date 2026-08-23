@@ -1,5 +1,10 @@
 # Changelog
 
+### Commit 41 — Add official Zion Privacy branding icon
+
+- Added the official 100px and 150px Zion Privacy logo assets to the plugin.
+- Added the compact logo to the WordPress admin menu and the high-resolution logo to the plugin header, with a safe text fallback when the asset URL is unavailable.
+
 ### Commit 40 — Automatic cookie category saves and refreshed AI inventory
 
 - Removed the category Save button; changing a category now persists the local website override immediately through AJAX.

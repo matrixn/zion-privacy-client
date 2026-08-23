@@ -41,6 +41,7 @@ type AdminConfig = {
   page: string;
   connected: boolean;
   version: string;
+  logoUrl?: string;
   siteUrl?: string;
   scanPollIntervalSeconds?: number;
   cookieCacheMinutes?: number;
@@ -2837,7 +2838,17 @@ function Sidebar({
   return (
     <aside className="zion-admin__sidebar">
       <div className="zion-admin__brand">
-        <span className="zion-admin__brand-mark">Z</span>
+        {config.logoUrl ? (
+          <img
+            className="zion-admin__brand-logo"
+            src={config.logoUrl}
+            width="42"
+            height="42"
+            alt="Zion Privacy"
+          />
+        ) : (
+          <span className="zion-admin__brand-mark">Z</span>
+        )}
         <span>
           <strong>Zion Privacy</strong>
           <small>Website intelligence</small>

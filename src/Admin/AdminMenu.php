@@ -22,7 +22,7 @@ final class AdminMenu
             'manage_options',
             'zion-privacy',
             [$this, 'renderPage'],
-            'dashicons-shield-alt',
+            ZION_PRIVACY_URL.'assets/logo-zion-privacy-100x100.png',
             80,
         );
 
@@ -55,6 +55,7 @@ final class AdminMenu
             'page' => sanitize_key((string) ($_GET['view'] ?? 'dashboard')),
             'connected' => $this->settings->isConnected(),
             'version' => ZION_PRIVACY_VERSION,
+            'logoUrl' => ZION_PRIVACY_URL.'assets/logo-zion-privacy-150x150.png',
             'siteUrl' => esc_url_raw(home_url('/')),
             'scanPollIntervalSeconds' => $this->settings->scanPollIntervalSeconds(),
             'defaultScanMode' => $this->settings->all()['default_scan_mode'],
