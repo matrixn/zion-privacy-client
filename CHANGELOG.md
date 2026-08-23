@@ -7,6 +7,10 @@
 - Reworked the Dashboard Cookie summary layout so scan metadata appears to the right of the cookie chart and category legend on wider screens, with a responsive single-column layout on mobile.
 - Hardened forced banner preview detection on both PHP and JavaScript sides. Any page containing `zion_priv_preview=true` now displays the consent banner regardless of stored consent or the banner enabled setting.
 
+## 0.1.37
+
+- Updated `zion/wordpress-license-sdk` from `0.4.11` to `^0.4.12` and regenerated Composer's lock file for the new SDK release.
+
 ## 0.1.36
 
 - Added an optional Consent banner setting that redirects visitors after they choose Reject, while preserving the consent event before navigation.
