@@ -137,6 +137,11 @@ final class SettingsRepository
                 'label' => sanitize_text_field((string) $link['label']),
                 'url' => esc_url_raw((string) $link['url'], ['http', 'https']),
                 'target' => in_array($link['target'] ?? '_self', ['_self', '_blank', '_parent', '_top'], true) ? $link['target'] : '_self',
+                'enabled' => array_key_exists('enabled', $link) ? ! empty($link['enabled']) : true,
+                'page_id' => is_numeric($link['page_id'] ?? null) ? max(0, absint($link['page_id'])) : null,
+                'page_title' => sanitize_text_field((string) ($link['page_title'] ?? '')),
+                'source' => in_array($link['source'] ?? 'custom', ['wordpress_page', 'custom', 'runtime'], true) ? $link['source'] : 'custom',
+                'internal' => ! empty($link['internal']),
             ];
         }, (array) ($banner['links'] ?? []))));
 

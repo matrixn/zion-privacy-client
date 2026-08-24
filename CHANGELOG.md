@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Updated the WordPress Banner Studio bridge to transmit resolved internal legal-page URLs, page titles, stable link keys and target metadata so imports auto-fill Privacy Policy, Terms and Cookie Policy exactly as configured in WordPress.
+- Preserved legal-link metadata when Banner Studio settings are synchronized back to the WordPress plugin.
+
 ## 0.1.39
 
 - Added a Settings Troubleshooting & Maintenance section with REST route diagnostics, signed API connectivity checks, WordPress/PHP runtime details, cache visibility and masked credential identifiers.

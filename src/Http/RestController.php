@@ -593,9 +593,9 @@ final class RestController
         }
 
         $definitions = [
-            ['key' => 'privacy_policy', 'enabled' => 'banner_show_privacy_policy_link', 'page' => 'banner_privacy_policy_page_id', 'label' => 'banner_privacy_policy_link_label'],
-            ['key' => 'terms', 'enabled' => 'banner_show_terms_link', 'page' => 'banner_terms_page_id', 'label' => 'banner_terms_link_label'],
-            ['key' => 'cookie_policy', 'enabled' => 'banner_show_cookie_policy_link', 'page' => 'banner_cookie_policy_page_id', 'label' => 'banner_cookie_policy_link_label'],
+            ['key' => 'privacy_policy', 'enabled' => 'banner_show_privacy_policy_link', 'page' => 'banner_privacy_policy_page_id', 'label' => 'banner_privacy_policy_link_label', 'default' => 'Privacy policy'],
+            ['key' => 'terms', 'enabled' => 'banner_show_terms_link', 'page' => 'banner_terms_page_id', 'label' => 'banner_terms_link_label', 'default' => 'Terms and Conditions'],
+            ['key' => 'cookie_policy', 'enabled' => 'banner_show_cookie_policy_link', 'page' => 'banner_cookie_policy_page_id', 'label' => 'banner_cookie_policy_link_label', 'default' => 'Cookie policy'],
         ];
 
         return array_values(array_filter(array_map(static function (array $definition) use ($settings): ?array {
@@ -607,7 +607,24 @@ final class RestController
                 return null;
             }
 
-            return ['key' => $definition['key'], 'label' => (string) $settings[$definition['label']], 'url' => $url, 'target' => (string) $settings['banner_policy_link_target']];
+            $pageId = (int) $settings[$definition['page']];
+            $pageTitle = html_entity_decode((string) get_the_title($pageId), ENT_QUOTES, get_bloginfo('charset') ?: 'UTF-8');
+            $label = trim((string) $settings[$definition['label']]);
+            if ($pageTitle !== '' && ($label === '' || $label === $definition['default'])) {
+                $label = $pageTitle;
+            }
+
+            return [
+                'key' => $definition['key'],
+                'label' => $label !== '' ? $label : ($pageTitle !== '' ? $pageTitle : $definition['default']),
+                'url' => $url,
+                'target' => (string) $settings['banner_policy_link_target'],
+                'enabled' => true,
+                'page_id' => $pageId,
+                'page_title' => $pageTitle,
+                'source' => 'wordpress_page',
+                'internal' => true,
+            ];
         }, $definitions)));
     }
 
