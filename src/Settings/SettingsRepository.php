@@ -40,6 +40,12 @@ final class SettingsRepository
             'banner_remote_policy_links' => [],
         ]));
 
+        // Keep the new Reject all label independent from the legacy
+        // Essential only label when upgrading an existing installation.
+        if (! array_key_exists('banner_reject_all_label', $stored)) {
+            $settings['banner_reject_all_label'] = 'Reject all';
+        }
+
         // Migrate the original single privacy-policy link into the new legal-link settings.
         if (! array_key_exists('banner_show_privacy_policy_link', $stored)) {
             $settings['banner_show_privacy_policy_link'] = ! array_key_exists('banner_show_privacy_link', $stored) || ! empty($stored['banner_show_privacy_link']);
@@ -73,11 +79,11 @@ final class SettingsRepository
         $current['banner_enabled'] = ! empty($settings['banner_enabled']);
         $current['banner_title'] = sanitize_text_field((string) ($settings['banner_title'] ?? $current['banner_title']));
         $current['banner_message'] = sanitize_textarea_field((string) ($settings['banner_message'] ?? $current['banner_message']));
-        foreach (['banner_accept_label', 'banner_reject_label', 'banner_customize_label', 'banner_save_label', 'banner_privacy_link_label', 'banner_privacy_policy_link_label', 'banner_terms_link_label', 'banner_cookie_policy_link_label', 'banner_selector_title'] as $key) {
+        foreach (['banner_accept_label', 'banner_reject_label', 'banner_reject_all_label', 'banner_customize_label', 'banner_save_label', 'banner_privacy_link_label', 'banner_privacy_policy_link_label', 'banner_terms_link_label', 'banner_cookie_policy_link_label', 'banner_selector_title'] as $key) {
             $current[$key] = sanitize_text_field((string) ($settings[$key] ?? $current[$key]));
         }
         $current['banner_selector_message'] = sanitize_textarea_field((string) ($settings['banner_selector_message'] ?? $current['banner_selector_message']));
-        foreach (['banner_show_customize', 'banner_show_cookie_details', 'banner_show_category_counts', 'banner_show_privacy_link', 'banner_show_privacy_policy_link', 'banner_show_terms_link', 'banner_show_cookie_policy_link', 'banner_use_site_font', 'banner_shadow', 'banner_button_hover_enabled', 'banner_show_cookie_launcher'] as $key) {
+        foreach (['banner_show_accept', 'banner_show_reject', 'banner_show_reject_all', 'banner_show_customize', 'banner_show_save_preferences', 'banner_show_cookie_details', 'banner_show_category_counts', 'banner_show_privacy_link', 'banner_show_privacy_policy_link', 'banner_show_terms_link', 'banner_show_cookie_policy_link', 'banner_use_site_font', 'banner_shadow', 'banner_button_hover_enabled', 'banner_show_cookie_launcher'] as $key) {
             $current[$key] = ! isset($settings[$key]) || ! empty($settings[$key]);
         }
         $current['banner_reject_redirect_enabled'] = ! empty($settings['banner_reject_redirect_enabled']);
@@ -146,9 +152,14 @@ final class SettingsRepository
             'banner_message' => $banner['message'] ?? '',
             'banner_accept_label' => $banner['accept_label'] ?? '',
             'banner_reject_label' => $banner['reject_label'] ?? '',
+            'banner_reject_all_label' => $banner['reject_all_label'] ?? ($banner['reject_label'] ?? 'Reject all'),
             'banner_customize_label' => $banner['customize_label'] ?? '',
             'banner_save_label' => $banner['save_label'] ?? '',
+            'banner_show_accept' => $banner['show_accept'] ?? true,
+            'banner_show_reject' => $banner['show_reject'] ?? true,
+            'banner_show_reject_all' => $banner['show_reject_all'] ?? true,
             'banner_show_customize' => $banner['show_customize'] ?? true,
+            'banner_show_save_preferences' => $banner['show_save_preferences'] ?? true,
             'banner_show_cookie_details' => $banner['show_cookie_details'] ?? true,
             'banner_show_category_counts' => $banner['show_category_counts'] ?? true,
             'banner_show_privacy_link' => $banner['show_privacy_link'] ?? true,
@@ -206,9 +217,14 @@ final class SettingsRepository
             'banner_message' => 'Choose which categories of cookies you allow.',
             'banner_accept_label' => 'Accept all',
             'banner_reject_label' => 'Essential only',
+            'banner_reject_all_label' => 'Reject all',
             'banner_customize_label' => 'Customize',
             'banner_save_label' => 'Save preferences',
+            'banner_show_accept' => true,
+            'banner_show_reject' => true,
+            'banner_show_reject_all' => true,
             'banner_show_customize' => true,
+            'banner_show_save_preferences' => true,
             'banner_show_cookie_details' => true,
             'banner_show_category_counts' => true,
             'banner_show_cookie_launcher' => true,

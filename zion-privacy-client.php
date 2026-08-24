@@ -3,7 +3,7 @@
  * Plugin Name: Zion Privacy Client
  * Plugin URI: https://github.com/matrixn/zion-privacy-client
  * Description: Connect WordPress to the Zion Privacy API for cookie scanning, privacy statistics and consent management.
- * Version: 0.1.41
+ * Version: 0.1.42
  * Author: Zion Privacy
  * Requires at least: 6.5
  * Requires PHP: 8.1

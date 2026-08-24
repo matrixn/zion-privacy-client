@@ -1446,11 +1446,40 @@ function BannerPage() {
                     value={settings.banner_accept_label || ""}
                     onChange={(value) => update({ banner_accept_label: value })}
                   />
+                  <div className="zion-admin__field zion-admin__field--full">
+                    <ToggleControl
+                      label="Show Accept all button"
+                      checked={settings.banner_show_accept !== false}
+                      onChange={(value) => update({ banner_show_accept: value })}
+                    />
+                  </div>
                   <TextControl
                     label="Essential only button"
                     value={settings.banner_reject_label || ""}
                     onChange={(value) => update({ banner_reject_label: value })}
                   />
+                  <div className="zion-admin__field zion-admin__field--full">
+                    <ToggleControl
+                      label="Show Essential only button"
+                      checked={settings.banner_show_reject !== false}
+                      onChange={(value) => update({ banner_show_reject: value })}
+                    />
+                  </div>
+                  <TextControl
+                    label="Reject all button"
+                    value={settings.banner_reject_all_label || ""}
+                    onChange={(value) => update({ banner_reject_all_label: value })}
+                  />
+                  <div className="zion-admin__field zion-admin__field--full">
+                    <ToggleControl
+                      label="Show Reject all button"
+                      checked={settings.banner_show_reject_all !== false}
+                      onChange={(value) => update({ banner_show_reject_all: value })}
+                    />
+                    <p className="zion-admin__field-note">
+                      Reject all records a rejected consent and triggers the configured redirect when enabled.
+                    </p>
+                  </div>
                   <TextControl
                     label="Customize button"
                     value={settings.banner_customize_label || ""}
@@ -1466,6 +1495,13 @@ function BannerPage() {
                       label="Show Customize button"
                       checked={settings.banner_show_customize !== false}
                       onChange={(value) => update({ banner_show_customize: value })}
+                    />
+                  </div>
+                  <div className="zion-admin__field zion-admin__field--full">
+                    <ToggleControl
+                      label="Show Save preferences button"
+                      checked={settings.banner_show_save_preferences !== false}
+                      onChange={(value) => update({ banner_show_save_preferences: value })}
                     />
                   </div>
                 </div>
@@ -2042,24 +2078,36 @@ function BannerPreview({
           )}
         </div>
         <div className="zion-admin__banner-preview-actions">
-          <button
-            type="button"
-            onClick={() => announce("Essential cookies only selected.", "info")}
-          >
-            {settings.banner_reject_label || "Essential only"}
-          </button>
+          {settings.banner_show_reject !== false && (
+            <button
+              type="button"
+              onClick={() => announce("Essential cookies only selected.", "info")}
+            >
+              {settings.banner_reject_label || "Essential only"}
+            </button>
+          )}
+          {settings.banner_show_reject_all !== false && (
+            <button
+              type="button"
+              onClick={() => announce("All optional cookies rejected.", "info")}
+            >
+              {settings.banner_reject_all_label || "Reject all"}
+            </button>
+          )}
           {settings.banner_show_customize !== false && (
             <button type="button" onClick={() => setCustomizing(true)}>
               {settings.banner_customize_label || "Customize"}
             </button>
           )}
-          <button
-            type="button"
-            className="is-primary"
-            onClick={() => announce("All cookies accepted.", "success")}
-          >
-            {settings.banner_accept_label || "Accept all"}
-          </button>
+          {settings.banner_show_accept !== false && (
+            <button
+              type="button"
+              className="is-primary"
+              onClick={() => announce("All cookies accepted.", "success")}
+            >
+              {settings.banner_accept_label || "Accept all"}
+            </button>
+          )}
         </div>
       </div>
       {customizing && (
@@ -2175,15 +2223,17 @@ function CookiePreferenceModal({
           <Button variant="secondary" onClick={onClose}>
             Cancel
           </Button>
-          <Button
-            variant="primary"
-            onClick={() => {
-              announce("Cookie preferences saved.", "success");
-              onClose();
-            }}
-          >
-            {settings.banner_save_label || "Save preferences"}
-          </Button>
+          {settings.banner_show_save_preferences !== false && (
+            <Button
+              variant="primary"
+              onClick={() => {
+                announce("Cookie preferences saved.", "success");
+                onClose();
+              }}
+            >
+              {settings.banner_save_label || "Save preferences"}
+            </Button>
+          )}
         </div>
       </div>
     </div>

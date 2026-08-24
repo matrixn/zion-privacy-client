@@ -27,10 +27,11 @@
   var launcher = null;
   var modalOnly = false;
   var regulation = safeRegulation(config.regulation || 'gdpr');
-  var defaultRejectLabel = regulation === 'us_state_laws'
+  var defaultEssentialLabel = regulation === 'us_state_laws'
     ? 'Do not sell or share'
     : (regulation === 'gdpr_us_state_laws' ? 'Reject / do not sell or share' : 'Essential only');
-  var rejectLabel = config.rejectLabel && config.rejectLabel !== 'Essential only' ? config.rejectLabel : defaultRejectLabel;
+  var rejectLabel = config.rejectLabel || defaultEssentialLabel;
+  var rejectAllLabel = config.rejectAllLabel || 'Reject all';
   root.className = 'zion-privacy-banner zion-privacy-banner--design-' + design + ' zion-privacy-banner--' + safePosition(config.position || 'bottom')
     + ' zion-privacy-banner--regulation-' + regulation
     + (config.shadow === false ? ' is-flat' : '')
@@ -62,9 +63,10 @@
     + '<p>' + escapeHtml(config.message || 'Choose which categories of cookies you allow.') + '</p>'
     + renderPolicyLinks()
     + '</div><div class="zion-privacy-banner__actions">'
-    + '<button type="button" data-zion-consent="reject">' + escapeHtml(rejectLabel) + '</button>'
+    + (config.showReject !== false ? '<button type="button" data-zion-consent="essential">' + escapeHtml(rejectLabel) + '</button>' : '')
+    + (config.showRejectAll !== false ? '<button type="button" data-zion-consent="reject-all">' + escapeHtml(rejectAllLabel) + '</button>' : '')
     + (config.showCustomize !== false ? '<button type="button" data-zion-consent="customize">' + escapeHtml(config.customizeLabel || 'Customize') + '</button>' : '')
-    + '<button type="button" data-zion-consent="accept" class="is-primary">' + escapeHtml(config.acceptLabel || 'Accept all') + '</button>'
+    + (config.showAccept !== false ? '<button type="button" data-zion-consent="accept" class="is-primary">' + escapeHtml(config.acceptLabel || 'Accept all') + '</button>' : '')
     + '</div></div>'
     + '<div class="zion-privacy-banner__footer">' + renderPoweredBy() + '</div>';
   shadowRoot.appendChild(root);
@@ -95,11 +97,21 @@
       return;
     }
 
+    if (action === 'essential' || action === 'reject') {
+      applyConsent({ necessary: true, preferences: false, analytics: false, marketing: false, security: false, personalization: false, unknown: false }, 'rejected', false);
+      return;
+    }
+
+    if (action === 'reject-all') {
+      applyConsent({ necessary: true, preferences: false, analytics: false, marketing: false, security: false, personalization: false, unknown: false }, 'rejected', true);
+      return;
+    }
+
     var consent = action === 'accept'
       ? { necessary: true, preferences: true, analytics: true, marketing: true, security: true, personalization: true, unknown: true }
       : { necessary: true, preferences: false, analytics: false, marketing: false, security: false, personalization: false, unknown: false };
 
-    applyConsent(consent, action === 'accept' ? 'accepted' : 'rejected');
+    applyConsent(consent, action === 'accept' ? 'accepted' : 'rejected', false);
   });
 
   if (hasStoredConsent && config.showCookieLauncher !== false) {
@@ -149,10 +161,11 @@
       + '<div class="zion-privacy-banner__preferences-body">' + html + '</div>'
       + '<div class="zion-privacy-banner__preferences-footer">'
       + '<div class="zion-privacy-banner__preferences-actions">'
-      + '<button type="button" data-zion-consent="reject">' + escapeHtml(rejectLabel) + '</button>'
+      + (config.showReject !== false ? '<button type="button" data-zion-consent="essential">' + escapeHtml(rejectLabel) + '</button>' : '')
+      + (config.showRejectAll !== false ? '<button type="button" data-zion-consent="reject-all">' + escapeHtml(rejectAllLabel) + '</button>' : '')
       + '<button type="button" data-zion-consent="close-preferences">Cancel</button>'
-      + '<button type="button" data-zion-consent="save-preferences">' + escapeHtml(config.saveLabel || 'Save preferences') + '</button>'
-      + '<button type="button" data-zion-consent="accept" class="is-primary">' + escapeHtml(config.acceptLabel || 'Accept all') + '</button>'
+      + (config.showSavePreferences !== false ? '<button type="button" data-zion-consent="save-preferences">' + escapeHtml(config.saveLabel || 'Save preferences') + '</button>' : '')
+      + (config.showAccept !== false ? '<button type="button" data-zion-consent="accept" class="is-primary">' + escapeHtml(config.acceptLabel || 'Accept all') + '</button>' : '')
       + '</div>'
       + renderPoweredBy()
       + '</div>'
@@ -179,7 +192,8 @@
       ? '<img src="' + escapeAttribute(config.logoUrl) + '" alt="Banner logo">'
       : '<span>Logo</span>';
 
-    return '<div class="zion-privacy-banner__card-header"><div class="zion-privacy-banner__logo">' + logo + '</div><button type="button" class="zion-privacy-banner__card-close" data-zion-consent="reject" aria-label="Reject all">×</button></div>';
+    var closeAction = config.showRejectAll !== false ? 'reject-all' : 'essential';
+    return '<div class="zion-privacy-banner__card-header"><div class="zion-privacy-banner__logo">' + logo + '</div><button type="button" class="zion-privacy-banner__card-close" data-zion-consent="' + closeAction + '" aria-label="Reject all">×</button></div>';
   }
 
   function closePreferences() {
@@ -205,7 +219,7 @@
     applyConsent(consent, status);
   }
 
-  function applyConsent(consent, status) {
+  function applyConsent(consent, status, shouldRedirect) {
     if (!isPreview) {
       window.localStorage.setItem(storageKey, JSON.stringify(consent));
       sendConsentEvent(consent, status);
@@ -224,11 +238,11 @@
       showLauncher();
     }
     document.dispatchEvent(new CustomEvent('zionprivacy:consent', { detail: consent }));
-    redirectAfterRejection(status);
+    redirectAfterRejection(status, shouldRedirect === true);
   }
 
-  function redirectAfterRejection(status) {
-    if (isPreview || status !== 'rejected' || config.rejectRedirectEnabled !== true || !config.rejectRedirectUrl) {
+  function redirectAfterRejection(status, shouldRedirect) {
+    if (isPreview || !shouldRedirect || status !== 'rejected' || config.rejectRedirectEnabled !== true || !config.rejectRedirectUrl) {
       return;
     }
 

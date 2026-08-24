@@ -1,7 +1,9 @@
 # Changelog
 
-## Unreleased
+## 0.1.42 — 2026-08-24
 
+- Added independent Accept all, Essential only, Reject all, Customize and Save preferences visibility controls. Reject all records a rejected consent and triggers the configured redirect only when that action is used; Essential only continues without redirect.
+- Synced the new button labels and visibility settings with the API Banner Studio import/export contract and regenerated the admin bundle.
 ## 0.1.41 — 2026-08-24
 
 - Reorganized the WordPress banner settings into the same professional accordion order used by the client Banner Studio, including dedicated Cookie selector and Branding sections.
