@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.1.39
+
 - Added a Settings Troubleshooting & Maintenance section with REST route diagnostics, signed API connectivity checks, WordPress/PHP runtime details, cache visibility and masked credential identifiers.
 - Added safe maintenance actions to clear only the local cookie inventory cache, only the short-lived master HMAC replay transients, or both; credentials and consent history remain untouched.
 - Added the shared `bar`/`card` consent-banner design selector. The card design supports a WordPress Media Library logo, responsive logo sizing, a close action and matching runtime configuration for Banner Studio and the generic SDK.
