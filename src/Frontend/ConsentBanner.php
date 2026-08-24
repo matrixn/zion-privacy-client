@@ -43,6 +43,7 @@ final class ConsentBanner
             'customizeLabel' => $settings['banner_customize_label'],
             'saveLabel' => $settings['banner_save_label'],
             'showCustomize' => (bool) $settings['banner_show_customize'],
+            'showCookieLauncher' => (bool) ($settings['banner_show_cookie_launcher'] ?? true),
             'showCookieDetails' => (bool) $settings['banner_show_cookie_details'],
             'showCategoryCounts' => (bool) $settings['banner_show_category_counts'],
             'showPrivacyLink' => (bool) $settings['banner_show_privacy_link'],
@@ -87,6 +88,21 @@ final class ConsentBanner
 
     private function policyLinks(array $settings): array
     {
+        $remoteLinks = (array) ($settings['banner_remote_policy_links'] ?? []);
+        if ($remoteLinks !== []) {
+            return array_values(array_filter(array_map(static function (mixed $link): ?array {
+                if (! is_array($link) || empty($link['url']) || empty($link['label'])) {
+                    return null;
+                }
+
+                return [
+                    'key' => sanitize_key((string) ($link['key'] ?? 'custom')),
+                    'label' => sanitize_text_field((string) $link['label']),
+                    'url' => esc_url((string) $link['url'], ['http', 'https']),
+                ];
+            }, $remoteLinks)));
+        }
+
         $links = [];
         $definitions = [
             [

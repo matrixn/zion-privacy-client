@@ -33,6 +33,18 @@ final class RestController
             'permission_callback' => [$this, 'permission'],
             'callback' => fn (): array => $this->status(),
         ]);
+        register_rest_route('zion-privacy/v1', '/banner', [
+            [
+                'methods' => 'GET',
+                'permission_callback' => [$this, 'masterPermission'],
+                'callback' => fn (): array => ['success' => true, 'source' => 'wordpress', 'config' => $this->runtimeBannerConfiguration()],
+            ],
+            [
+                'methods' => 'POST',
+                'permission_callback' => [$this, 'masterPermission'],
+                'callback' => [$this, 'applyMasterBanner'],
+            ],
+        ]);
         register_rest_route('zion-privacy/v1', '/consent', [
             'methods' => 'POST',
             'permission_callback' => '__return_true',
@@ -146,6 +158,55 @@ final class RestController
     public function permission(): bool
     {
         return current_user_can('manage_options');
+    }
+
+    public function masterPermission(\WP_REST_Request $request): bool
+    {
+        $credentials = $this->settings->credentials();
+        $client = sanitize_text_field((string) $request->get_header('X-Zion-Master-Client'));
+        $key = sanitize_text_field((string) $request->get_header('X-Zion-Master-Key'));
+        $timestamp = (string) $request->get_header('X-Zion-Master-Timestamp');
+        $nonce = sanitize_text_field((string) $request->get_header('X-Zion-Master-Nonce'));
+        $signature = sanitize_text_field((string) $request->get_header('X-Zion-Master-Signature'));
+        $path = (string) $request->get_header('X-Zion-Master-Path');
+
+        if ($client === '' || $key === '' || $timestamp === '' || $nonce === '' || $signature === '' || $path === ''
+            || ! ctype_digit($timestamp) || abs(time() - (int) $timestamp) > 300
+            || ! hash_equals((string) ($credentials['installation_uuid'] ?? ''), $client)
+            || ! hash_equals((string) ($credentials['key_id'] ?? ''), $key)
+            || empty($credentials['secret'])) {
+            return false;
+        }
+
+        $nonceKey = 'zion_privacy_master_nonce_'.md5($client.'|'.$nonce);
+        if (get_transient($nonceKey)) {
+            return false;
+        }
+
+        $rawBody = $request->get_method() === 'GET' ? '' : (string) $request->get_body();
+        $canonical = implode("\n", [$request->get_method(), $path, $timestamp, $nonce, $rawBody]);
+        $expected = hash_hmac('sha256', $canonical, (string) $credentials['secret']);
+        if (! hash_equals($expected, $signature)) {
+            return false;
+        }
+
+        set_transient($nonceKey, 1, 5 * MINUTE_IN_SECONDS);
+
+        return true;
+    }
+
+    public function applyMasterBanner(\WP_REST_Request $request): array
+    {
+        $payload = $request->get_json_params();
+        $this->settings->updateFromRuntimeConfig(is_array($payload['config'] ?? null) ? $payload['config'] : []);
+
+        return [
+            'success' => true,
+            'source' => 'wordpress',
+            'applied' => true,
+            'config' => $this->runtimeBannerConfiguration(),
+            'plugin_version' => ZION_PRIVACY_VERSION,
+        ];
     }
 
     private function status(): array
@@ -401,6 +462,7 @@ final class RestController
             'banner_show_customize' => (bool) $settings['banner_show_customize'],
             'banner_show_cookie_details' => (bool) $settings['banner_show_cookie_details'],
             'banner_show_category_counts' => (bool) $settings['banner_show_category_counts'],
+            'banner_show_cookie_launcher' => (bool) ($settings['banner_show_cookie_launcher'] ?? true),
             'banner_show_privacy_link' => (bool) $settings['banner_show_privacy_link'],
             'banner_privacy_link_label' => $settings['banner_privacy_link_label'],
             'banner_show_privacy_policy_link' => (bool) $settings['banner_show_privacy_policy_link'],
@@ -447,6 +509,90 @@ final class RestController
             'connected' => $this->settings->isConnected(),
             'account' => $this->settings->credentials()['account'] ?? [],
         ];
+    }
+
+    private function runtimeBannerConfiguration(): array
+    {
+        $settings = $this->settings->all();
+        $width = (int) ($settings['banner_width'] ?? 0);
+
+        return [
+            'version' => max(1, (int) ($settings['consent_revision'] ?? 1)),
+            'banner' => [
+                'enabled' => (bool) $settings['banner_enabled'],
+                'position' => str_replace('-', '_', (string) $settings['banner_position']),
+                'full_width' => $width === 0,
+                'maximum_width' => $width > 0 ? $width : null,
+                'show_customize' => (bool) $settings['banner_show_customize'],
+                'show_cookie_details' => (bool) $settings['banner_show_cookie_details'],
+                'show_category_counts' => (bool) $settings['banner_show_category_counts'],
+                'title' => (string) $settings['banner_title'],
+                'message' => (string) $settings['banner_message'],
+                'regulation' => (string) $settings['banner_regulation'],
+                'accept_label' => (string) $settings['banner_accept_label'],
+                'reject_label' => (string) $settings['banner_reject_label'],
+                'customize_label' => (string) $settings['banner_customize_label'],
+                'save_label' => (string) $settings['banner_save_label'],
+                'selector_title' => (string) $settings['banner_selector_title'],
+                'selector_message' => (string) $settings['banner_selector_message'],
+                'policy_link_target' => (string) $settings['banner_policy_link_target'],
+                'links' => $this->masterBannerPolicyLinks($settings),
+                'background' => (string) $settings['banner_background_color'],
+                'text' => (string) $settings['banner_text_color'],
+                'muted' => (string) $settings['banner_muted_color'],
+                'primary' => (string) $settings['banner_primary_color'],
+                'primary_text' => (string) $settings['banner_primary_text_color'],
+                'secondary' => (string) $settings['banner_secondary_color'],
+                'secondary_text' => (string) $settings['banner_secondary_text_color'],
+                'border' => (string) $settings['banner_border_color'],
+                'radius' => (int) $settings['banner_radius'],
+                'font_size' => (int) $settings['banner_font_size'],
+                'use_site_font' => (bool) $settings['banner_use_site_font'],
+                'shadow' => (bool) $settings['banner_shadow'],
+                'show_cookie_launcher' => (bool) ($settings['banner_show_cookie_launcher'] ?? true),
+                'launcher_position' => str_replace('-', '_', (string) $settings['banner_launcher_position']),
+                'hover_enabled' => (bool) $settings['banner_button_hover_enabled'],
+                'hover_effect' => (string) $settings['banner_button_hover_effect'],
+                'hover_duration' => (int) $settings['banner_button_hover_duration'],
+                'hover_scale' => (int) $settings['banner_button_hover_scale'],
+                'reject_redirect_enabled' => (bool) $settings['banner_reject_redirect_enabled'],
+                'reject_redirect_url' => (string) $settings['banner_reject_redirect_url'],
+                'powered_by_url' => $this->settings->branding()['powered_by_url'] ?? SettingsRepository::DEFAULT_POWERED_BY_URL,
+            ],
+            'categories' => [
+                'necessary' => ['enabled' => true, 'required' => true, 'label' => 'Necessary', 'description' => 'Always active for core website functionality.'],
+                'preferences' => ['enabled' => true, 'required' => false, 'label' => 'Preferences', 'description' => 'Remember choices that improve your experience.'],
+                'analytics' => ['enabled' => true, 'required' => false, 'label' => 'Analytics', 'description' => 'Help us understand how the website is used.'],
+                'marketing' => ['enabled' => true, 'required' => false, 'label' => 'Marketing', 'description' => 'Support relevant advertising and campaign measurement.'],
+            ],
+            'integrations' => ['google_consent_mode' => false, 'telemetry' => (bool) $settings['consent_tracking_enabled']],
+        ];
+    }
+
+    private function masterBannerPolicyLinks(array $settings): array
+    {
+        $remote = (array) ($settings['banner_remote_policy_links'] ?? []);
+        if ($remote !== []) {
+            return $remote;
+        }
+
+        $definitions = [
+            ['key' => 'privacy_policy', 'enabled' => 'banner_show_privacy_policy_link', 'page' => 'banner_privacy_policy_page_id', 'label' => 'banner_privacy_policy_link_label'],
+            ['key' => 'terms', 'enabled' => 'banner_show_terms_link', 'page' => 'banner_terms_page_id', 'label' => 'banner_terms_link_label'],
+            ['key' => 'cookie_policy', 'enabled' => 'banner_show_cookie_policy_link', 'page' => 'banner_cookie_policy_page_id', 'label' => 'banner_cookie_policy_link_label'],
+        ];
+
+        return array_values(array_filter(array_map(static function (array $definition) use ($settings): ?array {
+            if (empty($settings[$definition['enabled']])) {
+                return null;
+            }
+            $url = ! empty($settings[$definition['page']]) ? get_permalink((int) $settings[$definition['page']]) : '';
+            if (! is_string($url) || $url === '') {
+                return null;
+            }
+
+            return ['key' => $definition['key'], 'label' => (string) $settings[$definition['label']], 'url' => $url, 'target' => (string) $settings['banner_policy_link_target']];
+        }, $definitions)));
     }
 
     private function pages(): array

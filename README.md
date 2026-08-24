@@ -102,6 +102,13 @@ The **Zion Privacy → Settings** page keeps the production API URL fixed and ex
 
 The **Consent banner** page provides grouped accordion sections for banner position and width, responsive presentation, text and privacy link, action labels, the Customize cookie selector, category counts and cookie descriptions. Appearance controls include background, text, muted text, border, primary and secondary button colors, button text colors, radius, font size and shadow. The live preview uses the same values that are passed to the public banner.
 
+When the linked property is a WordPress installation, the API client Banner Studio can
+request the current plugin configuration and later synchronize edited values back to this
+plugin. The exchange uses the installation's existing HMAC credential and the plugin
+returns an explicit `success` response only after the configuration has been validated and
+stored. No WordPress configuration is considered synchronized when that confirmation is
+missing or invalid.
+
 When consent analytics is enabled, each banner choice is stored locally before it is synchronized with the API. The sync runs through a WordPress cron event every 15 minutes and retries unsent rows. The **WordPress Dashboard** widget reads the last 30 days from the API and displays accepted, rejected and partially accepted totals. No cookie values are collected; only the choice, selected categories, page URL and timestamp are sent.
 
 ## Release and Synology deployment

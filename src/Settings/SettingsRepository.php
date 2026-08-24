@@ -36,6 +36,7 @@ final class SettingsRepository
             'banner_regulation' => 'gdpr',
             'consent_revision' => 1,
             'consent_renewed_at' => null,
+            'banner_remote_policy_links' => [],
         ]));
 
         // Migrate the original single privacy-policy link into the new legal-link settings.
@@ -75,7 +76,7 @@ final class SettingsRepository
             $current[$key] = sanitize_text_field((string) ($settings[$key] ?? $current[$key]));
         }
         $current['banner_selector_message'] = sanitize_textarea_field((string) ($settings['banner_selector_message'] ?? $current['banner_selector_message']));
-        foreach (['banner_show_customize', 'banner_show_cookie_details', 'banner_show_category_counts', 'banner_show_privacy_link', 'banner_show_privacy_policy_link', 'banner_show_terms_link', 'banner_show_cookie_policy_link', 'banner_use_site_font', 'banner_shadow', 'banner_button_hover_enabled'] as $key) {
+        foreach (['banner_show_customize', 'banner_show_cookie_details', 'banner_show_category_counts', 'banner_show_privacy_link', 'banner_show_privacy_policy_link', 'banner_show_terms_link', 'banner_show_cookie_policy_link', 'banner_use_site_font', 'banner_shadow', 'banner_button_hover_enabled', 'banner_show_cookie_launcher'] as $key) {
             $current[$key] = ! isset($settings[$key]) || ! empty($settings[$key]);
         }
         $current['banner_reject_redirect_enabled'] = ! empty($settings['banner_reject_redirect_enabled']);
@@ -121,6 +122,66 @@ final class SettingsRepository
         update_option(self::SETTINGS_OPTION, $current, false);
     }
 
+    public function updateFromRuntimeConfig(array $config): void
+    {
+        $banner = (array) ($config['banner'] ?? []);
+        $links = array_values(array_filter(array_map(static function (mixed $link): ?array {
+            if (! is_array($link) || empty($link['url']) || empty($link['label'])) {
+                return null;
+            }
+
+            return [
+                'key' => sanitize_key((string) ($link['key'] ?? 'custom')),
+                'label' => sanitize_text_field((string) $link['label']),
+                'url' => esc_url_raw((string) $link['url'], ['http', 'https']),
+                'target' => in_array($link['target'] ?? '_self', ['_self', '_blank', '_parent', '_top'], true) ? $link['target'] : '_self',
+            ];
+        }, (array) ($banner['links'] ?? []))));
+
+        $this->update([
+            'banner_enabled' => $banner['enabled'] ?? true,
+            'banner_regulation' => $banner['regulation'] ?? 'gdpr',
+            'banner_title' => $banner['title'] ?? '',
+            'banner_message' => $banner['message'] ?? '',
+            'banner_accept_label' => $banner['accept_label'] ?? '',
+            'banner_reject_label' => $banner['reject_label'] ?? '',
+            'banner_customize_label' => $banner['customize_label'] ?? '',
+            'banner_save_label' => $banner['save_label'] ?? '',
+            'banner_show_customize' => $banner['show_customize'] ?? true,
+            'banner_show_cookie_details' => $banner['show_cookie_details'] ?? true,
+            'banner_show_category_counts' => $banner['show_category_counts'] ?? true,
+            'banner_show_cookie_launcher' => $banner['show_cookie_launcher'] ?? true,
+            'banner_selector_title' => $banner['selector_title'] ?? '',
+            'banner_selector_message' => $banner['selector_message'] ?? '',
+            'banner_position' => $banner['position'] ?? 'bottom',
+            'banner_launcher_position' => $banner['launcher_position'] ?? 'bottom_right',
+            'banner_policy_link_target' => $banner['policy_link_target'] ?? '_self',
+            'banner_width' => $banner['maximum_width'] ?? 0,
+            'banner_radius' => $banner['radius'] ?? 12,
+            'banner_font_size' => $banner['font_size'] ?? 14,
+            'banner_use_site_font' => $banner['use_site_font'] ?? true,
+            'banner_shadow' => $banner['shadow'] ?? true,
+            'banner_button_hover_enabled' => $banner['hover_enabled'] ?? true,
+            'banner_button_hover_effect' => $banner['hover_effect'] ?? 'lift_glow',
+            'banner_button_hover_duration' => $banner['hover_duration'] ?? 180,
+            'banner_button_hover_scale' => $banner['hover_scale'] ?? 102,
+            'banner_reject_redirect_enabled' => $banner['reject_redirect_enabled'] ?? false,
+            'banner_reject_redirect_url' => $banner['reject_redirect_url'] ?? '',
+            'banner_background_color' => $banner['background'] ?? '#ffffff',
+            'banner_text_color' => $banner['text'] ?? '#183153',
+            'banner_muted_color' => $banner['muted'] ?? '#52657c',
+            'banner_primary_color' => $banner['primary'] ?? '#2369d1',
+            'banner_primary_text_color' => $banner['primary_text'] ?? '#ffffff',
+            'banner_secondary_color' => $banner['secondary'] ?? '#f1f6fc',
+            'banner_secondary_text_color' => $banner['secondary_text'] ?? '#1e477c',
+            'banner_border_color' => $banner['border'] ?? '#dce5f0',
+        ]);
+
+        $current = $this->all();
+        $current['banner_remote_policy_links'] = $links;
+        update_option(self::SETTINGS_OPTION, $current, false);
+    }
+
     private function bannerDefaults(): array
     {
         return [
@@ -135,6 +196,7 @@ final class SettingsRepository
             'banner_show_customize' => true,
             'banner_show_cookie_details' => true,
             'banner_show_category_counts' => true,
+            'banner_show_cookie_launcher' => true,
             'banner_show_privacy_link' => true,
             'banner_privacy_link_label' => 'Privacy policy',
             'banner_show_privacy_policy_link' => true,

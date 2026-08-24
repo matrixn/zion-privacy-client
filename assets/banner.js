@@ -100,7 +100,7 @@
     applyConsent(consent, action === 'accept' ? 'accepted' : 'rejected');
   });
 
-  if (hasStoredConsent) {
+  if (hasStoredConsent && config.showCookieLauncher !== false) {
     showLauncher();
   }
 
