@@ -4,6 +4,7 @@
 
 - Aligned WordPress Banner Studio synchronization with the full banner contract: privacy fallback URL/label, Powered by branding, resolved internal page metadata and enabled legal links are preserved when configurations are imported or synchronized.
 - Added URL-safe logo and color round-tripping support for the client Banner Studio, while keeping WordPress page IDs and titles available for internal legal links.
+- Fixed the WordPress banner endpoint to return the synchronized custom privacy fallback URL instead of reverting to the site default.
 
 ## Unreleased
 

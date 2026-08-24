@@ -549,7 +549,7 @@ final class RestController
                 'show_category_counts' => (bool) $settings['banner_show_category_counts'],
                 'show_privacy_link' => (bool) $settings['banner_show_privacy_link'],
                 'privacy_link_label' => (string) $settings['banner_privacy_link_label'],
-                'privacy_url' => (string) apply_filters('zion_privacy_privacy_policy_url', get_privacy_policy_url()),
+                'privacy_url' => (string) ($settings['banner_privacy_url'] ?: apply_filters('zion_privacy_privacy_policy_url', get_privacy_policy_url())),
                 'title' => (string) $settings['banner_title'],
                 'message' => (string) $settings['banner_message'],
                 'regulation' => (string) $settings['banner_regulation'],
