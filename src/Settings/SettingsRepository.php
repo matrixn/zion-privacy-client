@@ -130,6 +130,12 @@ final class SettingsRepository
     {
         $banner = (array) ($config['banner'] ?? []);
         $links = array_values(array_filter(array_map(fn (mixed $link): ?array => $this->normaliseRuntimeLink($link), (array) ($banner['links'] ?? []))));
+        $linksByKey = [];
+        foreach ($links as $link) {
+            if (! empty($link['key'])) {
+                $linksByKey[$link['key']] = $link;
+            }
+        }
 
         $this->update([
             'banner_enabled' => $banner['enabled'] ?? true,
@@ -147,6 +153,15 @@ final class SettingsRepository
             'banner_show_category_counts' => $banner['show_category_counts'] ?? true,
             'banner_show_privacy_link' => $banner['show_privacy_link'] ?? true,
             'banner_privacy_link_label' => $banner['privacy_link_label'] ?? 'Privacy policy',
+            'banner_show_privacy_policy_link' => ! empty($linksByKey['privacy_policy']['enabled']),
+            'banner_privacy_policy_page_id' => $linksByKey['privacy_policy']['page_id'] ?? 0,
+            'banner_privacy_policy_link_label' => $linksByKey['privacy_policy']['label'] ?? 'Privacy policy',
+            'banner_show_terms_link' => ! empty($linksByKey['terms']['enabled']),
+            'banner_terms_page_id' => $linksByKey['terms']['page_id'] ?? 0,
+            'banner_terms_link_label' => $linksByKey['terms']['label'] ?? 'Terms and Conditions',
+            'banner_show_cookie_policy_link' => ! empty($linksByKey['cookie_policy']['enabled']),
+            'banner_cookie_policy_page_id' => $linksByKey['cookie_policy']['page_id'] ?? 0,
+            'banner_cookie_policy_link_label' => $linksByKey['cookie_policy']['label'] ?? 'Cookie policy',
             'banner_show_cookie_launcher' => $banner['show_cookie_launcher'] ?? true,
             'banner_selector_title' => $banner['selector_title'] ?? '',
             'banner_selector_message' => $banner['selector_message'] ?? '',
