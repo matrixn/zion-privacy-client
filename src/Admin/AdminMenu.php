@@ -40,6 +40,8 @@ final class AdminMenu
             return;
         }
 
+        wp_enqueue_media();
+
         $scriptFile = file_exists(ZION_PRIVACY_DIR.'build/admin.js') ? 'admin.js' : 'index.tsx.js';
         $assetFile = file_exists(ZION_PRIVACY_DIR.'build/admin.asset.php')
             ? ZION_PRIVACY_DIR.'build/admin.asset.php'

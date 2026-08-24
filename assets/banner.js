@@ -23,6 +23,7 @@
   shadowRoot.appendChild(stylesheet);
 
   var root = document.createElement('section');
+  var design = safeDesign(config.design || 'bar');
   var launcher = null;
   var modalOnly = false;
   var regulation = safeRegulation(config.regulation || 'gdpr');
@@ -30,7 +31,7 @@
     ? 'Do not sell or share'
     : (regulation === 'gdpr_us_state_laws' ? 'Reject / do not sell or share' : 'Essential only');
   var rejectLabel = config.rejectLabel && config.rejectLabel !== 'Essential only' ? config.rejectLabel : defaultRejectLabel;
-  root.className = 'zion-privacy-banner zion-privacy-banner--' + safePosition(config.position || 'bottom')
+  root.className = 'zion-privacy-banner zion-privacy-banner--design-' + design + ' zion-privacy-banner--' + safePosition(config.position || 'bottom')
     + ' zion-privacy-banner--regulation-' + regulation
     + (config.shadow === false ? ' is-flat' : '')
     + (config.useSiteFont === false ? ' uses-system-font' : ' uses-site-font')
@@ -56,7 +57,8 @@
   root.style.setProperty('--zion-banner-hover-duration', Math.max(100, Number(config.hoverDuration || 180)) + 'ms');
   root.style.setProperty('--zion-banner-hover-scale', Math.max(100, Number(config.hoverScale || 102)) / 100);
   root.innerHTML = '<div class="zion-privacy-banner__content">'
-    + '<div><h2>' + escapeHtml(config.title || 'Your privacy matters') + '</h2>'
+    + '<div class="zion-privacy-banner__copy">' + renderCardHeader()
+    + '<h2>' + escapeHtml(config.title || 'Your privacy matters') + '</h2>'
     + '<p>' + escapeHtml(config.message || 'Choose which categories of cookies you allow.') + '</p>'
     + renderPolicyLinks()
     + '</div><div class="zion-privacy-banner__actions">'
@@ -166,6 +168,18 @@
     var poweredByUrl = escapeHtml(config.poweredByUrl || 'https://zion3d.ro');
 
     return '<div class="zion-privacy-banner__powered">Powered by <a href="' + poweredByUrl + '" target="_blank" rel="noopener noreferrer" class="zion-privacy-banner__powered-link"><span class="zion-privacy-banner__powered-logo"><strong>zion</strong><span>Privacy</span></span></a></div>';
+  }
+
+  function renderCardHeader() {
+    if (design !== 'card') {
+      return '';
+    }
+
+    var logo = config.logoUrl
+      ? '<img src="' + escapeAttribute(config.logoUrl) + '" alt="Banner logo">'
+      : '<span>Logo</span>';
+
+    return '<div class="zion-privacy-banner__card-header"><div class="zion-privacy-banner__logo">' + logo + '</div><button type="button" class="zion-privacy-banner__card-close" data-zion-consent="reject" aria-label="Reject all">×</button></div>';
   }
 
   function closePreferences() {
@@ -330,6 +344,10 @@
 
   function safePosition(value) {
     return ['bottom', 'top', 'bottom_centered', 'top_centered', 'bottom_right', 'bottom_left', 'top_right', 'top_left', 'center'].indexOf(value) !== -1 ? value : 'bottom';
+  }
+
+  function safeDesign(value) {
+    return ['bar', 'card'].indexOf(value) !== -1 ? value : 'bar';
   }
 
   function safeLauncherPosition(value) {

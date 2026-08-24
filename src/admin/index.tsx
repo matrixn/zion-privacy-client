@@ -23,6 +23,7 @@ import {
 declare global {
   interface Window {
     ZionPrivacyAdmin: AdminConfig;
+    wp?: any;
   }
 }
 
@@ -1338,6 +1339,24 @@ function BannerPage() {
                     />
                   </div>
                   <SelectControl
+                    label="Banner design"
+                    value={settings.banner_design || "bar"}
+                    options={[
+                      { label: "Long banner — Bar", value: "bar" },
+                      { label: "Compact card — Logo", value: "card" },
+                    ]}
+                    onChange={(value) => update({ banner_design: value })}
+                    help="The bar keeps the current long layout. The card uses a compact panel with an optional logo."
+                  />
+                  {settings.banner_design === "card" && (
+                    <div className="zion-admin__field zion-admin__field--full">
+                      <BannerLogoPicker
+                        value={settings.banner_logo_url || ""}
+                        onChange={(value) => update({ banner_logo_url: value })}
+                      />
+                    </div>
+                  )}
+                  <SelectControl
                     label="Banner position"
                     value={settings.banner_position || "bottom"}
                     options={[
@@ -1890,6 +1909,47 @@ function NumberControl({
   );
 }
 
+function BannerLogoPicker({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const openMedia = () => {
+    const media = window.wp?.media;
+    if (!media) {
+      announce("The WordPress media library is not available on this page.", "error");
+      return;
+    }
+    const frame = media({
+      title: "Select a consent-banner logo",
+      button: { text: "Use this logo" },
+      multiple: false,
+      library: { type: "image" },
+    });
+    frame.on("select", () => {
+      const attachment = frame.state().get("selection").first().toJSON();
+      onChange(String(attachment.url || ""));
+    });
+    frame.open();
+  };
+
+  return (
+    <div className="zion-admin__banner-logo-picker">
+      <div className="zion-admin__field">
+        <label>Banner logo</label>
+        <small>Select an image from the WordPress media library. It is shown only with the card design.</small>
+      </div>
+      {value ? <img src={value} alt="Selected banner logo" /> : <div className="zion-admin__banner-logo-placeholder">No logo selected</div>}
+      <div className="zion-admin__banner-logo-actions">
+        <Button variant="secondary" onClick={openMedia}>Choose image</Button>
+        {value && <Button variant="tertiary" onClick={() => onChange("")}>Remove logo</Button>}
+      </div>
+    </div>
+  );
+}
+
 function BannerPreview({
   settings,
   cookies,
@@ -1928,9 +1988,12 @@ function BannerPreview({
         : "inherit",
   };
   const position = settings.banner_position || "bottom";
+  const design = settings.banner_design === "card" ? "card" : "bar";
   const previewClass =
     "zion-admin__banner-preview zion-admin__banner-preview--" +
     position +
+    " zion-admin__banner-preview--design-" +
+    design +
     " zion-admin__banner-preview--hover-" +
     hoverEffect +
     (settings.banner_button_hover_enabled === false
@@ -1963,6 +2026,15 @@ function BannerPreview({
     <div className={previewClass} style={style}>
       <div className="zion-admin__banner-preview-content">
         <div>
+          {design === "card" && (
+            <div className="zion-admin__banner-preview-logo">
+              {settings.banner_logo_url ? (
+                <img src={settings.banner_logo_url} alt="Banner logo" />
+              ) : (
+                <span>Logo</span>
+              )}
+            </div>
+          )}
           <h3>{settings.banner_title || "Your privacy matters"}</h3>
           <p>
             {settings.banner_message ||

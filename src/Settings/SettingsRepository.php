@@ -85,6 +85,8 @@ final class SettingsRepository
         foreach (['banner_privacy_policy_page_id', 'banner_terms_page_id', 'banner_cookie_policy_page_id'] as $key) {
             $current[$key] = $this->pageId($settings[$key] ?? $current[$key]);
         }
+        $current['banner_design'] = $this->allowedChoice($settings, 'banner_design', ['bar', 'card'], $current['banner_design']);
+        $current['banner_logo_url'] = $this->safeHttpUrl(trim((string) ($settings['banner_logo_url'] ?? $current['banner_logo_url'])), '');
         $current['banner_position'] = $this->allowedChoice($settings, 'banner_position', ['bottom', 'top', 'bottom_centered', 'top_centered', 'bottom_right', 'bottom_left', 'top_right', 'top_left', 'center'], $current['banner_position']);
         $current['banner_launcher_position'] = $this->allowedChoice($settings, 'banner_launcher_position', ['top_left', 'top_right', 'bottom_left', 'bottom_right'], $current['banner_launcher_position']);
         $current['banner_policy_link_target'] = $this->allowedChoice($settings, 'banner_policy_link_target', ['_self', '_blank', '_parent', '_top'], $current['banner_policy_link_target']);
@@ -140,6 +142,8 @@ final class SettingsRepository
 
         $this->update([
             'banner_enabled' => $banner['enabled'] ?? true,
+            'banner_design' => $banner['design'] ?? 'bar',
+            'banner_logo_url' => $banner['logo_url'] ?? '',
             'banner_regulation' => $banner['regulation'] ?? 'gdpr',
             'banner_title' => $banner['title'] ?? '',
             'banner_message' => $banner['message'] ?? '',
@@ -186,6 +190,8 @@ final class SettingsRepository
     {
         return [
             'banner_enabled' => true,
+            'banner_design' => 'bar',
+            'banner_logo_url' => '',
             'banner_regulation' => 'gdpr',
             'banner_title' => 'Your privacy matters',
             'banner_message' => 'Choose which categories of cookies you allow.',

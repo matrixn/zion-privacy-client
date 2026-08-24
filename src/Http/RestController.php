@@ -452,6 +452,8 @@ final class RestController
 
         return [
             'banner_enabled' => (bool) $settings['banner_enabled'],
+            'banner_design' => $settings['banner_design'],
+            'banner_logo_url' => (string) $settings['banner_logo_url'],
             'banner_regulation' => $settings['banner_regulation'],
             'banner_title' => $settings['banner_title'],
             'banner_message' => $settings['banner_message'],
@@ -520,6 +522,8 @@ final class RestController
             'version' => max(1, (int) ($settings['consent_revision'] ?? 1)),
             'banner' => [
                 'enabled' => (bool) $settings['banner_enabled'],
+                'design' => (string) $settings['banner_design'],
+                'logo_url' => (string) $settings['banner_logo_url'],
                 'position' => str_replace('-', '_', (string) $settings['banner_position']),
                 'full_width' => $width === 0,
                 'maximum_width' => $width > 0 ? $width : null,

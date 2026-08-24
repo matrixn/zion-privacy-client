@@ -36,6 +36,8 @@ final class ConsentBanner
             'styleUrl' => ZION_PRIVACY_URL.'assets/banner.css?ver='.rawurlencode(ZION_PRIVACY_VERSION),
             'title' => $settings['banner_title'],
             'preview' => $preview,
+            'design' => $settings['banner_design'],
+            'logoUrl' => $settings['banner_logo_url'],
             'regulation' => $settings['banner_regulation'],
             'message' => $settings['banner_message'],
             'acceptLabel' => $settings['banner_accept_label'],

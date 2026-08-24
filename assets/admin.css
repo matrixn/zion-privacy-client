@@ -160,6 +160,15 @@ body.toplevel_page_zion-privacy #wpfooter { display: none; }
 .zion-admin__preview-label { padding: 6px 9px; color: #a5f3fc; background: rgba(34, 211, 238, .1); border: 1px solid rgba(34, 211, 238, .25); border-radius: 99px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
 .zion-admin__banner-preview { position: relative; min-height: 285px; padding: 22px; color: var(--zion-preview-text, #183153); background: linear-gradient(150deg, #f8fbff, #eaf2fb); border: 1px solid #cddbeb; border-radius: 13px; box-shadow: 0 16px 40px rgba(4, 13, 35, .22); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; box-sizing: border-box; }
 .zion-admin__banner-preview-content { position: absolute; right: 22px; bottom: 22px; left: 22px; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 20px; background: var(--zion-preview-background, #fff); border: 1px solid var(--zion-preview-border, #dce5f0); border-radius: 12px; box-shadow: 0 14px 38px rgba(20, 43, 74, .16); }
+.zion-admin__banner-preview--design-card .zion-admin__banner-preview-content { display: block; width: min(620px, calc(100% - 44px)); }
+.zion-admin__banner-preview--design-card .zion-admin__banner-preview-logo { display: flex; align-items: center; min-height: 42px; margin-bottom: 13px; }
+.zion-admin__banner-preview--design-card .zion-admin__banner-preview-logo img { display: block; width: auto; max-width: min(180px, 45%); height: auto; max-height: 46px; object-fit: contain; }
+.zion-admin__banner-preview--design-card .zion-admin__banner-preview-logo span { display: grid; width: 108px; height: 42px; place-items: center; color: var(--zion-preview-muted, #52657c); background: var(--zion-preview-secondary, #f1f6fc); border: 1px dashed var(--zion-preview-border, #dce5f0); border-radius: 7px; font-size: 11px; font-weight: 800; }
+.zion-admin__banner-logo-picker { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 14px; border: 1px solid #dce5f0; border-radius: 10px; background: #f7faff; }
+.zion-admin__banner-logo-picker .zion-admin__field { grid-column: 1 / -1; }
+.zion-admin__banner-logo-picker img { display: block; width: auto; max-width: min(220px, 100%); height: auto; max-height: 64px; object-fit: contain; }
+.zion-admin__banner-logo-placeholder { display: grid; width: 110px; height: 54px; place-items: center; color: #52657c; border: 1px dashed #b9c9dc; border-radius: 8px; font-size: 11px; }
+.zion-admin__banner-logo-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 .zion-admin__banner-preview--top .zion-admin__banner-preview-content { top: 22px; bottom: auto; }
 .zion-admin__banner-preview--bottom_centered .zion-admin__banner-preview-content, .zion-admin__banner-preview--top_centered .zion-admin__banner-preview-content { right: auto; left: 50%; width: min(620px, calc(100% - 44px)); transform: translateX(-50%); }
 .zion-admin__banner-preview--top_centered .zion-admin__banner-preview-content { top: 22px; bottom: auto; }

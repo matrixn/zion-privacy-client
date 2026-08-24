@@ -61,6 +61,7 @@
 .zion-privacy-banner__policy-links { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-top: 7px; color: var(--zion-banner-muted, #52657c); font-size: .93em; }
 .zion-privacy-banner__policy-links a { font-size: inherit; }
 .zion-privacy-banner__content > * { min-width: 0; }
+.zion-privacy-banner__copy { min-width: 0; overflow-wrap: anywhere; }
 .zion-privacy-banner__actions { display: flex; flex: 0 1 auto; flex-wrap: wrap; justify-content: flex-end; gap: 8px; max-width: 100%; min-width: 0; }
 .zion-privacy-banner__footer { display: flex; justify-content: flex-end; margin-top: 13px; padding-top: 9px; border-top: 1px solid var(--zion-banner-border, #dce5f0); }
 .zion-privacy-banner__footer .zion-privacy-banner__powered { font-size: 11px; }
@@ -110,6 +111,15 @@
 .zion-privacy-banner__powered-logo { display: inline-flex; align-items: baseline; gap: 1px; font-size: 13px; font-weight: 800; letter-spacing: -.04em; }
 .zion-privacy-banner__powered-logo strong { color: #21b477; font-weight: 900; }
 .zion-privacy-banner__powered-logo span { color: var(--zion-banner-primary, #2369d1); }
+.zion-privacy-banner--design-card { width: min(var(--zion-banner-width, 620px), calc(100vw - 40px)); }
+.zion-privacy-banner--design-card .zion-privacy-banner__content { display: block; }
+.zion-privacy-banner--design-card .zion-privacy-banner__card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; min-height: 46px; margin-bottom: 13px; }
+.zion-privacy-banner--design-card .zion-privacy-banner__logo { display: flex; align-items: center; min-height: 42px; }
+.zion-privacy-banner--design-card .zion-privacy-banner__logo img { display: block; width: auto; max-width: min(220px, 55%); height: auto; max-height: 54px; object-fit: contain; }
+.zion-privacy-banner--design-card .zion-privacy-banner__logo span { display: grid; width: 116px; height: 46px; place-items: center; color: var(--zion-banner-muted, #52657c); background: var(--zion-banner-secondary, #f1f6fc); border: 1px dashed var(--zion-banner-border, #cddbeb); border-radius: 8px; font-size: 12px; font-weight: 800; }
+.zion-privacy-banner--design-card .zion-privacy-banner__card-close { display: grid; width: 34px; height: 34px; flex: 0 0 34px; place-items: center; padding: 0; color: var(--zion-banner-text, #183153); background: transparent; border-color: transparent; font-size: 25px; line-height: 1; }
+.zion-privacy-banner--design-card .zion-privacy-banner__actions { justify-content: stretch; width: 100%; margin-top: 20px; }
+.zion-privacy-banner--design-card .zion-privacy-banner__actions button { flex: 1 1 0; }
 .zion-privacy-banner__launcher { position: fixed; z-index: 2147483647; display: grid; width: 50px; height: 50px; place-items: center; padding: 0; color: var(--zion-banner-primary-text, #fff); background: var(--zion-banner-primary, #2369d1); border: 2px solid var(--zion-banner-background, #fff); border-radius: 50%; box-shadow: 0 10px 28px rgba(2, 13, 34, .3), 0 0 0 4px rgba(35, 105, 209, .14); cursor: pointer; font: inherit; pointer-events: auto; transition: transform .2s ease, box-shadow .2s ease, filter .2s ease; }
 .zion-privacy-banner__launcher:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 14px 34px rgba(2, 13, 34, .38), 0 0 0 6px rgba(35, 105, 209, .18); filter: brightness(1.06); }
 .zion-privacy-banner__launcher--top_left { top: 20px; left: 20px; }
@@ -148,4 +158,9 @@
   .zion-privacy-banner__preferences-header,
   .zion-privacy-banner__preferences-footer { padding-right: 14px; padding-left: 14px; }
   .zion-privacy-banner__preferences-body { padding-right: 14px; padding-left: 14px; }
+}
+
+@container zion-banner (max-width: 640px) {
+  .zion-privacy-banner--design-card .zion-privacy-banner__actions { flex-direction: column; }
+  .zion-privacy-banner--design-card .zion-privacy-banner__actions button { width: 100%; flex: 1 1 100%; }
 }
