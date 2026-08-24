@@ -597,8 +597,11 @@ final class RestController
     private function masterBannerPolicyLinks(array $settings): array
     {
         $remote = (array) ($settings['banner_remote_policy_links'] ?? []);
-        if ($remote !== []) {
-            return $remote;
+        $remoteByKey = [];
+        foreach ($remote as $link) {
+            if (is_array($link) && ! empty($link['key'])) {
+                $remoteByKey[(string) $link['key']] = $link;
+            }
         }
 
         $definitions = [
@@ -607,34 +610,50 @@ final class RestController
             ['key' => 'cookie_policy', 'enabled' => 'banner_show_cookie_policy_link', 'page' => 'banner_cookie_policy_page_id', 'label' => 'banner_cookie_policy_link_label', 'default' => 'Cookie policy'],
         ];
 
-        return array_values(array_filter(array_map(static function (array $definition) use ($settings): ?array {
-            if (empty($settings[$definition['enabled']])) {
-                return null;
-            }
-            $url = ! empty($settings[$definition['page']]) ? get_permalink((int) $settings[$definition['page']]) : '';
-            if (! is_string($url) || $url === '') {
-                return null;
-            }
-
-            $pageId = (int) $settings[$definition['page']];
-            $pageTitle = html_entity_decode((string) get_the_title($pageId), ENT_QUOTES, get_bloginfo('charset') ?: 'UTF-8');
-            $label = trim((string) $settings[$definition['label']]);
+        $links = [];
+        foreach ($definitions as $definition) {
+            $pageId = (int) ($settings[$definition['page']] ?? 0);
+            $url = $pageId > 0 ? get_permalink($pageId) : '';
+            $url = is_string($url) ? $url : '';
+            $pageTitle = $pageId > 0
+                ? html_entity_decode((string) get_the_title($pageId), ENT_QUOTES, get_bloginfo('charset') ?: 'UTF-8')
+                : '';
+            $label = trim((string) ($settings[$definition['label']] ?? ''));
             if ($pageTitle !== '' && ($label === '' || $label === $definition['default'])) {
                 $label = $pageTitle;
             }
 
-            return [
+            $native = [
                 'key' => $definition['key'],
                 'label' => $label !== '' ? $label : ($pageTitle !== '' ? $pageTitle : $definition['default']),
                 'url' => $url,
                 'target' => (string) $settings['banner_policy_link_target'],
-                'enabled' => true,
-                'page_id' => $pageId,
+                'enabled' => ! empty($settings[$definition['enabled']]) && $url !== '',
+                'page_id' => $pageId > 0 ? $pageId : null,
                 'page_title' => $pageTitle,
                 'source' => 'wordpress_page',
                 'internal' => true,
             ];
-        }, $definitions)));
+
+            // Native WordPress pages are authoritative when configured. A
+            // remote link is only used when the native setting has no URL,
+            // which preserves external links synced from Banner Studio.
+            if (empty($settings[$definition['enabled']]) || $native['enabled'] || ! isset($remoteByKey[$definition['key']])) {
+                $links[] = $native;
+            } elseif (! empty($remoteByKey[$definition['key']]['enabled'])) {
+                $links[] = $remoteByKey[$definition['key']];
+            } else {
+                $links[] = $native;
+            }
+        }
+
+        foreach ($remoteByKey as $key => $link) {
+            if (! in_array($key, array_column($definitions, 'key'), true) && ! empty($link['enabled'])) {
+                $links[] = $link;
+            }
+        }
+
+        return $links;
     }
 
     private function pages(): array

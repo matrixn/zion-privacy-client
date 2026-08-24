@@ -1426,8 +1426,8 @@ function BannerPage() {
                 </div>
               </BannerAccordion>
               <BannerAccordion
-                title="Content and legal links"
-                description="Write the visitor message and optionally show links to your legal pages."
+                title="Content and buttons"
+                description="Write the visitor message and configure the primary consent actions."
                 icon="✦"
               >
                 <div className="zion-admin__form">
@@ -1442,19 +1442,40 @@ function BannerPage() {
                     onChange={(value) => update({ banner_message: value })}
                   />
                   <TextControl
-                    label="Selector title"
-                    value={settings.banner_selector_title || ""}
-                    onChange={(value) =>
-                      update({ banner_selector_title: value })
-                    }
+                    label="Accept all button"
+                    value={settings.banner_accept_label || ""}
+                    onChange={(value) => update({ banner_accept_label: value })}
                   />
-                  <TextareaControl
-                    label="Selector introduction"
-                    value={settings.banner_selector_message || ""}
-                    onChange={(value) =>
-                      update({ banner_selector_message: value })
-                    }
+                  <TextControl
+                    label="Essential only button"
+                    value={settings.banner_reject_label || ""}
+                    onChange={(value) => update({ banner_reject_label: value })}
                   />
+                  <TextControl
+                    label="Customize button"
+                    value={settings.banner_customize_label || ""}
+                    onChange={(value) => update({ banner_customize_label: value })}
+                  />
+                  <TextControl
+                    label="Save preferences button"
+                    value={settings.banner_save_label || ""}
+                    onChange={(value) => update({ banner_save_label: value })}
+                  />
+                  <div className="zion-admin__field zion-admin__field--full">
+                    <ToggleControl
+                      label="Show Customize button"
+                      checked={settings.banner_show_customize !== false}
+                      onChange={(value) => update({ banner_show_customize: value })}
+                    />
+                  </div>
+                </div>
+              </BannerAccordion>
+              <BannerAccordion
+                title="Legal links"
+                description="Choose the pages and link targets shown in the consent experience."
+                icon="↗"
+              >
+                <div className="zion-admin__form">
                   <PolicyLinkSettings
                     title="Privacy policy"
                     enabled={settings.banner_show_privacy_policy_link !== false}
@@ -1491,54 +1512,8 @@ function BannerPage() {
                       { label: "Parent frame (_parent)", value: "_parent" },
                       { label: "Top frame (_top)", value: "_top" },
                     ]}
-                    onChange={(value) =>
-                      update({ banner_policy_link_target: value })
-                    }
+                    onChange={(value) => update({ banner_policy_link_target: value })}
                   />
-                </div>
-              </BannerAccordion>
-              <BannerAccordion
-                title="Buttons and actions"
-                description="Choose the labels visitors use to accept, reject or customize their consent."
-                icon="➜"
-              >
-                <div className="zion-admin__form">
-                  <TextControl
-                    label="Accept all button"
-                    value={settings.banner_accept_label || ""}
-                    onChange={(value) => update({ banner_accept_label: value })}
-                  />
-                  <TextControl
-                    label="Essential only button"
-                    value={settings.banner_reject_label || ""}
-                    onChange={(value) => update({ banner_reject_label: value })}
-                  />
-                  <TextControl
-                    label="Customize button"
-                    value={settings.banner_customize_label || ""}
-                    onChange={(value) =>
-                      update({ banner_customize_label: value })
-                    }
-                  />
-                  <TextControl
-                    label="Save preferences button"
-                    value={settings.banner_save_label || ""}
-                    onChange={(value) => update({ banner_save_label: value })}
-                  />
-                  <div className="zion-admin__field zion-admin__field--full">
-                    <ToggleControl
-                      label="Show Customize button"
-                      checked={settings.banner_show_customize !== false}
-                      onChange={(value) =>
-                        update({ banner_show_customize: value })
-                      }
-                    />
-                    <small>
-                      When disabled, visitors can still choose Essential only or
-                      Accept all, but the category selector is not opened from
-                      the banner.
-                    </small>
-                  </div>
                 </div>
               </BannerAccordion>
               <BannerAccordion
@@ -1547,6 +1522,16 @@ function BannerPage() {
                 icon="◌"
               >
                 <div className="zion-admin__form">
+                  <TextControl
+                    label="Selector title"
+                    value={settings.banner_selector_title || ""}
+                    onChange={(value) => update({ banner_selector_title: value })}
+                  />
+                  <TextareaControl
+                    label="Selector introduction"
+                    value={settings.banner_selector_message || ""}
+                    onChange={(value) => update({ banner_selector_message: value })}
+                  />
                   <div className="zion-admin__field zion-admin__field--full">
                     <ToggleControl
                       label="Show cookie details"
@@ -1566,6 +1551,30 @@ function BannerPage() {
                       Category switches always remain available for the consent
                       decision; these settings only control the explanatory
                       content.
+                    </small>
+                  </div>
+                </div>
+              </BannerAccordion>
+              <BannerAccordion
+                title="Branding"
+                description="Control the optional Powered by ZionPrivacy attribution and its destination URL."
+                icon="◒"
+              >
+                <div className="zion-admin__form">
+                  <div className="zion-admin__field zion-admin__field--full">
+                    <ToggleControl
+                      label="Show Powered by ZionPrivacy"
+                      checked={settings.banner_show_powered_by !== false}
+                      onChange={(value) => update({ banner_show_powered_by: value })}
+                    />
+                    <TextControl
+                      label="Powered by destination URL"
+                      value={settings.banner_powered_by_url || ""}
+                      onChange={(value) => update({ banner_powered_by_url: value })}
+                    />
+                    <small>
+                      The URL is shared with Banner Studio and is validated before
+                      it is used in the public banner.
                     </small>
                   </div>
                 </div>

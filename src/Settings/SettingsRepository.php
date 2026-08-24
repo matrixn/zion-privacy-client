@@ -114,6 +114,18 @@ final class SettingsRepository
         $current['consent_tracking_enabled'] = ! isset($settings['consent_tracking_enabled']) || ! empty($settings['consent_tracking_enabled']);
         $current['banner_regulation'] = $this->allowedChoice($settings, 'banner_regulation', ['gdpr', 'us_state_laws', 'gdpr_us_state_laws'], $current['banner_regulation']);
 
+        if (array_key_exists('banner_show_powered_by', $settings) || array_key_exists('banner_powered_by_url', $settings)) {
+            $branding = $this->branding();
+            $this->saveBranding([
+                'copyright_enabled' => array_key_exists('banner_show_powered_by', $settings)
+                    ? ! empty($settings['banner_show_powered_by'])
+                    : $branding['copyright_enabled'],
+                'powered_by_url' => array_key_exists('banner_powered_by_url', $settings)
+                    ? (string) $settings['banner_powered_by_url']
+                    : $branding['powered_by_url'],
+            ]);
+        }
+
         update_option(self::SETTINGS_OPTION, $current, false);
     }
 
