@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.43 — 2026-08-24
+
+- Unified the logo/card consent design across the WordPress banner, generic SDK and client Banner Studio preview. The card now places the title beside the logo, the message directly below the title and the three primary actions on one row until the mobile breakpoint, where they stack safely.
+- Bumped the plugin runtime version to 0.1.43.
+
 ## 0.1.42 — 2026-08-24
 
 - Added independent Accept all, Essential only, Reject all, Customize and Save preferences visibility controls. Reject all records a rejected consent and triggers the configured redirect only when that action is used; Essential only continues without redirect.

@@ -113,10 +113,13 @@
 .zion-privacy-banner__powered-logo span { color: var(--zion-banner-primary, #2369d1); }
 .zion-privacy-banner--design-card { width: min(var(--zion-banner-width, 620px), calc(100vw - 40px)); }
 .zion-privacy-banner--design-card .zion-privacy-banner__content { display: block; }
-.zion-privacy-banner--design-card .zion-privacy-banner__card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; min-height: 46px; margin-bottom: 13px; }
+.zion-privacy-banner--design-card .zion-privacy-banner__card-header { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: start; gap: 12px 16px; min-height: 46px; margin-bottom: 13px; }
 .zion-privacy-banner--design-card .zion-privacy-banner__logo { display: flex; align-items: center; min-height: 42px; }
 .zion-privacy-banner--design-card .zion-privacy-banner__logo img { display: block; width: auto; max-width: min(220px, 55%); height: auto; max-height: 54px; object-fit: contain; }
 .zion-privacy-banner--design-card .zion-privacy-banner__logo span { display: grid; width: 116px; height: 46px; place-items: center; color: var(--zion-banner-muted, #52657c); background: var(--zion-banner-secondary, #f1f6fc); border: 1px dashed var(--zion-banner-border, #cddbeb); border-radius: 8px; font-size: 12px; font-weight: 800; }
+.zion-privacy-banner--design-card .zion-privacy-banner__card-heading { min-width: 0; padding-top: 1px; }
+.zion-privacy-banner--design-card .zion-privacy-banner__card-heading h2 { margin: 0 0 6px; }
+.zion-privacy-banner--design-card .zion-privacy-banner__card-heading p { margin: 0; }
 .zion-privacy-banner--design-card .zion-privacy-banner__card-close { display: grid; width: 34px; height: 34px; flex: 0 0 34px; place-items: center; padding: 0; color: var(--zion-banner-text, #183153); background: transparent; border-color: transparent; font-size: 25px; line-height: 1; }
 .zion-privacy-banner--design-card .zion-privacy-banner__actions { justify-content: stretch; width: 100%; margin-top: 20px; }
 .zion-privacy-banner--design-card .zion-privacy-banner__actions button { flex: 1 1 0; }

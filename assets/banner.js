@@ -57,13 +57,14 @@
     : 'calc(100vw - 40px)');
   root.style.setProperty('--zion-banner-hover-duration', Math.max(100, Number(config.hoverDuration || 180)) + 'ms');
   root.style.setProperty('--zion-banner-hover-scale', Math.max(100, Number(config.hoverScale || 102)) / 100);
+  var isCardDesign = design === 'card';
   root.innerHTML = '<div class="zion-privacy-banner__content">'
     + '<div class="zion-privacy-banner__copy">' + renderCardHeader()
-    + '<h2>' + escapeHtml(config.title || 'Your privacy matters') + '</h2>'
-    + '<p>' + escapeHtml(config.message || 'Choose which categories of cookies you allow.') + '</p>'
+    + (isCardDesign ? '' : '<h2>' + escapeHtml(config.title || 'Your privacy matters') + '</h2>'
+      + '<p>' + escapeHtml(config.message || 'Choose which categories of cookies you allow.') + '</p>')
     + renderPolicyLinks()
     + '</div><div class="zion-privacy-banner__actions">'
-    + (config.showReject !== false ? '<button type="button" data-zion-consent="essential">' + escapeHtml(rejectLabel) + '</button>' : '')
+    + (!isCardDesign && config.showReject !== false ? '<button type="button" data-zion-consent="essential">' + escapeHtml(rejectLabel) + '</button>' : '')
     + (config.showRejectAll !== false ? '<button type="button" data-zion-consent="reject-all">' + escapeHtml(rejectAllLabel) + '</button>' : '')
     + (config.showCustomize !== false ? '<button type="button" data-zion-consent="customize">' + escapeHtml(config.customizeLabel || 'Customize') + '</button>' : '')
     + (config.showAccept !== false ? '<button type="button" data-zion-consent="accept" class="is-primary">' + escapeHtml(config.acceptLabel || 'Accept all') + '</button>' : '')
@@ -193,7 +194,7 @@
       : '<span>Logo</span>';
 
     var closeAction = config.showRejectAll !== false ? 'reject-all' : 'essential';
-    return '<div class="zion-privacy-banner__card-header"><div class="zion-privacy-banner__logo">' + logo + '</div><button type="button" class="zion-privacy-banner__card-close" data-zion-consent="' + closeAction + '" aria-label="Reject all">×</button></div>';
+    return '<div class="zion-privacy-banner__card-header"><div class="zion-privacy-banner__logo">' + logo + '</div><div class="zion-privacy-banner__card-heading"><h2>' + escapeHtml(config.title || 'Your privacy matters') + '</h2><p>' + escapeHtml(config.message || 'Choose which categories of cookies you allow.') + '</p></div><button type="button" class="zion-privacy-banner__card-close" data-zion-consent="' + closeAction + '" aria-label="Reject all">×</button></div>';
   }
 
   function closePreferences() {
