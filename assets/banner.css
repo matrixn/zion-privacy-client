@@ -1,6 +1,8 @@
 .zion-privacy-banner {
   all: initial;
   isolation: isolate;
+  container-type: inline-size;
+  container-name: zion-banner;
   position: fixed;
   z-index: 2147483647;
   right: 20px;
@@ -48,6 +50,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 24px;
+  min-width: 0;
   max-width: 1180px;
   margin: 0 auto;
 }
@@ -57,10 +60,11 @@
 .zion-privacy-banner a { color: var(--zion-banner-primary, #2369d1); font-size: .93em; }
 .zion-privacy-banner__policy-links { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-top: 7px; color: var(--zion-banner-muted, #52657c); font-size: .93em; }
 .zion-privacy-banner__policy-links a { font-size: inherit; }
-.zion-privacy-banner__actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+.zion-privacy-banner__content > * { min-width: 0; }
+.zion-privacy-banner__actions { display: flex; flex: 0 1 auto; flex-wrap: wrap; justify-content: flex-end; gap: 8px; max-width: 100%; min-width: 0; }
 .zion-privacy-banner__footer { display: flex; justify-content: flex-end; margin-top: 13px; padding-top: 9px; border-top: 1px solid var(--zion-banner-border, #dce5f0); }
 .zion-privacy-banner__footer .zion-privacy-banner__powered { font-size: 11px; }
-.zion-privacy-banner button { padding: 9px 13px; color: var(--zion-banner-secondary-text, #1e477c); background: var(--zion-banner-secondary, #f1f6fc); background-image: none; border: 1px solid var(--zion-banner-border, #cddbeb); border-radius: calc(var(--zion-banner-radius, 12px) / 2); cursor: pointer; font-size: .93em; transition: transform var(--zion-banner-hover-duration, 180ms) ease, box-shadow var(--zion-banner-hover-duration, 180ms) ease, filter var(--zion-banner-hover-duration, 180ms) ease; }
+.zion-privacy-banner button { min-width: 0; padding: 9px 13px; color: var(--zion-banner-secondary-text, #1e477c); background: var(--zion-banner-secondary, #f1f6fc); background-image: none; border: 1px solid var(--zion-banner-border, #cddbeb); border-radius: calc(var(--zion-banner-radius, 12px) / 2); cursor: pointer; font-size: .93em; overflow-wrap: anywhere; white-space: normal; transition: transform var(--zion-banner-hover-duration, 180ms) ease, box-shadow var(--zion-banner-hover-duration, 180ms) ease, filter var(--zion-banner-hover-duration, 180ms) ease; }
 .zion-privacy-banner button.is-primary { color: var(--zion-banner-primary-text, #fff); background: var(--zion-banner-primary, #2369d1); border-color: var(--zion-banner-primary, #2369d1); }
 .zion-privacy-banner button.is-primary { background-image: none; }
 .zion-privacy-banner.hover-disabled button,
@@ -74,6 +78,7 @@
 .zion-privacy-banner__preferences { position: fixed; z-index: 2147483647; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(17, 32, 55, .62); pointer-events: auto; }
 .zion-privacy-banner__preferences-dialog { display: flex; flex-direction: column; width: min(620px, 100%); height: min(82vh, 720px); max-height: min(82vh, 720px); overflow: hidden; color: var(--zion-banner-text, #183153); background: var(--zion-banner-background, #fff); border-radius: var(--zion-banner-radius, 12px); box-shadow: 0 24px 70px rgba(2, 13, 34, .38); }
 .zion-privacy-banner__preferences-header { display: flex; flex: 0 0 auto; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 18px 20px; border-bottom: 1px solid #dce5f0; }
+.zion-privacy-banner__preferences-header > div { min-width: 0; }
 .zion-privacy-banner__preferences-header span { color: var(--zion-banner-primary, #2369d1); font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
 .zion-privacy-banner__preferences-header h2 { margin: 4px 0 0; color: var(--zion-banner-text, #183153); font-size: 20px; }
 .zion-privacy-banner__preferences-header p { margin: 5px 0 0; color: var(--zion-banner-muted, #52657c); font-size: 12px; }
@@ -95,8 +100,8 @@
 .zion-privacy-banner__switch input:checked + span { background: #2369d1; }
 .zion-privacy-banner__switch input:checked + span::before { transform: translateX(14px); }
 .zion-privacy-banner__preferences-footer { display: grid; flex: 0 0 auto; gap: 12px; padding: 14px 20px 16px; border-top: 1px solid #dce5f0; }
-.zion-privacy-banner__preferences-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
-.zion-privacy-banner__preferences-footer button { padding: 9px 13px; color: var(--zion-banner-secondary-text, #1e477c); background: var(--zion-banner-secondary, #f1f6fc); background-image: none; border: 1px solid var(--zion-banner-border, #cddbeb); border-radius: 6px; cursor: pointer; font-size: 13px; }
+.zion-privacy-banner__preferences-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; min-width: 0; }
+.zion-privacy-banner__preferences-footer button { min-width: 0; padding: 9px 13px; color: var(--zion-banner-secondary-text, #1e477c); background: var(--zion-banner-secondary, #f1f6fc); background-image: none; border: 1px solid var(--zion-banner-border, #cddbeb); border-radius: 6px; cursor: pointer; font-size: 13px; overflow-wrap: anywhere; white-space: normal; }
 .zion-privacy-banner__preferences-footer button.is-primary { color: var(--zion-banner-primary-text, #fff); background: var(--zion-banner-primary, #2369d1); border-color: var(--zion-banner-primary, #2369d1); }
 .zion-privacy-banner__preferences-footer button.is-primary { background-image: none; }
 .zion-privacy-banner__preferences-footer .zion-privacy-banner__policy-links { justify-content: center; margin-top: 0; padding-top: 2px; font-size: 12px; }
@@ -125,4 +130,22 @@
   .zion-privacy-banner__launcher--top_right { top: 12px; right: 12px; }
   .zion-privacy-banner__launcher--bottom_left { bottom: 12px; left: 12px; }
   .zion-privacy-banner__launcher--bottom_right { right: 12px; bottom: 12px; }
+}
+
+/* Container breakpoints also respond when the banner has a custom maximum width. */
+@container zion-banner (max-width: 900px) {
+  .zion-privacy-banner__content { align-items: stretch; flex-direction: column; gap: 14px; }
+  .zion-privacy-banner__actions { justify-content: flex-start; width: 100%; }
+  .zion-privacy-banner__actions button { flex: 1 1 180px; }
+}
+
+@container zion-banner (max-width: 560px) {
+  .zion-privacy-banner { padding: 16px; }
+  .zion-privacy-banner__actions,
+  .zion-privacy-banner__preferences-actions { flex-direction: column; align-items: stretch; }
+  .zion-privacy-banner__actions button,
+  .zion-privacy-banner__preferences-actions button { width: 100%; flex: 1 1 100%; }
+  .zion-privacy-banner__preferences-header,
+  .zion-privacy-banner__preferences-footer { padding-right: 14px; padding-left: 14px; }
+  .zion-privacy-banner__preferences-body { padding-right: 14px; padding-left: 14px; }
 }
