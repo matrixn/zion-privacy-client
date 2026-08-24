@@ -75,7 +75,7 @@ final class ConsentBanner
                 'secondaryText' => $settings['banner_secondary_text_color'],
                 'border' => $settings['banner_border_color'],
             ],
-            'privacyUrl' => (string) apply_filters('zion_privacy_privacy_policy_url', get_privacy_policy_url()),
+            'privacyUrl' => (string) ($settings['banner_privacy_url'] ?: apply_filters('zion_privacy_privacy_policy_url', get_privacy_policy_url())),
             'storageKey' => 'zion_privacy_consent_v'.max(1, (int) $settings['consent_revision']),
             'consentUrl' => esc_url_raw(rest_url('zion-privacy/v1/consent')),
             'consentToken' => $this->settings->publicConsentToken(),
@@ -93,7 +93,7 @@ final class ConsentBanner
         $remoteLinks = (array) ($settings['banner_remote_policy_links'] ?? []);
         if ($remoteLinks !== []) {
             return array_values(array_filter(array_map(static function (mixed $link): ?array {
-                if (! is_array($link) || empty($link['url']) || empty($link['label'])) {
+                if (! is_array($link) || (array_key_exists('enabled', $link) && empty($link['enabled'])) || empty($link['url']) || empty($link['label'])) {
                     return null;
                 }
 

@@ -33,6 +33,7 @@ final class SettingsRepository
             'consent_tracking_enabled' => true,
             'banner_reject_redirect_enabled' => false,
             'banner_reject_redirect_url' => $this->defaultRejectRedirectUrl(),
+            'banner_privacy_url' => '',
             'banner_regulation' => 'gdpr',
             'consent_revision' => 1,
             'consent_renewed_at' => null,
@@ -82,6 +83,7 @@ final class SettingsRepository
         $current['banner_reject_redirect_enabled'] = ! empty($settings['banner_reject_redirect_enabled']);
         $redirectUrl = trim((string) ($settings['banner_reject_redirect_url'] ?? $current['banner_reject_redirect_url']));
         $current['banner_reject_redirect_url'] = $this->safeHttpUrl($redirectUrl, $this->defaultRejectRedirectUrl());
+        $current['banner_privacy_url'] = $this->safeHttpUrl(trim((string) ($settings['banner_privacy_url'] ?? $current['banner_privacy_url'])), '');
         foreach (['banner_privacy_policy_page_id', 'banner_terms_page_id', 'banner_cookie_policy_page_id'] as $key) {
             $current[$key] = $this->pageId($settings[$key] ?? $current[$key]);
         }
@@ -127,23 +129,7 @@ final class SettingsRepository
     public function updateFromRuntimeConfig(array $config): void
     {
         $banner = (array) ($config['banner'] ?? []);
-        $links = array_values(array_filter(array_map(static function (mixed $link): ?array {
-            if (! is_array($link) || empty($link['url']) || empty($link['label'])) {
-                return null;
-            }
-
-            return [
-                'key' => sanitize_key((string) ($link['key'] ?? 'custom')),
-                'label' => sanitize_text_field((string) $link['label']),
-                'url' => esc_url_raw((string) $link['url'], ['http', 'https']),
-                'target' => in_array($link['target'] ?? '_self', ['_self', '_blank', '_parent', '_top'], true) ? $link['target'] : '_self',
-                'enabled' => array_key_exists('enabled', $link) ? ! empty($link['enabled']) : true,
-                'page_id' => is_numeric($link['page_id'] ?? null) ? max(0, absint($link['page_id'])) : null,
-                'page_title' => sanitize_text_field((string) ($link['page_title'] ?? '')),
-                'source' => in_array($link['source'] ?? 'custom', ['wordpress_page', 'custom', 'runtime'], true) ? $link['source'] : 'custom',
-                'internal' => ! empty($link['internal']),
-            ];
-        }, (array) ($banner['links'] ?? []))));
+        $links = array_values(array_filter(array_map(fn (mixed $link): ?array => $this->normaliseRuntimeLink($link), (array) ($banner['links'] ?? []))));
 
         $this->update([
             'banner_enabled' => $banner['enabled'] ?? true,
@@ -159,6 +145,8 @@ final class SettingsRepository
             'banner_show_customize' => $banner['show_customize'] ?? true,
             'banner_show_cookie_details' => $banner['show_cookie_details'] ?? true,
             'banner_show_category_counts' => $banner['show_category_counts'] ?? true,
+            'banner_show_privacy_link' => $banner['show_privacy_link'] ?? true,
+            'banner_privacy_link_label' => $banner['privacy_link_label'] ?? 'Privacy policy',
             'banner_show_cookie_launcher' => $banner['show_cookie_launcher'] ?? true,
             'banner_selector_title' => $banner['selector_title'] ?? '',
             'banner_selector_message' => $banner['selector_message'] ?? '',
@@ -176,6 +164,7 @@ final class SettingsRepository
             'banner_button_hover_scale' => $banner['hover_scale'] ?? 102,
             'banner_reject_redirect_enabled' => $banner['reject_redirect_enabled'] ?? false,
             'banner_reject_redirect_url' => $banner['reject_redirect_url'] ?? '',
+            'banner_privacy_url' => $banner['privacy_url'] ?? '',
             'banner_background_color' => $banner['background'] ?? '#ffffff',
             'banner_text_color' => $banner['text'] ?? '#183153',
             'banner_muted_color' => $banner['muted'] ?? '#52657c',
@@ -185,6 +174,14 @@ final class SettingsRepository
             'banner_secondary_text_color' => $banner['secondary_text'] ?? '#1e477c',
             'banner_border_color' => $banner['border'] ?? '#dce5f0',
         ]);
+
+        if (array_key_exists('show_powered_by', $banner) || array_key_exists('powered_by_url', $banner)) {
+            $branding = $this->branding();
+            $this->saveBranding([
+                'copyright_enabled' => array_key_exists('show_powered_by', $banner) ? ! empty($banner['show_powered_by']) : $branding['copyright_enabled'],
+                'powered_by_url' => (string) ($banner['powered_by_url'] ?? $branding['powered_by_url']),
+            ]);
+        }
 
         $current = $this->all();
         $current['banner_remote_policy_links'] = $links;
@@ -235,6 +232,7 @@ final class SettingsRepository
             'banner_button_hover_scale' => 102,
             'banner_reject_redirect_enabled' => false,
             'banner_reject_redirect_url' => $this->defaultRejectRedirectUrl(),
+            'banner_privacy_url' => '',
             'banner_background_color' => '#ffffff',
             'banner_text_color' => '#183153',
             'banner_muted_color' => '#52657c',
@@ -244,6 +242,64 @@ final class SettingsRepository
             'banner_secondary_text_color' => '#1e477c',
             'banner_border_color' => '#dce5f0',
         ];
+    }
+
+    private function normaliseRuntimeLink(mixed $link): ?array
+    {
+        if (! is_array($link) || empty($link['url']) || empty($link['label'])) {
+            return null;
+        }
+
+        $url = $this->safeHttpUrl((string) $link['url'], '');
+        if ($url === '') {
+            return null;
+        }
+
+        $pageId = is_numeric($link['page_id'] ?? null) ? $this->pageId($link['page_id']) : 0;
+        if ($pageId === 0) {
+            $resolved = url_to_postid($url);
+            $pageId = $resolved > 0 ? $this->pageId($resolved) : 0;
+        }
+
+        $pageTitle = $pageId > 0 ? html_entity_decode((string) get_the_title($pageId), ENT_QUOTES, get_bloginfo('charset') ?: 'UTF-8') : sanitize_text_field((string) ($link['page_title'] ?? ''));
+        $key = $this->runtimeLinkKey((string) ($link['key'] ?? ''), (string) $link['label']);
+        $source = in_array($link['source'] ?? 'custom', ['wordpress_page', 'custom', 'runtime'], true) ? (string) $link['source'] : 'custom';
+        if ($pageId > 0) {
+            $source = 'wordpress_page';
+        }
+
+        return [
+            'key' => $key,
+            'label' => sanitize_text_field((string) $link['label']),
+            'url' => $url,
+            'target' => in_array($link['target'] ?? '_self', ['_self', '_blank', '_parent', '_top'], true) ? $link['target'] : '_self',
+            'enabled' => array_key_exists('enabled', $link) ? ! empty($link['enabled']) : true,
+            'page_id' => $pageId > 0 ? $pageId : null,
+            'page_title' => $pageTitle,
+            'source' => $source,
+            'internal' => $pageId > 0 || ! empty($link['internal']),
+        ];
+    }
+
+    private function runtimeLinkKey(string $key, string $label): string
+    {
+        $candidate = sanitize_key($key);
+        if (in_array($candidate, ['privacy_policy', 'terms', 'cookie_policy'], true)) {
+            return $candidate;
+        }
+
+        $value = sanitize_title($label);
+        if (str_contains($value, 'privacy') || str_contains($value, 'confidential')) {
+            return 'privacy_policy';
+        }
+        if (str_contains($value, 'term') || str_contains($value, 'condit')) {
+            return 'terms';
+        }
+        if (str_contains($value, 'cookie')) {
+            return 'cookie_policy';
+        }
+
+        return $candidate !== '' ? $candidate : 'custom';
     }
 
     public function apiBaseUrl(): string
