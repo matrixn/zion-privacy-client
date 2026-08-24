@@ -5,7 +5,7 @@
 ## 0.1.41 — 2026-08-24
 
 - Reorganized the WordPress banner settings into the same professional accordion order used by the client Banner Studio, including dedicated Cookie selector and Branding sections.
-- Added editable Powered by ZionPrivacy visibility and destination URL controls to the WordPress banner settings and synchronized them through the master API.
+- Kept Powered by ZionPrivacy branding server-owned; it is no longer exposed as an editable WordPress plugin or Banner Studio setting.
 - Removed the obsolete client privacy fallback controls from the shared Banner Studio editor while preserving explicit legal policy links.
 - Updated `zion/wordpress-license-sdk` to `^0.4.14` and regenerated the Composer lockfile.
 

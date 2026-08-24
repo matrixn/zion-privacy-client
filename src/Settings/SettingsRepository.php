@@ -114,18 +114,6 @@ final class SettingsRepository
         $current['consent_tracking_enabled'] = ! isset($settings['consent_tracking_enabled']) || ! empty($settings['consent_tracking_enabled']);
         $current['banner_regulation'] = $this->allowedChoice($settings, 'banner_regulation', ['gdpr', 'us_state_laws', 'gdpr_us_state_laws'], $current['banner_regulation']);
 
-        if (array_key_exists('banner_show_powered_by', $settings) || array_key_exists('banner_powered_by_url', $settings)) {
-            $branding = $this->branding();
-            $this->saveBranding([
-                'copyright_enabled' => array_key_exists('banner_show_powered_by', $settings)
-                    ? ! empty($settings['banner_show_powered_by'])
-                    : $branding['copyright_enabled'],
-                'powered_by_url' => array_key_exists('banner_powered_by_url', $settings)
-                    ? (string) $settings['banner_powered_by_url']
-                    : $branding['powered_by_url'],
-            ]);
-        }
-
         update_option(self::SETTINGS_OPTION, $current, false);
     }
 
@@ -201,14 +189,6 @@ final class SettingsRepository
             'banner_secondary_text_color' => $banner['secondary_text'] ?? '#1e477c',
             'banner_border_color' => $banner['border'] ?? '#dce5f0',
         ]);
-
-        if (array_key_exists('show_powered_by', $banner) || array_key_exists('powered_by_url', $banner)) {
-            $branding = $this->branding();
-            $this->saveBranding([
-                'copyright_enabled' => array_key_exists('show_powered_by', $banner) ? ! empty($banner['show_powered_by']) : $branding['copyright_enabled'],
-                'powered_by_url' => (string) ($banner['powered_by_url'] ?? $branding['powered_by_url']),
-            ]);
-        }
 
         $current = $this->all();
         $current['banner_remote_policy_links'] = $links;

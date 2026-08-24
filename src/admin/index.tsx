@@ -1556,30 +1556,6 @@ function BannerPage() {
                 </div>
               </BannerAccordion>
               <BannerAccordion
-                title="Branding"
-                description="Control the optional Powered by ZionPrivacy attribution and its destination URL."
-                icon="◒"
-              >
-                <div className="zion-admin__form">
-                  <div className="zion-admin__field zion-admin__field--full">
-                    <ToggleControl
-                      label="Show Powered by ZionPrivacy"
-                      checked={settings.banner_show_powered_by !== false}
-                      onChange={(value) => update({ banner_show_powered_by: value })}
-                    />
-                    <TextControl
-                      label="Powered by destination URL"
-                      value={settings.banner_powered_by_url || ""}
-                      onChange={(value) => update({ banner_powered_by_url: value })}
-                    />
-                    <small>
-                      The URL is shared with Banner Studio and is validated before
-                      it is used in the public banner.
-                    </small>
-                  </div>
-                </div>
-              </BannerAccordion>
-              <BannerAccordion
                 title="Colors and typography"
                 description="Match the banner to the visual identity of the website."
                 icon="◉"

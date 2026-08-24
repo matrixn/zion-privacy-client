@@ -521,8 +521,6 @@ final class RestController
             'banner_reject_redirect_enabled' => (bool) $settings['banner_reject_redirect_enabled'],
             'banner_reject_redirect_url' => (string) $settings['banner_reject_redirect_url'],
             'banner_privacy_url' => (string) $settings['banner_privacy_url'],
-            'banner_show_powered_by' => (bool) $this->settings->branding()['copyright_enabled'],
-            'banner_powered_by_url' => (string) $this->settings->branding()['powered_by_url'],
             'consent_revision' => (int) $settings['consent_revision'],
             'consent_renewed_at' => $settings['consent_renewed_at'],
             'connected' => $this->settings->isConnected(),
