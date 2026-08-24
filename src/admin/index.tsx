@@ -2624,8 +2624,10 @@ function Statistics() {
 
 function Settings() {
   const [settings, setSettings] = useState<RecordData | null>(null);
+  const [diagnostics, setDiagnostics] = useState<RecordData | null>(null);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const [maintenanceLoading, setMaintenanceLoading] = useState("");
   useEffect(() => {
     request<RecordData>("settings")
       .then(setSettings)
@@ -2633,6 +2635,9 @@ function Settings() {
         setError(e.message);
         announce(e.message, "error");
       });
+    request<RecordData>("settings/troubleshooting")
+      .then(setDiagnostics)
+      .catch(() => undefined);
   }, []);
   if (error) return <PageError message={error} />;
   if (!settings) return <Loading />;
@@ -2661,6 +2666,21 @@ function Settings() {
         window.location.reload();
       })
       .catch((e) => announce(e.message, "error"));
+  };
+  const runMaintenance = (action: string) => {
+    setMaintenanceLoading(action);
+    const options: RequestInit = action === "run_all"
+      ? {}
+      : { method: "POST", body: JSON.stringify({ action }) };
+    request<RecordData>("settings/troubleshooting", options)
+      .then((result) => {
+        setDiagnostics(result);
+        announce(action.startsWith("clear")
+          ? "Maintenance action completed and diagnostics refreshed."
+          : "Troubleshooting checks completed.");
+      })
+      .catch((e) => announce(e.message, "error"))
+      .finally(() => setMaintenanceLoading(""));
   };
   return (
     <>
@@ -2830,6 +2850,92 @@ function Settings() {
                 {saving ? "Saving…" : "Save application settings"}
               </Button>
             </div>
+          </CardBody>
+        </Card>
+        <Card className="zion-admin__settings-card zion-admin__settings-card--maintenance">
+          <CardHeader>
+            <div>
+              <h2>Troubleshooting &amp; Maintenance</h2>
+              <p>
+                Check the plugin REST bridge, the signed API connection and the
+                local runtime. Maintenance actions are scoped to this website;
+                credentials and consent history are never deleted.
+              </p>
+            </div>
+            <span className="zion-admin__maintenance-badge">Admin only</span>
+          </CardHeader>
+          <CardBody>
+            <div className="zion-admin__maintenance-actions">
+              <Button
+                variant="primary"
+                onClick={() => runMaintenance("run_all")}
+                disabled={maintenanceLoading !== ""}
+              >
+                {maintenanceLoading === "run_all" ? <Spinner /> : <ButtonIcon name="dashicons-admin-tools" />}
+                Run full diagnostics
+              </Button>
+              <Button
+                onClick={() => runMaintenance("check_rest")}
+                disabled={maintenanceLoading !== ""}
+              >
+                {maintenanceLoading === "check_rest" ? <Spinner /> : <ButtonIcon name="dashicons-rest-api" />}
+                Check REST routes
+              </Button>
+              <Button
+                onClick={() => runMaintenance("check_api")}
+                disabled={maintenanceLoading !== ""}
+              >
+                {maintenanceLoading === "check_api" ? <Spinner /> : <ButtonIcon name="dashicons-cloud" />}
+                Test API connection
+              </Button>
+              <Button
+                onClick={() => runMaintenance("clear_cache")}
+                disabled={maintenanceLoading !== ""}
+              >
+                {maintenanceLoading === "clear_cache" ? <Spinner /> : <ButtonIcon name="dashicons-trash" />}
+                Clear cookie cache
+              </Button>
+              <Button
+                onClick={() => runMaintenance("clear_transients")}
+                disabled={maintenanceLoading !== ""}
+              >
+                {maintenanceLoading === "clear_transients" ? <Spinner /> : <ButtonIcon name="dashicons-update" />}
+                Clear security transients
+              </Button>
+            </div>
+            <p className="zion-admin__maintenance-note">
+              Clearing the cookie cache only forces a fresh cookie inventory on
+              the next request. Security transients are short-lived replay
+              protection entries and are safe to clear during troubleshooting.
+            </p>
+            {diagnostics && (
+              <div className="zion-admin__maintenance-report">
+                <div className="zion-admin__maintenance-report-head">
+                  <strong>Latest diagnostic report</strong>
+                  <span>{diagnostics.checked_at || "—"}</span>
+                </div>
+                <div className="zion-admin__maintenance-grid">
+                  {Object.entries((diagnostics.checks || {}) as RecordData).map(([key, check]) => {
+                    const status = String(check?.status || "unknown");
+                    return (
+                      <div className="zion-admin__maintenance-check" key={key}>
+                        <div className="zion-admin__maintenance-check-title">
+                          <strong>{formatLabel(key)}</strong>
+                          <span className={`zion-admin__maintenance-status zion-admin__maintenance-status--${status}`}>
+                            {formatLabel(status)}
+                          </span>
+                        </div>
+                        <p>{check?.message || "No additional information."}</p>
+                        {check?.version && <small>Version: {check.version}</small>}
+                        {check?.endpoint && <small>Endpoint: {check.endpoint}</small>}
+                        {check?.key_id && <small>Key ID: {check.key_id}</small>}
+                        {check?.cookie_count !== undefined && <small>Cached cookies: {check.cookie_count}</small>}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </CardBody>
         </Card>
       </div>

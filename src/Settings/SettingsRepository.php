@@ -370,6 +370,33 @@ final class SettingsRepository
         return is_array($cache) ? $cache : [];
     }
 
+    public function clearCookieCache(): bool
+    {
+        return delete_option(self::COOKIE_CACHE_OPTION);
+    }
+
+    public function clearMasterTransients(): int
+    {
+        global $wpdb;
+
+        $like = $wpdb->esc_like('_transient_zion_privacy_master_nonce_').'%';
+        $timeoutLike = $wpdb->esc_like('_transient_timeout_zion_privacy_master_nonce_').'%';
+
+        return (int) $wpdb->query($wpdb->prepare(
+            "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s",
+            $like,
+            $timeoutLike,
+        ));
+    }
+
+    public function clearTroubleshootingCache(): array
+    {
+        return [
+            'cookie_cache' => $this->clearCookieCache(),
+            'master_transients_deleted' => $this->clearMasterTransients(),
+        ];
+    }
+
     public function saveCookieCache(string $websiteId, array $cookies): void
     {
         update_option(self::COOKIE_CACHE_OPTION, [

@@ -139,6 +139,18 @@ final class RestController
             'permission_callback' => [$this, 'permission'],
             'callback' => [$this, 'renewConsents'],
         ]);
+        register_rest_route('zion-privacy/v1', '/settings/troubleshooting', [
+            [
+                'methods' => 'GET',
+                'permission_callback' => [$this, 'permission'],
+                'callback' => fn (): array => $this->troubleshooting(),
+            ],
+            [
+                'methods' => 'POST',
+                'permission_callback' => [$this, 'permission'],
+                'callback' => [$this, 'runMaintenance'],
+            ],
+        ]);
         register_rest_route('zion-privacy/v1', '/connect', [
             'methods' => 'POST',
             'permission_callback' => [$this, 'permission'],
@@ -638,6 +650,121 @@ final class RestController
         $this->settings->renewConsents();
 
         return $this->publicSettings();
+    }
+
+    public function troubleshooting(): array
+    {
+        return $this->diagnostics();
+    }
+
+    public function runMaintenance(\WP_REST_Request $request): array|\WP_Error
+    {
+        $action = sanitize_key((string) $request->get_param('action'));
+
+        if (! in_array($action, ['check_rest', 'check_api', 'run_all', 'clear_cache', 'clear_transients', 'clear_all'], true)) {
+            return new \WP_Error('zion_privacy_invalid_maintenance_action', 'Unknown troubleshooting action.', ['status' => 400]);
+        }
+
+        $cleared = match ($action) {
+            'clear_cache' => ['cookie_cache' => $this->settings->clearCookieCache()],
+            'clear_transients' => ['master_transients_deleted' => $this->settings->clearMasterTransients()],
+            'clear_all' => $this->settings->clearTroubleshootingCache(),
+            default => [],
+        };
+
+        return [
+            'success' => true,
+            'action' => $action,
+            'cleared' => $cleared,
+            ...$this->diagnostics($action),
+        ];
+    }
+
+    private function diagnostics(string $focus = 'run_all'): array
+    {
+        $routes = rest_get_server()->get_routes();
+        $bannerRoute = $routes['/zion-privacy/v1/banner'] ?? null;
+        $routeMethods = is_array($bannerRoute)
+            ? array_values(array_unique(array_map(static fn (array $endpoint): string => implode(',', (array) ($endpoint['methods'] ?? [])), $bannerRoute)))
+            : [];
+        $cache = $this->settings->cookieCache();
+        $shouldCheckApi = in_array($focus, ['run_all', 'check_api'], true);
+        $api = $shouldCheckApi
+            ? [
+                'status' => 'not_connected',
+                'message' => 'Connect this WordPress installation to test the API.',
+            ]
+            : [
+                'status' => 'skipped',
+                'message' => 'API check was skipped for this maintenance action.',
+            ];
+
+        if ($shouldCheckApi && $this->settings->isConnected()) {
+            $response = $this->api->get('installation/account');
+            if (is_wp_error($response)) {
+                $api = [
+                    'status' => 'failed',
+                    'message' => $response->get_error_message(),
+                    'code' => $response->get_error_code(),
+                    'details' => $response->get_error_data(),
+                ];
+            } else {
+                $api = [
+                    'status' => 'ok',
+                    'message' => 'Signed API request completed successfully.',
+                    'account' => is_array($response['account'] ?? null) ? ($response['account']['email'] ?? $response['account']['name'] ?? null) : null,
+                ];
+            }
+        }
+
+        $credentials = $this->settings->credentials();
+        $routeAvailable = is_array($bannerRoute);
+
+        return [
+            'focus' => $focus,
+            'checked_at' => gmdate('c'),
+            'checks' => [
+                'plugin' => [
+                    'status' => 'ok',
+                    'message' => 'Zion Privacy Client is loaded.',
+                    'version' => ZION_PRIVACY_VERSION,
+                ],
+                'rest' => [
+                    'status' => $routeAvailable ? 'ok' : 'failed',
+                    'message' => $routeAvailable ? 'Banner REST route is registered.' : 'Banner REST route is not registered. Reactivate/update the plugin or check REST filters.',
+                    'endpoint' => rest_url('zion-privacy/v1/banner'),
+                    'methods' => $routeMethods,
+                    'route_registered' => $routeAvailable,
+                ],
+                'api' => $api,
+                'credentials' => [
+                    'status' => $this->settings->isConnected() ? 'ok' : 'not_connected',
+                    'installation_uuid' => (string) ($credentials['installation_uuid'] ?? ''),
+                    'key_id' => $this->masked((string) ($credentials['key_id'] ?? '')),
+                ],
+                'runtime' => [
+                    'status' => 'ok',
+                    'wordpress' => get_bloginfo('version'),
+                    'php' => PHP_VERSION,
+                    'multisite' => is_multisite(),
+                    'rest_url' => rest_url(),
+                ],
+                'cache' => [
+                    'status' => ! empty($cache['data']) ? 'present' : 'empty',
+                    'cookie_count' => is_array($cache['data'] ?? null) ? count($cache['data']) : 0,
+                    'saved_at' => $cache['saved_at'] ?? null,
+                ],
+            ],
+        ];
+    }
+
+    private function masked(string $value): string
+    {
+        if ($value === '') {
+            return '—';
+        }
+
+        return str_repeat('•', max(0, strlen($value) - 5)).substr($value, -5);
     }
 
     public function savePublicConsent(\WP_REST_Request $request): array|\WP_Error

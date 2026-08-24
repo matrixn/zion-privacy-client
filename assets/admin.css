@@ -500,3 +500,25 @@ body.zion-privacy-theme-light.toplevel_page_zion-privacy .zion-admin__sidebar { 
 .zion-admin-shell[data-theme="light"] .zion-admin .components-button.is-destructive:hover { color: #fff; background: #f97316 !important; border-color: #fdba74; }
 .zion-admin-shell[data-theme="light"] .zion-admin .components-button.is-destructive:active { background: #ea580c !important; }
 .zion-admin-shell[data-theme="light"] .zion-admin__ai-plan-lock { color: #9a3412; background: #fff7ed; border-color: #fdba74; }
+
+.zion-admin__settings-card--maintenance .components-card__header { align-items: flex-start; justify-content: space-between; gap: 18px; }
+.zion-admin__maintenance-badge { display: inline-flex; flex: 0 0 auto; align-items: center; min-height: 28px; padding: 0 10px; color: #fbbf24; background: rgba(245, 158, 11, .1); border: 1px solid rgba(245, 158, 11, .3); border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.zion-admin__maintenance-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.zion-admin__maintenance-actions .components-button .components-spinner { margin: 0 0 0 2px; }
+.zion-admin__maintenance-note { margin: 16px 0 0; color: var(--muted); font-size: 12px; line-height: 1.55; }
+.zion-admin__maintenance-report { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
+.zion-admin__maintenance-report-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 12px; color: var(--ink); }
+.zion-admin__maintenance-report-head span { color: var(--muted); font-size: 11px; }
+.zion-admin__maintenance-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.zion-admin__maintenance-check { min-width: 0; padding: 12px 13px; background: rgba(96, 165, 250, .055); border: 1px solid var(--line); border-radius: 10px; }
+.zion-admin__maintenance-check-title { display: flex; align-items: center; justify-content: space-between; gap: 10px; color: var(--ink); font-size: 12px; }
+.zion-admin__maintenance-check p { margin: 7px 0 0; color: var(--muted); font-size: 11px; line-height: 1.45; overflow-wrap: anywhere; }
+.zion-admin__maintenance-check small { display: block; margin-top: 5px; color: var(--muted); font-size: 10px; overflow-wrap: anywhere; }
+.zion-admin__maintenance-status { display: inline-flex; flex: 0 0 auto; padding: 3px 7px; border-radius: 999px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+.zion-admin__maintenance-status--ok { color: #047857; background: #d1fae5; }
+.zion-admin__maintenance-status--failed { color: #be123c; background: #ffe4e6; }
+.zion-admin__maintenance-status--not_connected,
+.zion-admin__maintenance-status--empty,
+.zion-admin__maintenance-status--present { color: #92400e; background: #fef3c7; }
+.zion-admin__maintenance-status--skipped { color: #475569; background: #e2e8f0; }
+@media (max-width: 700px) { .zion-admin__settings-card--maintenance .components-card__header, .zion-admin__maintenance-report-head { display: block; } .zion-admin__maintenance-badge { margin-top: 10px; } .zion-admin__maintenance-grid { grid-template-columns: 1fr; } }
