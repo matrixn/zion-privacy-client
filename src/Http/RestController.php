@@ -923,6 +923,8 @@ final class RestController
     {
         $scans = is_wp_error($scansResponse) ? [] : (array) ($scansResponse['data'] ?? []);
         $cookies = is_wp_error($cookiesResponse) ? [] : $this->applyOverrides((array) ($cookiesResponse['data'] ?? []));
+        $httpCookies = array_values(array_filter($cookies, static fn (array $cookie): bool => ($cookie['type'] ?? 'http_cookie') !== 'browser_storage'));
+        $browserStorage = array_values(array_filter($cookies, static fn (array $cookie): bool => ($cookie['type'] ?? 'http_cookie') === 'browser_storage'));
         $completed = array_values(array_filter($scans, static fn (array $scan): bool => ($scan['status'] ?? '') === 'completed'));
         $durations = array_values(array_filter(array_map(static function (array $scan): ?int {
             if (empty($scan['started_at']) || empty($scan['finished_at'])) {
@@ -936,7 +938,9 @@ final class RestController
         }, $completed)));
 
         return [
-            'total_cookies' => count($cookies),
+            'total_cookies' => count($httpCookies),
+            'total_browser_storage' => count($browserStorage),
+            'total_findings' => count($cookies),
             'categories' => array_count_values(array_map(static fn (array $cookie): string => (string) ($cookie['category'] ?? 'unknown'), $cookies)),
             'pages_scanned' => (int) ($completed[0]['page_count'] ?? 0),
             'scans_count' => count($scans),
@@ -956,6 +960,8 @@ final class RestController
             'successful_scans' => 0,
             'average_duration_seconds' => null,
             'last_successful_scan_at' => null,
+            'total_browser_storage' => 0,
+            'total_findings' => 0,
         ];
     }
 
@@ -970,11 +976,12 @@ final class RestController
         }
 
         return array_map(static function (array $cookie) use ($overrides): array {
-            $identity = implode('|', [(string) ($cookie['name'] ?? ''), (string) ($cookie['domain'] ?? ''), (string) ($cookie['path'] ?? '')]);
+            $identity = implode('|', [(string) ($cookie['type'] ?? 'http_cookie'), (string) ($cookie['name'] ?? ''), (string) ($cookie['domain'] ?? ''), (string) ($cookie['path'] ?? '')]);
             $hash = hash('sha256', $identity);
+            $legacyHash = hash('sha256', implode('|', [(string) ($cookie['name'] ?? ''), (string) ($cookie['domain'] ?? ''), (string) ($cookie['path'] ?? '')]));
 
-            if (isset($overrides[$hash])) {
-                $cookie['category'] = $overrides[$hash];
+            if (isset($overrides[$hash]) || (($cookie['type'] ?? 'http_cookie') === 'http_cookie' && isset($overrides[$legacyHash]))) {
+                $cookie['category'] = $overrides[$hash] ?? $overrides[$legacyHash];
                 $cookie['classification_source'] = 'local_override';
             }
 

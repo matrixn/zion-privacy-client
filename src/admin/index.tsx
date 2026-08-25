@@ -142,9 +142,11 @@ function Metric({
 function CookieSummaryChart({
   categories: entries,
   total,
+  label = "findings",
 }: {
   categories: [string, any][];
   total: number;
+  label?: string;
 }) {
   const palette = [
     "#f97316",
@@ -173,7 +175,7 @@ function CookieSummaryChart({
       <div className="zion-admin__cookie-chart" style={chartStyle}>
         <div>
           <strong>{total}</strong>
-          <span>cookies</span>
+          <span>{label}</span>
         </div>
       </div>
       <div className="zion-admin__cookie-legend">
@@ -415,9 +417,19 @@ function Dashboard() {
         <>
           <div className="zion-admin__grid">
             <Metric
-              label="Total cookies"
+              label="HTTP cookies"
               value={stats.total_cookies || 0}
-              note="Latest completed scan"
+              note="Real browser cookie records"
+            />
+            <Metric
+              label="Browser storage"
+              value={stats.total_browser_storage || 0}
+              note="localStorage and sessionStorage keys"
+            />
+            <Metric
+              label="Total findings"
+              value={stats.total_findings || 0}
+              note="Cookies plus browser storage"
             />
             <Metric
               label="Categories"
@@ -586,7 +598,8 @@ function Dashboard() {
                 <div className="zion-admin__cookie-summary-layout">
                   <CookieSummaryChart
                     categories={categories}
-                    total={Number(stats.total_cookies || 0)}
+                    total={Number(stats.total_findings || stats.total_cookies || 0)}
+                    label="findings"
                   />
                   <div className="zion-admin__dashboard-website-meta">
                     <div>
@@ -2300,6 +2313,7 @@ function Cookies() {
     const category = requestedCategory || categoryDrafts[key] || cookie.category || "unknown";
     if (category === (cookie.category || "unknown")) return;
     const identity = [
+      cookie.type || "http_cookie",
       cookie.name || "",
       cookie.domain || "",
       cookie.path || "",
@@ -2435,6 +2449,7 @@ function Cookies() {
                 <thead>
                   <tr>
                     <th>Name</th>
+                    <th>Type</th>
                     <th>Category</th>
                     <th>Vendor</th>
                     <th>Purpose</th>
@@ -2469,6 +2484,13 @@ function Cookies() {
                             <br />
                             <span className="zion-admin__muted">
                               {cookie.name}
+                            </span>
+                          </td>
+                          <td>
+                            <span className="zion-admin__type-badge" data-type={cookie.type || "http_cookie"}>
+                              {cookie.type === "browser_storage"
+                                ? "Browser Storage"
+                                : "HTTP Cookie"}
                             </span>
                           </td>
                           <td>
@@ -2566,7 +2588,7 @@ function Cookies() {
                     })
                   ) : (
                     <tr>
-                      <td colSpan={6}>
+                      <td colSpan={7}>
                         <div className="zion-admin__empty">
                           No cookies have been returned yet.
                         </div>

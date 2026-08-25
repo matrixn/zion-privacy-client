@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.46 — 2026-08-26
+
+- Added HTTP Cookie / Browser Storage labels to the cookie inventory and separate dashboard statistics for browser storage findings.
+- Made site-specific cookie category overrides type-aware so a browser-storage key and an HTTP cookie with the same name cannot overwrite each other.
+- Added browser-storage inventory support to the local cache and API statistics while preserving automatic refresh and manual refresh behavior.
+- Bumped the plugin runtime version to 0.1.46.
+
 ## 0.1.45 — 2026-08-26
 
 - Added an idempotent bootstrap guard so repeated loading of the plugin entry file does not redefine constants or register hooks twice.
