@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.45 — 2026-08-26
+
+- Added an idempotent bootstrap guard so repeated loading of the plugin entry file does not redefine constants or register hooks twice.
+- Prevented the `ZION_PRIVACY_VERSION`, `ZION_PRIVACY_FILE`, `ZION_PRIVACY_DIR` and `ZION_PRIVACY_URL` warnings reported on affected WordPress installations.
+
 ## 0.1.44 — 2026-08-26
 
 - Updated `zion/wordpress-license-sdk` to the exact `0.4.16` release and regenerated the Composer lock file.
