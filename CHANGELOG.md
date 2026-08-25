@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.44 — 2026-08-26
+
+- Updated `zion/wordpress-license-sdk` to the exact `0.4.16` release and regenerated the Composer lock file.
+- Bumped the plugin runtime version for the new release.
+
 ## 0.1.43 — 2026-08-24
 
 - Unified the logo/card consent design across the WordPress banner, generic SDK and client Banner Studio preview. The card now places the title beside the logo, the message directly below the title and the three primary actions on one row until the mobile breakpoint, where they stack safely.

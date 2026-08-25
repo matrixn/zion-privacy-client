@@ -4,7 +4,7 @@
   "type": "wordpress-plugin",
   "require": {
     "php": ">=8.1",
-    "zion/wordpress-license-sdk": "^0.4.14"
+    "zion/wordpress-license-sdk": "0.4.16"
   },
   "autoload": {
     "psr-4": {

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8b44453442dfe3bae49a2ababa3cd17c",
+    "content-hash": "eab41486c99aa1fa66bf75f18947a47f",
     "packages": [
         {
             "name": "firebase/php-jwt",
@@ -124,16 +124,16 @@
         },
         {
             "name": "zion/wordpress-license-sdk",
-            "version": "v0.4.14",
+            "version": "v0.4.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/matrixn/wordpress-license-sdk.git",
-                "reference": "991de2424d39cdf7469425366fb38151489479af"
+                "reference": "ead2958083042e4e3820da368d1f6112c0e8389a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/matrixn/wordpress-license-sdk/zipball/991de2424d39cdf7469425366fb38151489479af",
-                "reference": "991de2424d39cdf7469425366fb38151489479af",
+                "url": "https://api.github.com/repos/matrixn/wordpress-license-sdk/zipball/ead2958083042e4e3820da368d1f6112c0e8389a",
+                "reference": "ead2958083042e4e3820da368d1f6112c0e8389a",
                 "shasum": ""
             },
             "require": {
@@ -172,7 +172,7 @@
                 "issues": "https://github.com/matrixn/wordpress-license-sdk/issues",
                 "source": "https://github.com/matrixn/wordpress-license-sdk"
             },
-            "time": "2026-08-24T16:53:36+00:00"
+            "time": "2026-08-25T21:15:30+00:00"
         }
     ],
     "packages-dev": [
