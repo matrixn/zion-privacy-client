@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.47 — 2026-08-26
+
+- Renamed the Scans table count column to Findings and display it as `HTTP cookies / Browser storage`.
+- Added native tooltips and visual differentiation for each finding count.
+- Bumped the plugin runtime version to 0.1.47.
+
 ## 0.1.46 — 2026-08-26
 
 - Added HTTP Cookie / Browser Storage labels to the cookie inventory and separate dashboard statistics for browser storage findings.

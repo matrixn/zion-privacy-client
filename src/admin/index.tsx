@@ -827,7 +827,7 @@ function Scans() {
                 </h2>
                 <p>
                   {website.name} · {scans.length} scans available · pages and
-                  cookies refresh every 3 seconds while active
+                  findings refresh every 3 seconds while active
                 </p>
                 <div className="zion-admin__scan-timestamps">
                   <span>
@@ -3023,7 +3023,7 @@ function ScanTable({
             <th>Status</th>
             <th>Scenario</th>
             <th>Pages</th>
-            <th>Cookies</th>
+            <th>Findings</th>
             <th>Finished</th>
             {actions && <th>Actions</th>}
           </tr>
@@ -3067,7 +3067,21 @@ function ScanTable({
                     )}
                   </td>
                   <td>
-                    <strong>{scan.cookie_count || 0}</strong>
+                    <span
+                      className="zion-admin__finding-count"
+                      title={`HTTP cookies: ${Number(scan.cookie_count || 0)}`}
+                      aria-label={`HTTP cookies: ${Number(scan.cookie_count || 0)}`}
+                    >
+                      {Number(scan.cookie_count || 0)}
+                    </span>
+                    <span aria-hidden="true"> / </span>
+                    <span
+                      className="zion-admin__finding-count zion-admin__finding-count--storage"
+                      title={`Browser storage: ${Number(scan.browser_storage_count || 0)}`}
+                      aria-label={`Browser storage: ${Number(scan.browser_storage_count || 0)}`}
+                    >
+                      {Number(scan.browser_storage_count || 0)}
+                    </span>
                   </td>
                   <td className="zion-admin__muted">
                     {scan.finished_at ? formatDate(scan.finished_at) : "—"}
