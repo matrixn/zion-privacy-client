@@ -1,9 +1,9 @@
 === Zion Privacy Client ===
 Contributors: zionprivacy
 Tags: privacy, cookies, gdpr, consent, scanner
-Requires at least: 6.4
+Requires at least: 6.5
 Requires PHP: 8.1
-Stable tag: 0.1.0
+Stable tag: 0.1.48
 License: Proprietary
 
 Zion Privacy Client connects WordPress to the Zion Privacy API for cookie scanning, privacy statistics and consent management.

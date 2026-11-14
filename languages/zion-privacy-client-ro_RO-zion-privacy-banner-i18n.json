@@ -1,0 +1,128 @@
+{
+  "translation-revision-date": "2026-11-14 00:00+0200",
+  "generator": "Zion Privacy Client 0.1.48",
+  "source": "assets/banner-i18n.js",
+  "domain": "zion-privacy-client",
+  "locale_data": {
+    "messages": {
+      "": {
+        "domain": "zion-privacy-client",
+        "lang": "ro_RO",
+        "plural-forms": "nplurals=3; plural=(n == 1 ? 0 : (n == 0 || (n % 100 > 0 && n % 100 < 20)) ? 1 : 2);"
+      },
+      "Privacy preferences": [
+        "Preferințe de confidențialitate"
+      ],
+      "Cookie preferences": [
+        "Preferințe cookie"
+      ],
+      "Privacy choices": [
+        "Alegeri de confidențialitate"
+      ],
+      "Always active for core website functionality.": [
+        "Întotdeauna active pentru funcționarea de bază a site-ului."
+      ],
+      "Optional cookies": [
+        "Cookie-uri opționale"
+      ],
+      "Close": [
+        "Închide"
+      ],
+      "Cancel": [
+        "Anulează"
+      ],
+      "No description available.": [
+        "Nu există o descriere disponibilă."
+      ],
+      "Unknown cookie": [
+        "Cookie necunoscut"
+      ],
+      "Review cookie preferences": [
+        "Modifică preferințele cookie"
+      ],
+      "Powered by": [
+        "Oferit de"
+      ],
+      "Banner logo": [
+        "Sigla bannerului"
+      ],
+      "Logo": [
+        "Siglă"
+      ],
+      "Your privacy matters": [
+        "Confidențialitatea ta contează"
+      ],
+      "Choose which categories of cookies you allow.": [
+        "Alege categoriile de cookie-uri pe care le permiți."
+      ],
+      "Customize": [
+        "Personalizează"
+      ],
+      "Customize cookies": [
+        "Preferințe cookie"
+      ],
+      "Choose which cookie categories you allow on this website.": [
+        "Alege categoriile de cookie-uri pe care le permiți pe acest site."
+      ],
+      "Choose whether optional cookies may be used or opt out of sale and sharing.": [
+        "Alege dacă permiți cookie-uri opționale sau refuzi vânzarea și distribuirea datelor."
+      ],
+      "Accept all": [
+        "Acceptă toate"
+      ],
+      "Essential only": [
+        "Doar necesare"
+      ],
+      "Reject all": [
+        "Refuză opționalele"
+      ],
+      "Save preferences": [
+        "Salvează preferințele"
+      ],
+      "Cookie preferences saved.": [
+        "Preferințele cookie au fost salvate."
+      ],
+      "Privacy policy": [
+        "Politica de confidențialitate"
+      ],
+      "US State Laws": [
+        "Legile statelor SUA"
+      ],
+      "GDPR + US State Laws": [
+        "GDPR și legile statelor SUA"
+      ],
+      "Do not sell or share": [
+        "Nu vinde și nu distribui datele"
+      ],
+      "Reject / do not sell or share": [
+        "Refuză / nu vinde și nu distribui datele"
+      ],
+      "Necessary": [
+        "Necesare"
+      ],
+      "Preferences": [
+        "Preferințe"
+      ],
+      "Analytics": [
+        "Analiză"
+      ],
+      "Marketing": [
+        "Marketing"
+      ],
+      "Security": [
+        "Securitate"
+      ],
+      "Personalization": [
+        "Personalizare"
+      ],
+      "Unknown": [
+        "Neclasificate"
+      ],
+      "%d cookie detected": [
+        "%d cookie identificat",
+        "%d cookie-uri identificate",
+        "%d de cookie-uri identificate"
+      ]
+    }
+  }
+}

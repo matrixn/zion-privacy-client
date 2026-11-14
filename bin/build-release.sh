@@ -41,13 +41,15 @@ rsync -a --delete \
   --exclude='AGENTS.md' \
   --exclude='bin/' \
   --exclude='CHANGELOG.md' \
-  --exclude='composer.lock' \
   --exclude='node_modules/' \
   --exclude='package.json' \
   --exclude='package-lock.json' \
   --exclude='phpstan*' \
   --exclude='phpunit.xml*' \
   --exclude='tests/' \
+  --exclude='test-results/' \
+  --exclude='playwright-report/' \
+  --exclude='playwright.config.mjs' \
   --exclude='deploy.ps1' \
   --exclude='*.log' \
   "$project_root/" "$stage_root/"

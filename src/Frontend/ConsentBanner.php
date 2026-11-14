@@ -31,7 +31,8 @@ final class ConsentBanner
 
         $branding = $this->settings->branding();
 
-        wp_enqueue_script('zion-privacy-banner', ZION_PRIVACY_URL.'assets/banner.js', [], ZION_PRIVACY_VERSION, true);
+        BannerLocalization::enqueue();
+        wp_enqueue_script('zion-privacy-banner', ZION_PRIVACY_URL.'assets/banner.js', [BannerLocalization::HANDLE], ZION_PRIVACY_VERSION, true);
         wp_localize_script('zion-privacy-banner', 'ZionPrivacyBanner', [
             'styleUrl' => ZION_PRIVACY_URL.'assets/banner.css?ver='.rawurlencode(ZION_PRIVACY_VERSION),
             'title' => $settings['banner_title'],
