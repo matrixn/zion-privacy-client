@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.48 — 2026-11-14
+
+- Consent preferences now restore the exact category selections saved by the visitor whenever the preferences modal is reopened.
+- Local consent events retain the selected categories, and the plugin dashboard displays accepted-category statistics received from the API.
+
 ## 0.1.47 — 2026-08-26
 
 - Renamed the Scans table count column to Findings and display it as `HTTP cookies / Browser storage`.

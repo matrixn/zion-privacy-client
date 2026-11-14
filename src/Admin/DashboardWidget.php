@@ -72,6 +72,16 @@ final class DashboardWidget
         $this->legend('Rejected', $rejected, 'rejected', $total);
         $this->legend('Partially accepted', $partial, 'partial', $total);
         echo '</div></div></div>';
+
+        $categories = (array) ($response['category_breakdown']['categories'] ?? []);
+        if ($categories !== []) {
+            echo '<div class="zion-privacy-dashboard-consent__categories"><strong>Accepted categories</strong>';
+            foreach (['necessary' => 'Necessary', 'preferences' => 'Preferences', 'analytics' => 'Analytics', 'marketing' => 'Marketing', 'security' => 'Security', 'personalization' => 'Personalization', 'unknown' => 'Unknown'] as $key => $label) {
+                $stats = (array) ($categories[$key] ?? []);
+                echo '<span><b>'.esc_html($label).'</b> '.esc_html((string) ((int) ($stats['accepted'] ?? 0))).' selections · '.esc_html((string) ((int) ($stats['unique_visitors'] ?? 0))).' visitors</span>';
+            }
+            echo '</div>';
+        }
     }
 
     private function legend(string $label, int $value, string $class, int $total): void

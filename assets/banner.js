@@ -6,7 +6,8 @@
   var isPreview = config.preview === true
     || String(config.preview || '').toLowerCase() === 'true'
     || /(?:^|&)zion_priv_preview=(?:true|1|yes)(?:&|$)/i.test(window.location.search.replace(/^\?/, ''));
-  var hasStoredConsent = !isPreview && !!window.localStorage.getItem(storageKey);
+  var storedConsent = !isPreview ? readStoredConsent() : null;
+  var hasStoredConsent = !isPreview && storedConsent !== null;
 
   var host = document.createElement('section');
   host.setAttribute('data-zion-privacy-banner-host', '');
@@ -133,6 +134,7 @@
     var groups = ['necessary', 'preferences', 'analytics', 'marketing', 'security', 'personalization', 'unknown'];
     var cookies = Array.isArray(config.cookies) ? config.cookies : [];
     var optionalDefault = regulation === 'us_state_laws';
+    var savedConsent = !isPreview ? readStoredConsent() : null;
     var html = groups.map(function (category) {
       var categoryCookies = cookies.filter(function (cookie) { return (cookie.category || 'unknown') === category; });
       var rows = categoryCookies.map(function (cookie) {
@@ -146,10 +148,16 @@
         return '';
       }
 
+      var isSelected = category === 'necessary'
+        ? true
+        : (savedConsent && Object.prototype.hasOwnProperty.call(savedConsent, category)
+          ? Boolean(savedConsent[category])
+          : optionalDefault);
+
       return '<section class="zion-privacy-banner__category"><div class="zion-privacy-banner__category-head">'
         + '<div><h3>' + escapeHtml(formatLabel(category)) + '</h3><p>'
         + (category === 'necessary' ? 'Always active for core website functionality.' : (config.showCategoryCounts === false ? 'Optional cookies' : categoryCookies.length + ' cookie' + (categoryCookies.length === 1 ? '' : 's') + ' detected'))
-        + '</p></div><label class="zion-privacy-banner__switch"><input type="checkbox" data-zion-category="' + category + '" ' + (category === 'necessary' ? 'checked disabled' : (optionalDefault ? 'checked' : '')) + '><span></span></label></div>'
+        + '</p></div><label class="zion-privacy-banner__switch"><input type="checkbox" data-zion-category="' + category + '" ' + (isSelected ? 'checked' : '') + (category === 'necessary' ? ' disabled' : '') + '><span></span></label></div>'
         + (config.showCookieDetails !== false && rows ? '<div class="zion-privacy-banner__cookies">' + rows + '</div>' : '')
         + '</section>';
     }).join('');
@@ -221,9 +229,16 @@
   }
 
   function applyConsent(consent, status, shouldRedirect) {
+    var normalizedConsent = normalizeConsent(consent);
+
     if (!isPreview) {
-      window.localStorage.setItem(storageKey, JSON.stringify(consent));
-      sendConsentEvent(consent, status);
+      storedConsent = normalizedConsent;
+      try {
+        window.localStorage.setItem(storageKey, JSON.stringify(normalizedConsent));
+      } catch (error) {
+        // Consent can still be sent when browser storage is unavailable.
+      }
+      sendConsentEvent(normalizedConsent, status);
     }
     if (isPreview) {
       host.remove();
@@ -238,7 +253,7 @@
       root.classList.add('is-hidden');
       showLauncher();
     }
-    document.dispatchEvent(new CustomEvent('zionprivacy:consent', { detail: consent }));
+    document.dispatchEvent(new CustomEvent('zionprivacy:consent', { detail: normalizedConsent }));
     redirectAfterRejection(status, shouldRedirect === true);
   }
 
@@ -289,6 +304,35 @@
       }),
       keepalive: true
     }).catch(function () {});
+  }
+
+  function readStoredConsent() {
+    try {
+      var raw = window.localStorage.getItem(storageKey);
+      if (!raw) {
+        return null;
+      }
+
+      var parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+        return null;
+      }
+
+      return normalizeConsent(parsed);
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function normalizeConsent(consent) {
+    var categories = ['necessary', 'preferences', 'analytics', 'marketing', 'security', 'personalization', 'unknown'];
+    var normalized = {};
+
+    categories.forEach(function (category) {
+      normalized[category] = category === 'necessary' || Boolean(consent && consent[category]);
+    });
+
+    return normalized;
   }
 
   function recordVisitorView() {

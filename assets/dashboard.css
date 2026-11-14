@@ -16,5 +16,9 @@
 .zion-privacy-dashboard-consent__swatch.is-accepted { background: #9ad4c1; }
 .zion-privacy-dashboard-consent__swatch.is-rejected { background: #f39baa; }
 .zion-privacy-dashboard-consent__swatch.is-partial { background: #a8c7fb; }
+.zion-privacy-dashboard-consent__categories { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 14px; margin-top: 18px; padding-top: 14px; border-top: 1px solid #e5ebf2; color: #52657c; font-size: 11px; }
+.zion-privacy-dashboard-consent__categories strong { grid-column: 1 / -1; color: #183153; font-size: 13px; }
+.zion-privacy-dashboard-consent__categories span { display: flex; justify-content: space-between; gap: 8px; }
+.zion-privacy-dashboard-consent__categories b { color: #183153; }
 .zion-privacy-dashboard-empty { color: #52657c; }
-@media (max-width: 520px) { .zion-privacy-dashboard-consent__body { align-items: flex-start; flex-direction: column; } .zion-privacy-dashboard-consent__chart { align-self: center; } .zion-privacy-dashboard-consent__legend { width: 100%; } }
+@media (max-width: 520px) { .zion-privacy-dashboard-consent__body { align-items: flex-start; flex-direction: column; } .zion-privacy-dashboard-consent__chart { align-self: center; } .zion-privacy-dashboard-consent__legend { width: 100%; } .zion-privacy-dashboard-consent__categories { grid-template-columns: 1fr; } }

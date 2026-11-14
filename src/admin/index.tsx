@@ -243,7 +243,7 @@ function ButtonIcon({ name }: { name: string }) {
   );
 }
 
-function ConsentTrendChart({ totals }: { totals: RecordData }) {
+function ConsentTrendChart({ totals, categoryBreakdown }: { totals: RecordData; categoryBreakdown: RecordData }) {
   const items = [
     ["accepted", "Accepted", "#8fe3c0", "accepted"],
     ["rejected", "Rejected", "#f2a0aa", "rejected"],
@@ -262,22 +262,32 @@ function ConsentTrendChart({ totals }: { totals: RecordData }) {
       : "conic-gradient(#334155 0deg 360deg)",
   };
   return (
-    <div className="zion-admin__consent-trend">
-      <div className="zion-admin__consent-donut" style={style}>
-        <div>
-          <strong>{total}</strong>
-          <span>Total consents</span>
+    <div>
+      <div className="zion-admin__consent-trend">
+        <div className="zion-admin__consent-donut" style={style}>
+          <div>
+            <strong>{total}</strong>
+            <span>Total consents</span>
+          </div>
+        </div>
+        <div className="zion-admin__consent-legend">
+          {items.map(([key, label, , className]) => (
+            <div className="zion-admin__consent-legend-item" key={key}>
+              <span
+                className={`zion-admin__consent-swatch zion-admin__consent-swatch--${className}`}
+              />
+              <span>
+                <strong>{Number(totals[key] || 0)}</strong> {label}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
-      <div className="zion-admin__consent-legend">
-        {items.map(([key, label, , className]) => (
-          <div className="zion-admin__consent-legend-item" key={key}>
-            <span
-              className={`zion-admin__consent-swatch zion-admin__consent-swatch--${className}`}
-            />
-            <span>
-              <strong>{Number(totals[key] || 0)}</strong> {label}
-            </span>
+      <div className="zion-admin__consent-category-list">
+        {Object.entries(categoryBreakdown || {}).map(([key, value]) => (
+          <div className="zion-admin__consent-category-item" key={key}>
+            <span>{formatLabel(key)}</span>
+            <strong>{Number((value as RecordData)?.accepted || 0)}</strong>
           </div>
         ))}
       </div>
@@ -636,7 +646,10 @@ function Dashboard() {
                 </div>
               </CardHeader>
               <CardBody>
-                <ConsentTrendChart totals={consent.totals || {}} />
+                <ConsentTrendChart
+                  totals={consent.totals || {}}
+                  categoryBreakdown={consent.category_breakdown?.categories || {}}
+                />
               </CardBody>
             </Card>
             <Card className="zion-admin__dashboard-chart-card">
