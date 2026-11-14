@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.57 — 2026-11-14
+
+- Hardened consent banner CSS isolation with an explicit typography, form-control and layout reset inside the Shadow DOM stylesheet.
+- Prevented inherited website styles from enlarging consent category headings, buttons or rows, while preserving the configured website font option.
+- Added a responsive regression test that applies oversized inherited site typography and verifies the modal category geometry at mobile width.
+
 ## 0.1.56 — 2026-11-14
 
 - Rebuilt the plugin Statistics tab as an analysis workspace with consent KPIs, opt-in rate, visitor comparison, scan coverage, scan status health, category acceptance footprint and recent consent activity.

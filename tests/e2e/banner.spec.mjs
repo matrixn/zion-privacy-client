@@ -97,6 +97,31 @@ test('cookie categories start collapsed and remember their expanded state', asyn
   await expect(dialog.locator('.zion-privacy-banner__category[data-zion-category-panel="analytics"] .zion-privacy-banner__cookie').first()).toBeVisible();
 });
 
+test('banner typography and category geometry are isolated from inherited site styles', async ({ page, baseURL }) => {
+  await fixture(page, baseURL);
+  await page.evaluate(() => {
+    document.body.style.fontSize = '48px';
+    document.body.style.lineHeight = '3';
+    document.body.style.letterSpacing = '0.35em';
+    document.body.style.textAlign = 'center';
+  });
+
+  const banner = page.locator('.zion-privacy-banner');
+  expect(await banner.evaluate(element => getComputedStyle(element).fontSize)).toBe('15px');
+  expect(await banner.evaluate(element => getComputedStyle(element).lineHeight)).toBe('21px');
+  expect(await banner.evaluate(element => getComputedStyle(element).letterSpacing)).toBe('normal');
+  expect(await banner.evaluate(element => getComputedStyle(element).textAlign)).toBe('left');
+
+  await banner.getByRole('button', { name: 'Personalizează', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Preferințe cookie', exact: true });
+  const category = dialog.locator('[data-zion-category-panel="analytics"]');
+  const categoryWidth = Number.parseFloat(await category.evaluate(element => getComputedStyle(element).width));
+  expect(categoryWidth).toBeGreaterThan(500);
+  expect(categoryWidth).toBeLessThanOrEqual(580);
+  expect(await category.locator('h3').evaluate(element => getComputedStyle(element).fontSize)).toBe('14px');
+  expect(await category.locator('h3').evaluate(element => getComputedStyle(element).lineHeight)).toBe('18.2px');
+});
+
 test('native English fallback and configurable merchant labels remain available', async ({ page, baseURL }) => {
   await fixture(page, baseURL, { romanian: false, title: 'Merchant title', customizeLabel: 'My choices' });
   await expect(page.getByRole('heading', { name: 'Merchant title', exact: true })).toBeVisible();

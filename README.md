@@ -1,12 +1,13 @@
 # Zion Privacy Client
 
-## Current release — 0.1.55
+## Current release — 0.1.57
 
 - [x] Shared native WordPress script translations for the public banner and admin preview, including Romanian categories, accessible labels, launcher, fallback descriptions and plural cookie counts.
 - [x] Romanian localization for the plugin administration interface and native WordPress dashboard widget when the WordPress user locale is `ro_*`; English is used automatically for every other locale.
 - [x] Configurable merchant copy takes priority; English remains the source-language fallback. Scanner-provided cookie names and descriptions remain inventory metadata.
 - [x] Editable validated HEX fields accompany the native color pickers. The preferences modal and floating launcher inherit the configured palette.
 - [x] Centered mobile banners and fixed preferences overlays remain within the viewport. Switches and actions retain accessible targets, keyboard focus and reduced-motion support.
+- [x] The public banner and preferences modal are isolated inside a Shadow DOM boundary, with an explicit typography and component reset so theme styles cannot enlarge or reshape consent categories.
 - [x] Consent payloads, required-category rules, connection credentials, licensing and classification behavior are preserved; no consent renewal is triggered by this update.
 - [x] Typed native JSON preserves boolean frontend settings; disabled controls stay disabled rather than becoming empty strings.
 - [x] Production packaging installs the exact Composer lock before removing development files from the ZIP.
@@ -33,8 +34,8 @@ Release packages are built automatically by `.github/workflows/release.yml` when
 To publish a release:
 
 ```bash
-git tag v0.1.55
-git push origin v0.1.55
+git tag v0.1.57
+git push origin v0.1.57
 ```
 
 The product key is used only as the SDK product identifier. The GitHub publishing token must remain a repository secret and must never be committed to the plugin.
