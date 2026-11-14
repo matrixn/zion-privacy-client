@@ -391,3 +391,7 @@
 
 - Rebuilt the native WordPress dashboard consent widget with a professional consent-intelligence layout, decision explanations, visitor comparison, smart insights and category impact bars.
 - Added an AJAX-powered widget layout editor so administrators can choose which statistics appear.
+
+## 0.1.53 — 2026-11-14
+
+- Fixed the dashboard consent widget grid so a remaining Smart insights or Category impact panel expands across the full row when its companion panel is hidden.

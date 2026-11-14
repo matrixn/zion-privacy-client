@@ -99,7 +99,9 @@ final class DashboardWidget
             $this->renderComparison((array) ($response['visitor_comparison'] ?? []), $total);
         }
         if ($options['insights'] || $options['categories']) {
-            echo '<div class="zion-privacy-dashboard-grid">';
+            $visiblePanels = (int) $options['insights'] + (int) $options['categories'];
+            $gridClass = $visiblePanels === 1 ? ' is-single' : '';
+            echo '<div class="zion-privacy-dashboard-grid'.esc_attr($gridClass).'">';
             if ($options['insights']) {
                 $this->renderInsights($response, $total, $accepted, $rejected, $partial);
             }
