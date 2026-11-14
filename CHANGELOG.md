@@ -386,3 +386,8 @@
 - Replaced gradients from admin and consent-banner buttons with clear solid action colors for neutral, primary and destructive actions.
 - Added consistent readable text contrast, keyboard focus rings and subtle hover/pressed feedback in dark and light themes.
 - Kept the configured consent-banner colors intact while preventing inherited site backgrounds or gradients from reducing button legibility.
+
+## 0.1.52 — 2026-11-14
+
+- Rebuilt the native WordPress dashboard consent widget with a professional consent-intelligence layout, decision explanations, visitor comparison, smart insights and category impact bars.
+- Added an AJAX-powered widget layout editor so administrators can choose which statistics appear.
