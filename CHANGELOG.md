@@ -1,9 +1,22 @@
 # Changelog
 
+## 0.1.55 — 2026-11-14
+
+- Updated README and changelog documentation to reflect the current plugin architecture, dashboard widget, Romanian/English localization, WordPress 6.5 baseline and license SDK 0.4.17.
+
 ## 0.1.54 — 2026-11-14
 
 - Added Romanian admin translations selected automatically from the WordPress user locale, with English as the fallback for every other locale.
 - Applied the same locale rule to the native consent dashboard widget and the plugin administration interface.
+
+## 0.1.53 — 2026-11-14
+
+- Fixed the dashboard consent widget grid so a remaining Smart insights or Category impact panel expands across the full row when its companion panel is hidden.
+
+## 0.1.52 — 2026-11-14
+
+- Rebuilt the native WordPress dashboard consent widget with a professional consent-intelligence layout, decision explanations, visitor comparison, smart insights and category impact bars.
+- Added an AJAX-powered widget layout editor so administrators can choose which statistics appear.
 
 ## 0.1.51 — 2026-11-14
 
@@ -391,12 +404,3 @@
 - Replaced gradients from admin and consent-banner buttons with clear solid action colors for neutral, primary and destructive actions.
 - Added consistent readable text contrast, keyboard focus rings and subtle hover/pressed feedback in dark and light themes.
 - Kept the configured consent-banner colors intact while preventing inherited site backgrounds or gradients from reducing button legibility.
-
-## 0.1.52 — 2026-11-14
-
-- Rebuilt the native WordPress dashboard consent widget with a professional consent-intelligence layout, decision explanations, visitor comparison, smart insights and category impact bars.
-- Added an AJAX-powered widget layout editor so administrators can choose which statistics appear.
-
-## 0.1.53 — 2026-11-14
-
-- Fixed the dashboard consent widget grid so a remaining Smart insights or Category impact panel expands across the full row when its companion panel is hidden.

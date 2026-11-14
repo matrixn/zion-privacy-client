@@ -1,15 +1,16 @@
 # Zion Privacy Client
 
-## Banner localization and appearance — 0.1.48
+## Current release — 0.1.55
 
 - [x] Shared native WordPress script translations for the public banner and admin preview, including Romanian categories, accessible labels, launcher, fallback descriptions and plural cookie counts.
+- [x] Romanian localization for the plugin administration interface and native WordPress dashboard widget when the WordPress user locale is `ro_*`; English is used automatically for every other locale.
 - [x] Configurable merchant copy takes priority; English remains the source-language fallback. Scanner-provided cookie names and descriptions remain inventory metadata.
 - [x] Editable validated HEX fields accompany the native color pickers. The preferences modal and floating launcher inherit the configured palette.
 - [x] Centered mobile banners and fixed preferences overlays remain within the viewport. Switches and actions retain accessible targets, keyboard focus and reduced-motion support.
 - [x] Consent payloads, required-category rules, connection credentials, licensing and classification behavior are preserved; no consent renewal is triggered by this update.
 - [x] Typed native JSON preserves boolean frontend settings; disabled controls stay disabled rather than becoming empty strings.
 - [x] Production packaging installs the exact Composer lock before removing development files from the ZIP.
-- [x] Validation: production admin build, PHP syntax, eleven isolated Playwright cases and a native WordPress script-catalog integration check.
+- [x] Validation: production admin build, PHP syntax and twelve isolated Playwright cases, including Romanian labels and English fallback behavior.
 
 ```bash
 npm ci
@@ -25,15 +26,15 @@ Browser tests use synthetic inventory and intercept consent submissions. They co
 
 ## Zion licensing and releases
 
-The plugin includes `zion/wordpress-license-sdk` `0.4.16` and is registered with the Zion licensing server as `zion-privacy-client`. Licensing and update metadata use the production endpoint `https://license.zion3d.ro/api/v1`.
+The plugin includes `zion/wordpress-license-sdk` `0.4.17` and is registered with the Zion licensing server as `zion-privacy-client`. Licensing and update metadata use the production endpoint `https://license.zion3d.ro/api/v1`.
 
 Release packages are built automatically by `.github/workflows/release.yml` whenever a version tag such as `v0.1.33` is pushed. The workflow reads the product configuration from the licensing server with the repository secret `ZION_PUBLISH_TOKEN`, builds the production ZIP with Composer dependencies included and uploads the asset to the matching GitHub release.
 
 To publish a release:
 
 ```bash
-git tag v0.1.33
-git push origin v0.1.33
+git tag v0.1.55
+git push origin v0.1.55
 ```
 
 The product key is used only as the SDK product identifier. The GitHub publishing token must remain a repository secret and must never be committed to the plugin.
@@ -74,6 +75,8 @@ Zion Privacy API
 - cookie banner with essential, analytics, marketing and preferences consent states;
 - consent analytics stored first in a local WordPress table and synchronized every 15 minutes to the API;
 - a native WordPress Dashboard donut widget for accepted, rejected and partially accepted choices;
+- a configurable native WordPress Dashboard consent-intelligence widget with overview, visitor comparison, smart insights and category impact sections;
+- AJAX-saved widget display controls so administrators can choose which statistics are visible, with single-column expansion when one panel is hidden;
 - a Consent banner design studio with grouped behavior, content, action, selector and appearance controls;
 - isolated consent banner and cookie preference modal styles, with an option to inherit the active website font or use a neutral system font;
 - server-side banner design reset and configurable button hover effects for the public banner and cookie preferences modal;
@@ -112,7 +115,7 @@ For live admin development:
 npm start
 ```
 
-The plugin requires WordPress 6.4+ and PHP 8.1+.
+The plugin requires WordPress 6.5+ and PHP 8.1+.
 
 ## Application settings
 
@@ -122,6 +125,8 @@ The **Zion Privacy → Settings** page keeps the production API URL fixed and ex
 - default scan mode and scenario for new scan forms;
 - public banner cookie metadata cache duration;
 - consent analytics collection toggle.
+
+The native WordPress Dashboard widget includes its own **Customize statistics** control. The selected sections are stored in WordPress and saved through AJAX. Romanian is selected automatically when the current WordPress admin user uses a Romanian locale; all other locales use English.
 
 The **Consent banner** page provides grouped accordion sections for banner position and width, responsive presentation, text and privacy link, action labels, the Customize cookie selector, category counts and cookie descriptions. Appearance controls include background, text, muted text, border, primary and secondary button colors, button text colors, radius, font size and shadow. The live preview uses the same values that are passed to the public banner.
 
