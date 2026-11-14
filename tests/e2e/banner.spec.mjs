@@ -116,6 +116,15 @@ for (const [label, allowed] of [['Doar necesare', false], ['Refuză opționalele
   });
 }
 
+test('compact category summaries hide inventory without hiding consent controls', async ({ page, baseURL }) => {
+  await fixture(page, baseURL, { showCookieDetails: false });
+  await page.getByRole('button', { name: 'Personalizează', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Preferințe cookie', exact: true });
+  await expect(dialog.locator('.zion-privacy-banner__cookie')).toHaveCount(0);
+  await expect(dialog.getByRole('checkbox', { name: 'Analiză', exact: true })).toBeVisible();
+  await expect(dialog.getByText('2 cookie-uri identificate', { exact: true })).toBeVisible();
+});
+
 test('the public preview never persists consent decisions', async ({ page, baseURL }) => {
   const events = await fixture(page, baseURL);
   await page.getByRole('button', { name: 'Acceptă toate', exact: true }).click();

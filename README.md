@@ -7,8 +7,9 @@
 - [x] Editable validated HEX fields accompany the native color pickers. The preferences modal and floating launcher inherit the configured palette.
 - [x] Centered mobile banners and fixed preferences overlays remain within the viewport. Switches and actions retain accessible targets, keyboard focus and reduced-motion support.
 - [x] Consent payloads, required-category rules, connection credentials, licensing and classification behavior are preserved; no consent renewal is triggered by this update.
+- [x] Typed native JSON preserves boolean frontend settings; disabled controls stay disabled rather than becoming empty strings.
 - [x] Production packaging installs the exact Composer lock before removing development files from the ZIP.
-- [x] Validation: production admin build, PHP syntax, ten isolated Playwright cases and a native WordPress script-catalog integration check.
+- [x] Validation: production admin build, PHP syntax, eleven isolated Playwright cases and a native WordPress script-catalog integration check.
 
 ```bash
 npm ci

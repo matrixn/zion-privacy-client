@@ -5,7 +5,8 @@
 - Added shared native WordPress Romanian banner translations, including fixed category names, modal controls, accessible labels, launcher and plural counts. Merchant copy and external inventory descriptions remain independent.
 - Added validated HEX entry alongside native color pickers; synchronized modal, preview and launcher palettes.
 - Corrected centered mobile banner geometry and transformed-parent modal containment; improved switch/action hit areas, keyboard focus and reduced-motion support.
-- Preserved consent decisions and connection/classification contracts; added ten synthetic browser checks and a native WordPress translation-loader check.
+- Preserved consent decisions and connection/classification contracts; added eleven synthetic browser checks and a native WordPress translation-loader check.
+- Preserved native JSON boolean types in frontend settings so disabled presentation and action controls remain disabled.
 - Fixed production packaging to honor the committed Composer lock and exclude browser-test artifacts.
 
 ## 0.1.47 — 2026-08-26
