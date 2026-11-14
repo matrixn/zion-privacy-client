@@ -99,7 +99,10 @@ test('Romanian labels preserve the consent payload and launcher uses the configu
   await expect(launcher).toBeVisible();
   await expect(launcher).toHaveCSS('background-color', 'rgb(217, 251, 79)');
   await launcher.click();
-  await expect(page.getByRole('dialog', { name: 'Preferințe cookie', exact: true })).toBeVisible();
+  const dialog = page.getByRole('dialog', { name: 'Preferințe cookie', exact: true });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole('checkbox', { name: 'Analiză', exact: true })).toBeChecked();
+  await expect(dialog.getByRole('checkbox', { name: 'Preferințe', exact: true })).not.toBeChecked();
   const stored = await page.evaluate(() => JSON.parse(localStorage.getItem('zion_privacy_synthetic_test')));
   expect(stored).toEqual(consent.categories);
 });

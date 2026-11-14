@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.49 — 2026-11-14
+
+- Fixed the consent preferences modal so it restores the exact category choices saved by the visitor when reopened.
+- Added a first-party cookie fallback for consent state and anonymous visitor identifiers when browser `localStorage` is unavailable.
+- Added an end-to-end regression assertion for the restored category switches.
+
 ## 0.1.48 — 2026-11-14
 
 - Consent preferences now restore the exact category selections saved by the visitor whenever the preferences modal is reopened.

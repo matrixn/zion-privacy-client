@@ -240,7 +240,7 @@
     if (!isPreview) {
       storedConsent = normalizedConsent;
       try {
-        window.localStorage.setItem(storageKey, JSON.stringify(normalizedConsent));
+        writeStorage(storageKey, JSON.stringify(normalizedConsent));
       } catch (error) {
         // Consent can still be sent when browser storage is unavailable.
       }
@@ -315,7 +315,7 @@
 
   function readStoredConsent() {
     try {
-      var raw = window.localStorage.getItem(storageKey);
+      var raw = readStorage(storageKey);
       if (!raw) {
         return null;
       }
@@ -349,11 +349,11 @@
 
     var seenKey = storageKey + '_visitor_seen';
     try {
-      if (window.localStorage.getItem(seenKey) === '1') {
+      if (readStorage(seenKey) === '1') {
         return;
       }
 
-      window.localStorage.setItem(seenKey, '1');
+      writeStorage(seenKey, '1');
     } catch (error) {
       // Continue without local deduplication when storage is unavailable.
     }
@@ -375,12 +375,47 @@
 
   function visitorToken() {
     var key = 'zion_privacy_visitor_v1';
-    var token = window.localStorage.getItem(key);
+    var token = readStorage(key);
     if (!token) {
       token = uuid();
-      window.localStorage.setItem(key, token);
+      writeStorage(key, token);
     }
     return token;
+  }
+
+  function readStorage(key) {
+    try {
+      if (window.localStorage) {
+        var localValue = window.localStorage.getItem(key);
+        if (localValue !== null) {
+          return localValue;
+        }
+      }
+    } catch (error) {
+      // Fall back to a first-party cookie when browser storage is blocked.
+    }
+
+    var prefix = encodeURIComponent(key) + '=';
+    var cookie = document.cookie.split(';').map(function (part) { return part.trim(); }).find(function (part) {
+      return part.indexOf(prefix) === 0;
+    });
+
+    return cookie ? decodeURIComponent(cookie.slice(prefix.length)) : null;
+  }
+
+  function writeStorage(key, value) {
+    try {
+      if (window.localStorage) {
+        window.localStorage.setItem(key, value);
+        if (window.localStorage.getItem(key) === value) {
+          return;
+        }
+      }
+    } catch (error) {
+      // Fall back to a first-party cookie when browser storage is blocked.
+    }
+
+    document.cookie = encodeURIComponent(key) + '=' + encodeURIComponent(value) + '; Max-Age=31536000; Path=/; SameSite=Lax' + (window.location.protocol === 'https:' ? '; Secure' : '');
   }
 
   function renderPolicyLinks() {
