@@ -1,8 +1,31 @@
 # Zion Privacy Client
 
+## Banner localization and appearance — 0.1.48
+
+- [x] Shared native WordPress script translations for the public banner and admin preview, including Romanian categories, accessible labels, launcher, fallback descriptions and plural cookie counts.
+- [x] Configurable merchant copy takes priority; English remains the source-language fallback. Scanner-provided cookie names and descriptions remain inventory metadata.
+- [x] Editable validated HEX fields accompany the native color pickers. The preferences modal and floating launcher inherit the configured palette.
+- [x] Centered mobile banners and fixed preferences overlays remain within the viewport. Switches and actions retain accessible targets, keyboard focus and reduced-motion support.
+- [x] Consent payloads, required-category rules, connection credentials, licensing and classification behavior are preserved; no consent renewal is triggered by this update.
+- [x] Typed native JSON preserves boolean frontend settings; disabled controls stay disabled rather than becoming empty strings.
+- [x] Production packaging installs the exact Composer lock before removing development files from the ZIP.
+- [x] Validation: production admin build, PHP syntax, eleven isolated Playwright cases and a native WordPress script-catalog integration check.
+
+```bash
+npm ci
+npm run build
+npm run test:banner
+# Requires an isolated WordPress site at localhost:8917 (override ZION_WORDPRESS_TEST_URL).
+# Native catalog integration: copy this plugin source to the WordPress test container, then:
+wp eval-file /absolute/path/to/zion-privacy-client/tests/wordpress-i18n.php
+bash bin/build-release.sh
+```
+
+Browser tests use synthetic inventory and intercept consent submissions. They cover four viewport widths (390, 768, 1024 and 1440), Romanian plural forms, the English fallback, custom copy, consent choices and preview isolation. They do not certify legal compliance or an external API deployment. The native integration test loads the script translations through WordPress itself without activating or connecting the plugin. This repository has no configured PHPUnit suite; these checks do not claim PHPUnit or WordPress Coding Standards coverage.
+
 ## Zion licensing and releases
 
-The plugin includes `zion/wordpress-license-sdk` `0.4.11` and is registered with the Zion licensing server as `zion-privacy-client`. Licensing and update metadata use the production endpoint `https://license.zion3d.ro/api/v1`.
+The plugin includes `zion/wordpress-license-sdk` `0.4.16` and is registered with the Zion licensing server as `zion-privacy-client`. Licensing and update metadata use the production endpoint `https://license.zion3d.ro/api/v1`.
 
 Release packages are built automatically by `.github/workflows/release.yml` whenever a version tag such as `v0.1.33` is pushed. The workflow reads the product configuration from the licensing server with the repository secret `ZION_PUBLISH_TOKEN`, builds the production ZIP with Composer dependencies included and uploads the asset to the matching GitHub release.
 

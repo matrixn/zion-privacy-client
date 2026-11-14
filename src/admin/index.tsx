@@ -23,6 +23,7 @@ import {
 declare global {
   interface Window {
     ZionPrivacyAdmin: AdminConfig;
+    ZionPrivacyBannerI18n: RecordData;
     wp?: any;
   }
 }
@@ -67,6 +68,7 @@ type ScanFormState = {
 };
 
 const config = window.ZionPrivacyAdmin;
+const bannerText = window.ZionPrivacyBannerI18n;
 let toastSequence = 0;
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
@@ -1911,16 +1913,31 @@ function ColorControl({
   value: string;
   onChange: (value: string) => void;
 }) {
+  const [hex, setHex] = useState(value);
+  useEffect(() => setHex(value), [value]);
   return (
     <label className="zion-admin__color-control">
       <span>{label}</span>
       <span className="zion-admin__color-control-input">
         <input
           type="color"
+          aria-label={`${label} color picker`}
           value={value}
           onChange={(event) => onChange(event.target.value)}
         />
-        <code>{value}</code>
+        <input
+          type="text"
+          aria-label={`${label} HEX`}
+          value={hex}
+          maxLength={7}
+          spellCheck={false}
+          onChange={(event) => {
+            const candidate = event.target.value;
+            setHex(candidate);
+            if (/^#[0-9a-f]{6}$/i.test(candidate)) onChange(candidate);
+          }}
+          onBlur={() => setHex(value)}
+        />
       </span>
     </label>
   );
@@ -2050,7 +2067,7 @@ function BannerPreview({
     {
       enabled: settings.banner_show_privacy_policy_link !== false,
       pageId: settings.banner_privacy_policy_page_id || 0,
-      label: settings.banner_privacy_policy_link_label || "Privacy policy",
+      label: settings.banner_privacy_policy_link_label || bannerText.privacyPolicy,
     },
     {
       enabled: !!settings.banner_show_terms_link,
@@ -2076,16 +2093,16 @@ function BannerPreview({
           {design === "card" && (
             <div className="zion-admin__banner-preview-logo">
               {settings.banner_logo_url ? (
-                <img src={settings.banner_logo_url} alt="Banner logo" />
+                <img src={settings.banner_logo_url} alt={bannerText.bannerLogo} />
               ) : (
-                <span>Logo</span>
+                <span>{bannerText.logo}</span>
               )}
             </div>
           )}
-          <h3>{settings.banner_title || "Your privacy matters"}</h3>
+          <h3>{settings.banner_title || bannerText.title}</h3>
           <p>
             {settings.banner_message ||
-              "Choose which categories of cookies you allow."}
+              bannerText.message}
           </p>
           {policyLinks.length > 0 && (
             <div className="zion-admin__banner-preview-policy-links">
@@ -2109,7 +2126,7 @@ function BannerPreview({
               type="button"
               onClick={() => announce("Essential cookies only selected.", "info")}
             >
-              {settings.banner_reject_label || "Essential only"}
+              {settings.banner_reject_label || bannerText.essential}
             </button>
           )}
           {settings.banner_show_reject_all !== false && (
@@ -2117,12 +2134,12 @@ function BannerPreview({
               type="button"
               onClick={() => announce("All optional cookies rejected.", "info")}
             >
-              {settings.banner_reject_all_label || "Reject all"}
+              {settings.banner_reject_all_label || bannerText.rejectAll}
             </button>
           )}
           {settings.banner_show_customize !== false && (
             <button type="button" onClick={() => setCustomizing(true)}>
-              {settings.banner_customize_label || "Customize"}
+              {settings.banner_customize_label || bannerText.customize}
             </button>
           )}
           {settings.banner_show_accept !== false && (
@@ -2131,7 +2148,7 @@ function BannerPreview({
               className="is-primary"
               onClick={() => announce("All cookies accepted.", "success")}
             >
-              {settings.banner_accept_label || "Accept all"}
+              {settings.banner_accept_label || bannerText.accept}
             </button>
           )}
         </div>
@@ -2183,18 +2200,18 @@ function CookiePreferenceModal({
         className="zion-admin__preference-modal"
         role="dialog"
         aria-modal="true"
-        aria-label="Cookie preferences"
+        aria-label={bannerText.cookiePreferences}
       >
         <div className="zion-admin__preference-header">
           <div>
-            <span className="zion-admin__eyebrow">Privacy choices</span>
-            <h3>{settings.banner_selector_title || "Customize cookies"}</h3>
+            <span className="zion-admin__eyebrow">{bannerText.privacyChoices}</span>
+            <h3>{settings.banner_selector_title || bannerText.selectorTitle}</h3>
             <p>
               {settings.banner_selector_message ||
-                "Choose which cookie categories you allow on this website."}
+                bannerText.selectorMessage}
             </p>
           </div>
-          <button type="button" onClick={onClose} aria-label="Close">
+          <button type="button" onClick={onClose} aria-label={bannerText.close}>
             ×
           </button>
         </div>
@@ -2206,19 +2223,18 @@ function CookiePreferenceModal({
             >
               <div className="zion-admin__preference-category-head">
                 <div>
-                  <h4>{group.label}</h4>
+                  <h4>{bannerText.categoryLabel(group.value)}</h4>
                   <p>
                     {group.value === "necessary"
-                      ? "Always active for core website functionality."
+                      ? bannerText.alwaysActive
                       : settings.banner_show_category_counts !== false
-                      ? `${group.cookies.length} cookie${
-                          group.cookies.length === 1 ? "" : "s"
-                        } detected`
-                      : "Optional cookies"}
+                      ? bannerText.detectedCookies(group.cookies.length)
+                      : bannerText.optionalCookies}
                   </p>
                 </div>
                 <input
                   type="checkbox"
+                  aria-label={bannerText.categoryLabel(group.value)}
                   checked={!!preferences[group.value]}
                   disabled={group.value === "necessary"}
                   onChange={(event) =>
@@ -2233,9 +2249,7 @@ function CookiePreferenceModal({
                       <div key={`${cookie.name}-${index}`}>
                         <strong>{cookie.display_name || cookie.name}</strong>
                         <span>
-                          {cookie.description ||
-                            cookie.purpose ||
-                            "No description available."}
+                          {bannerText.cookieDescription(cookie.description || cookie.purpose)}
                           {cookie.vendor ? ` · ${cookie.vendor}` : ""}
                         </span>
                       </div>
@@ -2246,19 +2260,20 @@ function CookiePreferenceModal({
           ))}
         </div>
         <div className="zion-admin__preference-footer">
-          <Button variant="secondary" onClick={onClose}>
-            Cancel
-          </Button>
+          <button type="button" onClick={onClose}>
+            {bannerText.cancel}
+          </button>
           {settings.banner_show_save_preferences !== false && (
-            <Button
-              variant="primary"
+            <button
+              type="button"
+              className="is-primary"
               onClick={() => {
-                announce("Cookie preferences saved.", "success");
+                announce(bannerText.saved, "success");
                 onClose();
               }}
             >
-              {settings.banner_save_label || "Save preferences"}
-            </Button>
+              {settings.banner_save_label || bannerText.save}
+            </button>
           )}
         </div>
       </div>

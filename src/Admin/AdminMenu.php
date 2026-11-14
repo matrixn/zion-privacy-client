@@ -3,6 +3,7 @@
 namespace ZionPrivacy\Admin;
 
 use ZionPrivacy\Settings\SettingsRepository;
+use ZionPrivacy\Frontend\BannerLocalization;
 
 final class AdminMenu
 {
@@ -50,10 +51,11 @@ final class AdminMenu
 
         wp_enqueue_style('zion-privacy-admin', ZION_PRIVACY_URL.'assets/admin.css', [], ZION_PRIVACY_VERSION);
         wp_enqueue_style('dashicons');
+        BannerLocalization::enqueue();
         wp_enqueue_script(
             'zion-privacy-admin',
             ZION_PRIVACY_URL.'build/'.$scriptFile,
-            $asset['dependencies'],
+            array_values(array_unique(array_merge($asset['dependencies'], [BannerLocalization::HANDLE]))),
             $asset['version'],
             true,
         );

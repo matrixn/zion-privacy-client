@@ -8,6 +8,7 @@
  * Requires at least: 6.5
  * Requires PHP: 8.1
  * Text Domain: zion-privacy-client
+ * Domain Path: /languages
  *
  * @package ZionPrivacy
  */
