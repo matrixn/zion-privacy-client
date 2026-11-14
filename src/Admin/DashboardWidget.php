@@ -3,6 +3,7 @@
 namespace ZionPrivacy\Admin;
 
 use ZionPrivacy\Api\ApiClient;
+use ZionPrivacy\Localization\AdminLocale;
 use ZionPrivacy\Settings\SettingsRepository;
 
 final class DashboardWidget
@@ -42,10 +43,13 @@ final class DashboardWidget
 
         wp_enqueue_style('zion-privacy-dashboard', ZION_PRIVACY_URL.'assets/dashboard.css', [], ZION_PRIVACY_VERSION);
         wp_enqueue_script('zion-privacy-dashboard', ZION_PRIVACY_URL.'assets/dashboard.js', [], ZION_PRIVACY_VERSION, true);
+        wp_enqueue_script('zion-privacy-admin-locale', ZION_PRIVACY_URL.'assets/admin-i18n.js', [], ZION_PRIVACY_VERSION, true);
         wp_localize_script('zion-privacy-dashboard', 'zionPrivacyDashboard', [
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('zion_privacy_dashboard_options'),
         ]);
+        wp_localize_script('zion-privacy-admin-locale', 'ZionPrivacyAdmin', ['locale' => AdminLocale::locale()]);
+        wp_localize_script('zion-privacy-admin-locale', 'ZionPrivacyAdminTranslations', AdminLocale::translations());
     }
 
     public function saveWidgetOptions(): void

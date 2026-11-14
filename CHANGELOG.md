@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.54 — 2026-11-14
+
+- Added Romanian admin translations selected automatically from the WordPress user locale, with English as the fallback for every other locale.
+- Applied the same locale rule to the native consent dashboard widget and the plugin administration interface.
+
 ## 0.1.51 — 2026-11-14
 
 - Added collapsible consent categories with all cookie details collapsed by default.

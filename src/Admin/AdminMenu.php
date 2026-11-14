@@ -4,6 +4,7 @@ namespace ZionPrivacy\Admin;
 
 use ZionPrivacy\Settings\SettingsRepository;
 use ZionPrivacy\Frontend\BannerLocalization;
+use ZionPrivacy\Localization\AdminLocale;
 
 final class AdminMenu
 {
@@ -71,7 +72,16 @@ final class AdminMenu
             'defaultScanMode' => $this->settings->all()['default_scan_mode'],
             'defaultScanScenario' => $this->settings->all()['default_scan_scenario'],
             'cookieCacheMinutes' => $this->settings->bannerCookieCacheMinutes(),
+            'locale' => AdminLocale::locale(),
         ]);
+        wp_enqueue_script(
+            'zion-privacy-admin-locale',
+            ZION_PRIVACY_URL.'assets/admin-i18n.js',
+            ['zion-privacy-admin'],
+            ZION_PRIVACY_VERSION,
+            true,
+        );
+        wp_localize_script('zion-privacy-admin-locale', 'ZionPrivacyAdminTranslations', AdminLocale::translations());
     }
 
     public function renderPage(): void
