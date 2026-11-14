@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.51 — 2026-11-14
+
+- Added collapsible consent categories with all cookie details collapsed by default.
+- Remembered each category's expanded or collapsed state when the consent modal is reopened.
+
 ## 0.1.50 — 2026-11-14
 
 - Updated `zion/wordpress-license-sdk` to `0.4.17` and refreshed its Composer dependency tree.

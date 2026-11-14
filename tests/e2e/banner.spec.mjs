@@ -63,6 +63,9 @@ for (const width of [390, 768, 1024, 1440]) {
     await expect(dialog.getByRole('checkbox', { name: 'Necesare', exact: true })).toBeChecked();
     await expect(dialog.getByRole('checkbox', { name: 'Necesare', exact: true })).toBeDisabled();
     await expect(dialog.getByRole('checkbox', { name: 'Analiză', exact: true })).not.toBeChecked();
+    await dialog.locator('[data-zion-category-toggle="necessary"]').click();
+    await dialog.locator('[data-zion-category-toggle="analytics"]').click();
+    await dialog.locator('[data-zion-category-toggle="security"]').click();
     await expect(dialog.getByText('1 cookie identificat', { exact: true }).first()).toBeVisible();
     await expect(dialog.getByText('2 cookie-uri identificate', { exact: true })).toBeVisible();
     await expect(dialog.getByText('20 de cookie-uri identificate', { exact: true })).toBeVisible();
@@ -75,6 +78,24 @@ for (const width of [390, 768, 1024, 1440]) {
     expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBe(0);
   });
 }
+
+test('cookie categories start collapsed and remember their expanded state', async ({ page, baseURL }) => {
+  await fixture(page, baseURL, { preview: false });
+  const banner = page.locator('.zion-privacy-banner');
+  await banner.getByRole('button', { name: 'Personalizează', exact: true }).click();
+  let dialog = page.getByRole('dialog', { name: 'Preferințe cookie', exact: true });
+  const analytics = dialog.locator('[data-zion-category-toggle="analytics"]');
+  await expect(analytics).toHaveAttribute('aria-expanded', 'false');
+  await expect(dialog.locator('.zion-privacy-banner__category[data-zion-category-panel="analytics"] .zion-privacy-banner__cookie').first()).toBeHidden();
+  await analytics.click();
+  await expect(analytics).toHaveAttribute('aria-expanded', 'true');
+  await expect(dialog.locator('.zion-privacy-banner__category[data-zion-category-panel="analytics"] .zion-privacy-banner__cookie').first()).toBeVisible();
+  await dialog.getByRole('button', { name: 'Salvează preferințele', exact: true }).click();
+  await page.getByRole('button', { name: 'Modifică preferințele cookie', exact: true }).click();
+  dialog = page.getByRole('dialog', { name: 'Preferințe cookie', exact: true });
+  await expect(dialog.locator('[data-zion-category-toggle="analytics"]')).toHaveAttribute('aria-expanded', 'true');
+  await expect(dialog.locator('.zion-privacy-banner__category[data-zion-category-panel="analytics"] .zion-privacy-banner__cookie').first()).toBeVisible();
+});
 
 test('native English fallback and configurable merchant labels remain available', async ({ page, baseURL }) => {
   await fixture(page, baseURL, { romanian: false, title: 'Merchant title', customizeLabel: 'My choices' });

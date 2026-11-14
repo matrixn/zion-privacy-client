@@ -80,6 +80,13 @@
   recordVisitorView();
 
   root.addEventListener('click', function (event) {
+    var categoryToggle = event.target.closest('[data-zion-category-toggle]');
+
+    if (categoryToggle) {
+      toggleCategory(categoryToggle.getAttribute('data-zion-category-toggle'));
+      return;
+    }
+
     var button = event.target.closest('[data-zion-consent]');
 
     if (!button) {
@@ -140,6 +147,7 @@
     var cookies = Array.isArray(config.cookies) ? config.cookies : [];
     var optionalDefault = regulation === 'us_state_laws';
     var savedConsent = !isPreview ? readStoredConsent() : null;
+    var expandedCategories = !isPreview ? readExpandedCategories() : {};
     var html = groups.map(function (category) {
       var categoryCookies = cookies.filter(function (cookie) { return (cookie.category || 'unknown') === category; });
       var rows = categoryCookies.map(function (cookie) {
@@ -158,12 +166,14 @@
         : (savedConsent && Object.prototype.hasOwnProperty.call(savedConsent, category)
           ? Boolean(savedConsent[category])
           : optionalDefault);
+      var isExpanded = expandedCategories[category] === true;
+      var categoryId = 'zion-privacy-category-' + category;
 
-      return '<section class="zion-privacy-banner__category"><div class="zion-privacy-banner__category-head">'
-        + '<div><h3>' + escapeHtml(text.categoryLabel(category)) + '</h3><p>'
+      return '<section class="zion-privacy-banner__category' + (isExpanded ? ' is-expanded' : '') + '" data-zion-category-panel="' + category + '"><div class="zion-privacy-banner__category-head">'
+        + '<button type="button" class="zion-privacy-banner__category-toggle" data-zion-category-toggle="' + category + '" aria-expanded="' + (isExpanded ? 'true' : 'false') + '" aria-controls="' + categoryId + '"><span><h3>' + escapeHtml(text.categoryLabel(category)) + '</h3><p>'
         + escapeHtml(category === 'necessary' ? text.alwaysActive : (config.showCategoryCounts === false ? text.optionalCookies : text.detectedCookies(categoryCookies.length)))
-        + '</p></div><label class="zion-privacy-banner__switch"><input type="checkbox" aria-label="' + escapeAttribute(text.categoryLabel(category)) + '" data-zion-category="' + category + '" ' + (isSelected ? 'checked' : '') + (category === 'necessary' ? ' disabled' : '') + '><span></span></label></div>'
-        + (config.showCookieDetails !== false && rows ? '<div class="zion-privacy-banner__cookies">' + rows + '</div>' : '')
+        + '</p></span><span class="zion-privacy-banner__category-chevron" aria-hidden="true"></span></button><label class="zion-privacy-banner__switch"><input type="checkbox" aria-label="' + escapeAttribute(text.categoryLabel(category)) + '" data-zion-category="' + category + '" ' + (isSelected ? 'checked' : '') + (category === 'necessary' ? ' disabled' : '') + '><span></span></label></div>'
+        + (config.showCookieDetails !== false && rows ? '<div id="' + categoryId + '" class="zion-privacy-banner__cookies">' + rows + '</div>' : '')
         + '</section>';
     }).join('');
 
@@ -185,6 +195,36 @@
       + '</div>'
       + '</div>';
     root.appendChild(modal);
+  }
+
+  function toggleCategory(category) {
+    var panel = root.querySelector('[data-zion-category-panel="' + escapeAttribute(category) + '"]');
+    var toggle = root.querySelector('[data-zion-category-toggle="' + escapeAttribute(category) + '"]');
+
+    if (!panel || !toggle) {
+      return;
+    }
+
+    var expanded = !panel.classList.contains('is-expanded');
+    panel.classList.toggle('is-expanded', expanded);
+    toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+
+    if (!isPreview) {
+      var expandedCategories = readExpandedCategories();
+      expandedCategories[category] = expanded;
+      writeStorage(storageKey + '_expanded_categories', JSON.stringify(expandedCategories));
+    }
+  }
+
+  function readExpandedCategories() {
+    try {
+      var raw = readStorage(storageKey + '_expanded_categories');
+      var parsed = raw ? JSON.parse(raw) : {};
+
+      return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+    } catch (error) {
+      return {};
+    }
   }
 
   function renderPoweredBy() {
