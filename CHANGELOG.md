@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.56 — 2026-11-14
+
+- Rebuilt the plugin Statistics tab as an analysis workspace with consent KPIs, opt-in rate, visitor comparison, scan coverage, scan status health, category acceptance footprint and recent consent activity.
+- Extended the WordPress REST statistics response with 30-day consent data, account metadata and cookie-cache synchronization time.
+
 ## 0.1.55 — 2026-11-14
 
 - Updated README and changelog documentation to reflect the current plugin architecture, dashboard widget, Romanian/English localization, WordPress 6.5 baseline and license SDK 0.4.17.

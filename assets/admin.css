@@ -101,9 +101,38 @@ body.toplevel_page_zion-privacy #wpfooter { display: none; }
 .zion-admin__status-text--completed { color: #86efac; background: rgba(34, 197, 94, .13); }
 .zion-admin__status-text--failed { color: #fda4af; background: rgba(244, 63, 94, .13); }
 .zion-admin__status-text--cancelled { color: #cbd5e1; background: rgba(100, 116, 139, .18); }
-.zion-admin__status-text--running, .zion-admin__status-text--queued, .zion-admin__status-text--pending { color: #fde68a; background: rgba(245, 158, 11, .13); }
+.zion-admin__status-text--running, .zion-admin__status-text--queued, .zion-admin__status-text--pending, .zion-admin__status-text--scanning, .zion-admin__status-text--discovering, .zion-admin__status-text--processing, .zion-admin__status-text--classifying { color: #fde68a; background: rgba(245, 158, 11, .13); }
+.zion-admin__status-text--timed_out { color: #fdba74; background: rgba(234, 88, 12, .16); }
 .zion-admin__status-text--unknown { color: #c4b5fd; background: rgba(139, 92, 246, .13); }
 .zion-admin__empty { padding: 28px 0; color: var(--muted); text-align: center; }
+.zion-admin__statistics-toolbar { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; margin: -10px 0 20px; padding: 15px 18px; background: linear-gradient(110deg, rgba(34, 211, 238, .08), rgba(249, 115, 22, .08)); border: 1px solid var(--line); border-radius: 14px; }
+.zion-admin__statistics-toolbar p { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+.zion-admin__statistics-toolbar .components-button { flex: 0 0 auto; }
+.zion-admin__grid--statistics { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.zion-admin__statistics-grid { align-items: stretch; }
+.zion-admin__statistics-callout { display: flex; align-items: flex-start; gap: 10px; margin-top: 16px; padding: 11px 13px; color: #c9d9f7; background: rgba(34, 211, 238, .06); border: 1px solid rgba(34, 211, 238, .16); border-radius: 10px; font-size: 11px; line-height: 1.45; }
+.zion-admin__statistics-callout strong { flex: 0 0 auto; color: #67e8f9; font-size: 12px; }
+.zion-admin__statistics-callout span { color: var(--muted); }
+.zion-admin__statistics-performance { display: flex; align-items: flex-end; gap: 10px; height: 220px; padding: 26px 8px 0; border-bottom: 1px solid var(--line); }
+.zion-admin__statistics-performance-item { position: relative; display: flex; flex: 1; min-width: 24px; height: 100%; align-items: flex-end; justify-content: center; }
+.zion-admin__statistics-performance-item strong { position: absolute; bottom: calc(var(--bar-height, 0%) + 8px); color: var(--ink); font-size: 10px; font-weight: 800; transform: translateY(-100%); }
+.zion-admin__statistics-performance-bar { display: block; width: min(38px, 100%); min-height: 5px; border-radius: 7px 7px 2px 2px; background: linear-gradient(180deg, #22d3ee, #3b82f6); box-shadow: 0 0 18px rgba(34, 211, 238, .2); }
+.zion-admin__statistics-performance-bar--failed, .zion-admin__statistics-performance-bar--timed_out { background: linear-gradient(180deg, #fb7185, #be123c); }
+.zion-admin__statistics-performance-bar--cancelled { background: linear-gradient(180deg, #94a3b8, #475569); }
+.zion-admin__statistics-performance-item small { position: absolute; bottom: -22px; color: var(--muted); font-size: 9px; white-space: nowrap; }
+.zion-admin__statistics-footnote { margin-top: 31px; color: var(--muted); font-size: 11px; }
+.zion-admin__statistics-footnote strong { color: var(--ink); }
+.zion-admin__statistics-statuses { display: grid; gap: 14px; }
+.zion-admin__statistics-status > div:first-child { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.zion-admin__statistics-status > div:first-child strong { color: var(--ink); font-size: 13px; }
+.zion-admin__statistics-status-track { height: 7px; margin-top: 7px; overflow: hidden; background: rgba(148, 163, 184, .14); border-radius: 999px; }
+.zion-admin__statistics-status-track span { display: block; height: 100%; min-width: 2px; border-radius: inherit; background: linear-gradient(90deg, #22d3ee, #8b5cf6); }
+.zion-admin__statistics-status small { display: block; margin-top: 4px; color: var(--muted); font-size: 10px; }
+.zion-admin__statistics-category-analysis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 28px; }
+.zion-admin__statistics-category > div:first-child { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; color: var(--muted); font-size: 11px; }
+.zion-admin__statistics-category strong { color: var(--ink); font-size: 12px; }
+.zion-admin__statistics-category-track { height: 8px; margin-top: 7px; overflow: hidden; background: rgba(148, 163, 184, .14); border-radius: 999px; }
+.zion-admin__statistics-category-track span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #f97316, #3b82f6); }
 .zion-admin__bar-chart { display: flex; align-items: flex-end; gap: 9px; height: 210px; padding: 20px 8px 0; border-bottom: 1px solid var(--line); }
 .zion-admin__bar { display: flex; flex: 1; align-items: flex-end; height: 100%; min-width: 14px; }
 .zion-admin__bar span { display: block; width: 100%; min-height: 3px; background: linear-gradient(180deg, var(--cyan), var(--purple)); border-radius: 5px 5px 0 0; box-shadow: 0 0 18px rgba(34, 211, 238, .2); }
@@ -504,6 +533,8 @@ body.zion-privacy-theme-light.toplevel_page_zion-privacy .zion-admin__sidebar { 
 .zion-admin__renew-note { max-width: 560px; color: var(--muted); font-size: 12px; line-height: 1.55; }
 @media (max-width: 900px) { .zion-admin__cookie-summary-layout { grid-template-columns: 1fr; } .zion-admin__cookie-summary-layout .zion-admin__dashboard-website-meta { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 18px; } }
 @media (max-width: 700px) { .zion-admin__dashboard-website-meta, .zion-admin__consent-trend, .zion-admin__visitor-comparison { grid-template-columns: 1fr; } .zion-admin__consent-donut, .zion-admin__visitor-comparison-summary { margin: 0 auto; } }
+@media (max-width: 1000px) { .zion-admin__grid--statistics { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 700px) { .zion-admin__statistics-toolbar { align-items: stretch; flex-direction: column; } .zion-admin__statistics-toolbar .components-button { align-self: flex-start; } .zion-admin__grid--statistics, .zion-admin__statistics-category-analysis { grid-template-columns: 1fr; } }
 .zion-admin-shell[data-theme="light"] .zion-admin .components-button.is-destructive { color: #9a3412; background: #fff7ed !important; border-color: #fb923c; }
 .zion-admin-shell[data-theme="light"] .zion-admin .components-button.is-destructive:hover { color: #fff; background: #f97316 !important; border-color: #fdba74; }
 .zion-admin-shell[data-theme="light"] .zion-admin .components-button.is-destructive:active { background: #ea580c !important; }

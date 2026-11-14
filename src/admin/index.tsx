@@ -2633,75 +2633,182 @@ function Cookies() {
   );
 }
 
+function ScanPerformanceChart({ scans }: { scans: RecordData[] }) {
+  const entries = scans.slice(0, 8).reverse();
+  const maxPages = Math.max(1, ...entries.map((scan) => Number(scan.page_count || 0)));
+
+  return (
+    <div className="zion-admin__statistics-performance">
+      {entries.length ? entries.map((scan) => {
+        const pages = Number(scan.page_count || 0);
+        const duration = scanDuration(scan);
+        const height = Math.max(5, (pages / maxPages) * 100);
+        return (
+          <div className="zion-admin__statistics-performance-item" key={scan.id}>
+            <strong>{pages}</strong>
+            <span
+              className={`zion-admin__statistics-performance-bar zion-admin__statistics-performance-bar--${scan.status || "unknown"}`}
+              style={{ height: `${height}%` }}
+              title={`${pages} pages · ${formatDuration(duration)}`}
+            />
+            <small>{scan.finished_at ? shortDate(scan.finished_at) : "—"}</small>
+          </div>
+        );
+      }) : <div className="zion-admin__empty">No scan data available yet.</div>}
+    </div>
+  );
+}
+
+function ScanStatusChart({ counts }: { counts: Record<string, number> }) {
+  const statuses = ["completed", "scanning", "queued", "failed", "cancelled", "timed_out"];
+  const total = Object.values(counts).reduce((sum, value) => sum + value, 0);
+  return (
+    <div className="zion-admin__statistics-statuses">
+      {statuses.map((status) => {
+        const value = counts[status] || 0;
+        const percentage = total ? Math.round((value / total) * 100) : 0;
+        return (
+          <div className="zion-admin__statistics-status" key={status}>
+            <div>
+              <span className={`zion-admin__status-text zion-admin__status-text--${status}`}>{formatLabel(status)}</span>
+              <strong>{value}</strong>
+            </div>
+            <div className="zion-admin__statistics-status-track"><span style={{ width: `${percentage}%` }} /></div>
+            <small>{percentage}% of recorded scans</small>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function CategoryAnalysis({ categories }: { categories: RecordData }) {
+  const labels: Record<string, string> = {
+    necessary: "Necessary",
+    preferences: "Preferences",
+    analytics: "Analytics",
+    marketing: "Marketing",
+    security: "Security",
+    personalization: "Personalization",
+    unknown: "Unknown",
+  };
+  const values = Object.values(categories).map((stats: any) => Number(stats?.accepted || 0));
+  const max = Math.max(1, ...values);
+  return (
+    <div className="zion-admin__statistics-category-analysis">
+      {Object.entries(labels).map(([key, label]) => {
+        const stats = (categories[key] || {}) as RecordData;
+        const accepted = Number(stats.accepted || 0);
+        const visitors = Number(stats.unique_visitors || 0);
+        const width = accepted ? Math.max(5, (accepted / max) * 100) : 0;
+        return (
+          <div className="zion-admin__statistics-category" key={key}>
+            <div><strong>{label}</strong><span>{accepted} selections · {visitors} visitors</span></div>
+            <div className="zion-admin__statistics-category-track"><span style={{ width: `${width}%` }} /></div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function Statistics() {
   const [data, setData] = useState<RecordData | null>(null);
   const [error, setError] = useState("");
-  useEffect(() => {
+  const [refreshing, setRefreshing] = useState(false);
+  const load = () => {
+    setRefreshing(true);
     request<RecordData>("statistics")
       .then(setData)
       .catch((e) => {
         setError(e.message);
         announce(e.message, "error");
-      });
-  }, []);
+      })
+      .finally(() => setRefreshing(false));
+  };
+  useEffect(load, []);
   if (error) return <PageError message={error} />;
   if (!data) return <Loading />;
+
   const stats = data.stats || {};
-  const scans = data.scans || [];
-  const maxPages = Math.max(
-    1,
-    ...scans.map((scan: RecordData) => Number(scan.page_count || 0)),
-  );
+  const scans = (data.scans || []) as RecordData[];
+  const consent = data.consent || {};
+  const totals = consent.totals || {};
+  const comparison = consent.visitor_comparison || {};
+  const categories = consent.category_breakdown?.categories || {};
+  const totalDecisions = Number(totals.total || Number(totals.accepted || 0) + Number(totals.rejected || 0) + Number(totals.partially_accepted || 0));
+  const accepted = Number(totals.accepted || 0);
+  const rejected = Number(totals.rejected || 0);
+  const partial = Number(totals.partially_accepted || 0);
+  const optedIn = accepted + partial;
+  const optInRate = totalDecisions ? Math.round((optedIn / totalDecisions) * 100) : 0;
+  const statusCounts = scans.reduce<Record<string, number>>((result, scan) => {
+    const status = String(scan.status || "unknown");
+    result[status] = (result[status] || 0) + 1;
+    return result;
+  }, {});
+  const findings = Number(stats.total_findings || Number(stats.total_cookies || 0) + Number(stats.total_browser_storage || 0));
+  const latestScan = scans[0];
+
   return (
     <>
       <Header
         title="Statistics"
-        subtitle="Website-specific scanner metrics from the Zion Privacy API."
+        subtitle="A deeper view of consent behavior, scanner health, coverage and privacy findings for this website."
         connected={config.connected}
       />
-      <div className="zion-admin__grid">
-        <Metric label="Scans" value={stats.scans_count || 0} />
-        <Metric label="Successful" value={stats.successful_scans || 0} />
-        <Metric label="Cookies" value={stats.total_cookies || 0} />
-        <Metric label="Pages" value={stats.pages_scanned || 0} />
+      <div className="zion-admin__statistics-toolbar">
+        <div><span className="zion-admin__eyebrow">Analysis workspace</span><p>Use the signals below to understand visitor choices and scanner performance.</p></div>
+        <Button variant="secondary" icon={<ButtonIcon name="dashicons-update" />} onClick={load} disabled={refreshing}>{refreshing ? "Refreshing…" : "Refresh statistics"}</Button>
+      </div>
+      <div className="zion-admin__grid zion-admin__grid--statistics">
+        <Metric label="Total decisions" value={totalDecisions} note={`Last ${consent.days || 30} days`} />
+        <Metric label="Opt-in rate" value={`${optInRate}%`} note={`${optedIn} accepted or partially accepted`} />
+        <Metric label="Unique visitors" value={comparison.total || 0} note="Anonymous visitors in period" />
+        <Metric label="Scan success rate" value={`${stats.scans_count ? Math.round((Number(stats.successful_scans || 0) / Number(stats.scans_count)) * 100) : 0}%`} note={`${stats.successful_scans || 0} successful scans`} />
+        <Metric label="Pages scanned" value={stats.pages_scanned || 0} note="Latest successful coverage" />
+        <Metric label="Average duration" value={formatDuration(stats.average_duration_seconds)} note="Completed scans only" />
+        <Metric label="Privacy findings" value={findings} note={`${stats.total_cookies || 0} cookies · ${stats.total_browser_storage || 0} storage`} />
+        <Metric label="Last scan" value={latestScan?.finished_at ? shortDate(latestScan.finished_at) : "—"} note={latestScan ? formatLabel(latestScan.status || "unknown") : "No scan yet"} />
+      </div>
+      <div className="zion-admin__grid zion-admin__grid--two zion-admin__statistics-grid">
+        <Card className="zion-admin__dashboard-chart-card">
+          <CardHeader><div className="zion-admin__card-heading"><div><h2>Consent decision distribution</h2><p>How visitors responded to the banner during the selected period.</p></div><span className="zion-admin__muted">{consent.days || 30} days</span></div></CardHeader>
+          <CardBody>
+            <ConsentTrendChart totals={totals} categoryBreakdown={categories} />
+            <div className="zion-admin__statistics-callout"><strong>{optInRate}% opted in</strong><span>Accepted and partially accepted decisions indicate visitors allowed at least one optional category.</span></div>
+          </CardBody>
+        </Card>
+        <Card className="zion-admin__dashboard-chart-card">
+          <CardHeader><div className="zion-admin__card-heading"><div><h2>Visitor journey</h2><p>Compare reach, decisions and visitors who have not chosen yet.</p></div><span className="zion-admin__muted">Anonymous</span></div></CardHeader>
+          <CardBody><ConsentVisitorComparison comparison={comparison} /></CardBody>
+        </Card>
+      </div>
+      <div className="zion-admin__grid zion-admin__grid--two zion-admin__statistics-grid">
+        <Card className="zion-admin__dashboard-chart-card">
+          <CardHeader><div className="zion-admin__card-heading"><div><h2>Scan coverage and performance</h2><p>Pages processed by each recent scan. Hover a bar for duration.</p></div><span className="zion-admin__muted">Latest {Math.min(8, scans.length)}</span></div></CardHeader>
+          <CardBody><ScanPerformanceChart scans={scans} /><div className="zion-admin__statistics-footnote">Average completed scan duration: <strong>{formatDuration(stats.average_duration_seconds)}</strong></div></CardBody>
+        </Card>
+        <Card className="zion-admin__dashboard-chart-card">
+          <CardHeader><div className="zion-admin__card-heading"><div><h2>Scan status health</h2><p>Operational distribution of scans returned by the API.</p></div><span className="zion-admin__muted">{scans.length} scans</span></div></CardHeader>
+          <CardBody><ScanStatusChart counts={statusCounts} /></CardBody>
+        </Card>
       </div>
       <Card>
-        <CardHeader>
-          <h2>Pages scanned per recent scan</h2>
-        </CardHeader>
+        <CardHeader><div className="zion-admin__card-heading"><div><h2>Category acceptance footprint</h2><p>Which cookie categories receive the most consent activity.</p></div><span className="zion-admin__muted">Selections and unique visitors</span></div></CardHeader>
+        <CardBody><CategoryAnalysis categories={categories} /></CardBody>
+      </Card>
+      <Card>
+        <CardHeader><div className="zion-admin__card-heading"><div><h2>Recent consent activity</h2><p>Anonymous decisions retained for trend analysis and audit context.</p></div><span className="zion-admin__muted">Latest events</span></div></CardHeader>
         <CardBody>
-          <div className="zion-admin__bar-chart">
-            {scans.length ? (
-              scans.map((scan: RecordData) => (
-                <div className="zion-admin__bar" key={scan.id}>
-                  <span
-                    style={{
-                      height: `${Math.max(
-                        3,
-                        (Number(scan.page_count || 0) / maxPages) * 100,
-                      )}%`,
-                    }}
-                    title={`${scan.page_count || 0} pages — ${formatLabel(
-                      scan.status || "unknown",
-                    )}`}
-                  />
-                </div>
-              ))
-            ) : (
-              <div className="zion-admin__empty">
-                No scan data available yet.
-              </div>
-            )}
-          </div>
+          <div className="zion-admin__table-wrap"><table className="zion-admin__table zion-admin__consent-log-table"><thead><tr><th>Consent ID</th><th>Status</th><th>Regulation</th><th>Date / time</th></tr></thead><tbody>
+            {(consent.recent || []).length ? (consent.recent || []).slice(0, 10).map((event: RecordData, index: number) => <tr key={`${event.visitor}-${event.occurred_at}-${index}`}><td><code>{event.visitor || "Anonymous visitor"}</code></td><td><span className={`zion-admin__consent-status zion-admin__consent-status--${event.status || "unknown"}`}>{formatLabel(event.status || "unknown")}</span></td><td>{formatRegulation(event.regulation)}</td><td className="zion-admin__muted">{formatDate(event.occurred_at)}</td></tr>) : <tr><td colSpan={4}><div className="zion-admin__empty">No consent events recorded yet.</div></td></tr>}
+          </tbody></table></div>
         </CardBody>
       </Card>
       <Card>
-        <CardHeader>
-          <h2>Recent scan outcomes</h2>
-        </CardHeader>
-        <CardBody>
-          <ScanTable scans={scans} />
-        </CardBody>
+        <CardHeader><div className="zion-admin__card-heading"><div><h2>Recent scan outcomes</h2><p>Review the latest scan records, findings and completion state.</p></div><span className="zion-admin__muted">Scanner history</span></div></CardHeader>
+        <CardBody><ScanTable scans={scans} /></CardBody>
       </Card>
     </>
   );
@@ -3542,6 +3649,13 @@ function formatDuration(seconds: number | null) {
   return seconds >= 60
     ? `${Math.floor(seconds / 60)}m ${seconds % 60}s`
     : `${seconds}s`;
+}
+function scanDuration(scan: RecordData): number | null {
+  if (!scan.started_at || !scan.finished_at) return null;
+  const start = new Date(scan.started_at).getTime();
+  const finish = new Date(scan.finished_at).getTime();
+  if (Number.isNaN(start) || Number.isNaN(finish)) return null;
+  return Math.max(0, Math.round((finish - start) / 1000));
 }
 function limitValue(value: any) {
   return value === null || typeof value === "undefined" ? "Unlimited" : value;

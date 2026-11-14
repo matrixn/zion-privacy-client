@@ -329,11 +329,20 @@ final class RestController
     private function statistics(): array|\WP_Error
     {
         $dashboard = $this->dashboard();
+        if (is_wp_error($dashboard)) {
+            return $dashboard;
+        }
 
-        return is_wp_error($dashboard) ? $dashboard : [
+        $consentResponse = $this->api->get('installation/consent-statistics', ['days' => 30]);
+        $accountResponse = $this->api->get('installation/account');
+
+        return [
             'website' => $dashboard['website'],
             'stats' => $dashboard['stats'],
             'scans' => $dashboard['scans'],
+            'consent' => is_wp_error($consentResponse) ? null : $consentResponse,
+            'account' => is_wp_error($accountResponse) ? null : $accountResponse,
+            'cookies_synced_at' => $dashboard['cookies_synced_at'] ?? null,
         ];
     }
 

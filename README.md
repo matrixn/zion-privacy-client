@@ -68,6 +68,7 @@ Zion Privacy API
 - WordPress-native PHP bootstrap with PSR-4 Composer autoloading;
 - React/TypeScript admin application built with `@wordpress/scripts`;
 - Dashboard, Cookies, Statistics and Settings admin pages;
+- Statistics analysis workspace with consent KPIs, visitor journey, scan-performance charts, status health, category impact and recent consent activity;
 - HMAC request signing compatible with the Laravel API;
 - encrypted-at-rest storage for the issued installation credential;
 - API REST bridge with nonce and capability protection;
