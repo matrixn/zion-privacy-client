@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.50 — 2026-11-14
+
+- Updated `zion/wordpress-license-sdk` to `0.4.17` and refreshed its Composer dependency tree.
+
 ## 0.1.49 — 2026-11-14
 
 - Fixed the consent preferences modal so it restores the exact category choices saved by the visitor when reopened.
